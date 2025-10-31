@@ -11,6 +11,9 @@
 - [x] Créer vues de base (Login, Home, Routines, Creatures, Profile)
 - [x] Configuration navigation
 - [x] Génération de code
+- [x] Résoudre problèmes de cache Gradle
+- [x] Gérer l'absence de Firebase (mode démo)
+- [x] Premier lancement de l'application réussi! 🎉
 
 ### 🔥 Priorité 1 - Configuration Firebase
 

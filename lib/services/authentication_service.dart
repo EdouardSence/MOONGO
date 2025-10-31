@@ -2,13 +2,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:my_first_app/models/user_model.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  FirebaseAuth? _firebaseAuth;
+  bool _isFirebaseAvailable = true;
+
+  /// Lazy initialization de FirebaseAuth
+  FirebaseAuth? get _auth {
+    try {
+      _firebaseAuth ??= FirebaseAuth.instance;
+      return _firebaseAuth;
+    } catch (e) {
+      _isFirebaseAvailable = false;
+      print('⚠️ Firebase Auth non disponible: $e');
+      return null;
+    }
+  }
+
+  /// Vérifie si Firebase est disponible
+  bool get isFirebaseAvailable => _isFirebaseAvailable;
 
   /// Stream de l'utilisateur connecté
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User?> get authStateChanges {
+    final auth = _auth;
+    if (auth == null) {
+      return Stream.value(null);
+    }
+    return auth.authStateChanges();
+  }
 
   /// Utilisateur actuellement connecté
-  User? get currentUser => _firebaseAuth.currentUser;
+  User? get currentUser {
+    final auth = _auth;
+    return auth?.currentUser;
+  }
 
   /// Inscription avec email et mot de passe
   Future<UserModel?> signUpWithEmail({
@@ -16,9 +41,13 @@ class AuthenticationService {
     required String password,
     String? displayName,
   }) async {
+    final auth = _auth;
+    if (auth == null) {
+      throw Exception('Firebase n\'est pas configuré');
+    }
+
     try {
-      final UserCredential result =
-          await _firebaseAuth.createUserWithEmailAndPassword(
+      final UserCredential result = await auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -48,9 +77,13 @@ class AuthenticationService {
     required String email,
     required String password,
   }) async {
+    final auth = _auth;
+    if (auth == null) {
+      throw Exception('Firebase n\'est pas configuré');
+    }
+
     try {
-      final UserCredential result =
-          await _firebaseAuth.signInWithEmailAndPassword(
+      final UserCredential result = await auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -73,8 +106,13 @@ class AuthenticationService {
 
   /// Déconnexion
   Future<void> signOut() async {
+    final auth = _auth;
+    if (auth == null) {
+      throw Exception('Firebase n\'est pas configuré');
+    }
+
     try {
-      await _firebaseAuth.signOut();
+      await auth.signOut();
     } catch (e) {
       throw Exception('Erreur lors de la déconnexion: $e');
     }
@@ -82,8 +120,13 @@ class AuthenticationService {
 
   /// Réinitialisation du mot de passe
   Future<void> resetPassword(String email) async {
+    final auth = _auth;
+    if (auth == null) {
+      throw Exception('Firebase n\'est pas configuré');
+    }
+
     try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      await auth.sendPasswordResetEmail(email: email);
     } catch (e) {
       throw _handleAuthException(e);
     }

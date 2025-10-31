@@ -4,7 +4,28 @@ import 'package:my_first_app/models/routine_model.dart';
 import 'package:my_first_app/models/creature_model.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore? _firestoreInstance;
+
+  /// Lazy initialization de Firestore
+  FirebaseFirestore? get _firestoreNullable {
+    try {
+      _firestoreInstance ??= FirebaseFirestore.instance;
+      return _firestoreInstance;
+    } catch (e) {
+      print('⚠️ Firestore non disponible: $e');
+      return null;
+    }
+  }
+
+  /// Get Firestore instance or throw if not available
+  FirebaseFirestore get _firestore {
+    final instance = _firestoreNullable;
+    if (instance == null) {
+      throw Exception(
+          'Firestore n\'est pas configuré. Veuillez configurer Firebase.');
+    }
+    return instance;
+  }
 
   // Collections
   static const String usersCollection = 'users';

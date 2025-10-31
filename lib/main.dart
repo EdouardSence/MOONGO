@@ -9,8 +9,14 @@ import 'package:stacked_services/stacked_services.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialiser Firebase
-  await Firebase.initializeApp();
+  // Initialiser Firebase (avec gestion d'erreur)
+  try {
+    await Firebase.initializeApp();
+    debugPrint('✅ Firebase initialisé avec succès');
+  } catch (e) {
+    debugPrint('⚠️ Firebase non configuré: $e');
+    debugPrint('💡 L\'application fonctionnera en mode démo sans Firebase');
+  }
 
   await setupLocator();
   setupDialogUi();

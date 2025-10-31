@@ -31,21 +31,65 @@ class RoutinesView extends StackedView<RoutinesViewModel> {
 
   Widget _buildEmptyState() {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.checklist, size: 100, color: Colors.grey[300]),
-          const SizedBox(height: 16),
-          Text(
-            'Aucune routine',
-            style: TextStyle(fontSize: 20, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Créez votre première routine !',
-            style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.checklist_rounded,
+              size: 100,
+              color: Colors.deepPurple.shade200,
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Bienvenue sur MOONGO!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Créez vos premières routines et faites évoluer vos créatures!',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.shade200),
+              ),
+              child: Column(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.orange.shade700),
+                  const SizedBox(height: 8),
+                  Text(
+                    '⚠️ Firebase non configuré',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange.shade900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Pour activer toutes les fonctionnalités:\n1. Créez un projet Firebase\n2. Ajoutez google-services.json\n3. Consultez MOONGO_SETUP.md',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.orange.shade800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
