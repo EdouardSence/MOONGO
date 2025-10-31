@@ -1,21 +1,242 @@
 # MOONGO - Liste des Tâches
 
-## 🎯 MVP - Version 1.0
+## 📋 Projet Académique - Consignes Obligatoires
 
 ### ✅ Architecture & Configuration (COMPLÉTÉ)
 
-- [x] Configurer architecture Stacked (MVVM)
-- [x] Installer dépendances Firebase
-- [x] Créer modèles de données (User, Routine, Creature)
-- [x] Créer services (Auth, Firestore, Gamification)
-- [x] Créer vues de base (Login, Home, Routines, Creatures, Profile)
-- [x] Configuration navigation
-- [x] Génération de code
-- [x] Résoudre problèmes de cache Gradle
-- [x] Gérer l'absence de Firebase (mode démo)
+- [x] Configurer architecture Stacked (MVVM) ✓
+- [x] Créer modèles de données (User, Routine, Creature) ✓
+- [x] Créer services de base ✓
+- [x] Créer vues de base (Startup, Home, Routines, Creatures, Profile) ✓
+- [x] Configuration navigation avec Stacked Router ✓
+- [x] Génération de code ✓
+- [x] Résoudre problèmes de cache Gradle ✓
 - [x] Premier lancement de l'application réussi! 🎉
 
-### 🔥 Priorité 1 - Configuration Firebase
+### 🎯 Priorité 1 - Consignes Obligatoires du Projet
+
+#### ✅ Requis Minimum (À COMPLÉTER POUR LE RENDU)
+
+- [ ] **Architecture & State Management**
+
+  - [x] Utilisation de Stacked (✓ déjà implémenté)
+  - [x] Structure MVVM respectée (✓ déjà implémenté)
+  - [ ] Vérifier que tous les ViewModels utilisent BaseViewModel
+  - [ ] Documenter l'architecture dans le README
+
+- [ ] **Écrans (Minimum 2 écrans)**
+
+  - [x] Écran 1: Home avec navigation (✓ déjà implémenté)
+  - [x] Écran 2: Routines (✓ déjà implémenté)
+  - [x] Écran 3: Créatures (✓ bonus - déjà implémenté)
+  - [x] Écran 4: Profil (✓ bonus - déjà implémenté)
+  - [ ] Navigation entre écrans avec Navigator (via Stacked Router)
+
+- [ ] **API REST avec DIO/HTTP**
+
+  - [ ] Installer package DIO
+  - [ ] Créer service API pour récupérer des données
+  - [ ] Choisir une API publique (exemples ci-dessous)
+  - [ ] Implémenter au moins 1 endpoint GET
+  - [ ] Afficher les données récupérées dans l'interface
+  - [ ] Gérer les erreurs réseau
+  - [ ] Ajouter un loading indicator pendant les requêtes
+
+- [ ] **ThemeData et Style Global**
+
+  - [ ] Créer un fichier theme.dart
+  - [ ] Définir ThemeData pour le thème clair
+  - [ ] Appliquer le thème dans MaterialApp
+  - [ ] Utiliser les couleurs du thème dans toute l'app
+  - [ ] Documentation du système de thème
+
+- [ ] **Tests sur Téléphone Physique**
+  - [x] Application testée sur téléphone Android (✓ déjà fait)
+  - [ ] Capturer des screenshots de l'app en fonctionnement
+  - [ ] Vérifier que toutes les fonctionnalités marchent sur device
+  - [ ] Tester la rotation d'écran
+  - [ ] Tester les performances
+
+#### 🌟 Bonus (Recommandé)
+
+- [ ] **Dark Mode**
+
+  - [ ] Créer ThemeData pour le thème sombre
+  - [ ] Implémenter un switch pour changer de thème
+  - [ ] Persister le choix du thème (shared_preferences)
+  - [ ] Animations de transition entre thèmes
+
+- [ ] **Fonctionnalités Avancées**
+  - [ ] Pagination pour les listes
+  - [ ] Pull-to-refresh
+  - [ ] Recherche/Filtrage
+  - [ ] Animations Flutter
+  - [ ] Cache local des données API
+
+---
+
+## 💡 Suggestions d'APIs Publiques (Choisir UNE)
+
+### Option 1: PokéAPI (Recommandé - Facile)
+
+- **URL**: https://pokeapi.co/
+- **Documentation**: https://pokeapi.co/docs/v2
+- **Utilisation pour MOONGO**: Récupérer des créatures Pokémon comme "créatures" de l'app
+- **Exemples d'endpoints**:
+  - GET https://pokeapi.co/api/v2/pokemon?limit=20
+  - GET https://pokeapi.co/api/v2/pokemon/{id}
+
+### Option 2: REST Countries (Facile)
+
+- **URL**: https://restcountries.com/
+- **Utilisation**: Liste de pays avec drapeaux, population, etc.
+
+### Option 3: JSONPlaceholder (Très simple)
+
+- **URL**: https://jsonplaceholder.typicode.com/
+- **Utilisation**: Données de test (posts, users, comments)
+
+### Option 4: OpenWeatherMap (Nécessite clé API gratuite)
+
+- **URL**: https://openweathermap.org/api
+- **Utilisation**: Météo pour gamifier les routines
+
+### Option 5: Marvel API (Nécessite clé API)
+
+- **URL**: https://developer.marvel.com/
+- **Utilisation**: Personnages Marvel comme créatures
+
+---
+
+## 🎯 Plan de Développement Simplifié pour le Rendu
+
+### Phase 1: Configuration API (2-3h)
+
+- [ ] **Choisir l'API**
+
+  - [ ] Lire la documentation de l'API choisie
+  - [ ] Tester les endpoints avec Postman/Insomnia
+  - [ ] Noter les endpoints à utiliser
+
+- [ ] **Installer DIO**
+
+  ```yaml
+  dependencies:
+    dio: ^5.4.0
+  ```
+
+  - [ ] Ajouter DIO dans pubspec.yaml
+  - [ ] Run flutter pub get
+
+- [ ] **Créer Service API**
+
+  - [ ] Créer `lib/services/api_service.dart`
+  - [ ] Initialiser DIO avec baseUrl
+  - [ ] Créer méthode fetchCreatures() ou équivalent
+  - [ ] Gérer les erreurs (try-catch)
+  - [ ] Enregistrer dans locator
+
+- [ ] **Créer Modèles depuis API**
+  - [ ] Analyser la réponse JSON de l'API
+  - [ ] Créer modèles Dart correspondants
+  - [ ] Ajouter fromJson() et toJson()
+  - [ ] (Bonus) Utiliser json_serializable
+
+### Phase 2: Interface & ThemeData (2-3h)
+
+- [ ] **Configurer ThemeData**
+
+  - [ ] Créer `lib/ui/common/app_theme.dart`
+  - [ ] Définir couleurs primaires et secondaires
+  - [ ] Configurer TextTheme
+  - [ ] Configurer AppBarTheme, CardTheme, etc.
+  - [ ] Appliquer dans MaterialApp
+
+- [ ] **Améliorer les Écrans Existants**
+
+  - [ ] Modifier RoutinesView pour afficher données de l'API
+  - [ ] Modifier CreaturesView pour afficher données de l'API
+  - [ ] Ajouter loading states
+  - [ ] Ajouter gestion d'erreurs
+  - [ ] Améliorer le design avec le thème
+
+- [ ] **Écran de Détails**
+  - [ ] Créer DetailView pour afficher détails d'un élément
+  - [ ] Implémenter navigation vers cet écran
+  - [ ] Afficher toutes les infos de l'API
+  - [ ] Ajouter bouton retour
+
+### Phase 3: Dark Mode (Bonus - 1-2h)
+
+- [ ] **Implémenter Dark Theme**
+  - [ ] Créer darkThemeData dans app_theme.dart
+  - [ ] Créer ThemeService pour gérer le thème
+  - [ ] Ajouter toggle dans ProfileView
+  - [ ] Sauvegarder préférence avec shared_preferences
+  - [ ] Animations de transition
+
+### Phase 4: Polissage & Tests (1-2h)
+
+- [ ] **Tests & Optimisation**
+
+  - [ ] Tester sur téléphone physique
+  - [ ] Corriger les bugs
+  - [ ] Vérifier toutes les consignes
+  - [ ] Prendre screenshots
+  - [ ] Optimiser les performances
+
+- [ ] **Documentation**
+  - [ ] Mettre à jour README avec:
+    - Description du projet
+    - API utilisée
+    - Architecture
+    - Screenshots
+    - Instructions d'installation
+  - [ ] Commenter le code important
+  - [ ] Créer ARCHITECTURE.md si nécessaire
+
+---
+
+## 📦 Dépendances Minimales Requises
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  stacked: ^3.4.3
+  stacked_services: ^1.2.0
+
+  # Navigation
+  auto_route: ^7.8.4 # ou stacked déjà configuré
+
+  # API & Network
+  dio: ^5.4.0
+
+  # UI
+  flutter_svg: ^2.0.9 # si besoin d'icônes SVG
+
+  # Bonus Dark Mode
+  shared_preferences: ^2.2.2 # pour persister le thème
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code generation
+  build_runner: ^2.4.7
+  stacked_generator: ^1.5.0
+  json_serializable: ^6.7.1 # si utilisation
+```
+
+---
+
+## 🔥 Priorité 2 - Retirer Firebase (Simplifier pour le Rendu)
+
+### À RETIRER OU DÉSACTIVER
+
+- [ ] **Firebase (Non requis pour le projet)**
 
 - [ ] **Créer projet Firebase**
 
