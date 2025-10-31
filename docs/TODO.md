@@ -237,6 +237,72 @@ dev_dependencies:
 ### À RETIRER OU DÉSACTIVER
 
 - [ ] **Firebase (Non requis pour le projet)**
+  - [ ] Retirer AuthenticationService de firebase (ou créer MockAuthService)
+  - [ ] Retirer FirestoreService (remplacer par API + cache local)
+  - [ ] Simplifier StartupViewModel (pas besoin d'auth pour le rendu)
+  - [ ] Retirer dépendances firebase\_\* du pubspec.yaml
+  - [ ] Nettoyer le code lié à Firebase
+  - [ ] (Alternative) Garder Firebase mais en mode démo uniquement
+
+---
+
+## 📊 Checklist Finale pour le Rendu
+
+### ✅ Consignes Obligatoires
+
+- [ ] ✅ Au moins 2 écrans fonctionnels
+- [ ] ✅ Utilisation de DIO ou HTTP pour API
+- [ ] ✅ Données récupérées depuis une API publique
+- [ ] ✅ ThemeData configuré et utilisé
+- [ ] ✅ Application structurée (architecture Stacked)
+- [ ] ✅ State management implémenté (Stacked)
+- [ ] ✅ Navigation fonctionnelle
+- [ ] ✅ App tourne sur téléphone physique
+
+### 🌟 Bonus Recommandés
+
+- [ ] 💎 Dark mode implémenté
+- [ ] 💎 Pull-to-refresh
+- [ ] 💎 Animations
+- [ ] 💎 Gestion d'erreurs robuste
+- [ ] 💎 Cache local
+- [ ] 💎 Code bien commenté
+- [ ] 💎 README complet avec screenshots
+
+---
+
+## 📝 Livrables pour le Rendu
+
+- [ ] **Code Source**
+
+  - [ ] Repository Git propre
+  - [ ] Commits réguliers et clairs
+  - [ ] .gitignore configuré
+
+- [ ] **Documentation**
+
+  - [ ] README.md avec:
+    - Titre et description
+    - API utilisée
+    - Architecture choisie
+    - Instructions d'installation
+    - Screenshots (minimum 3)
+    - Difficultés rencontrées
+  - [ ] Commentaires dans le code
+
+- [ ] **Démonstration**
+  - [ ] Vidéo ou GIF de l'app en fonctionnement
+  - [ ] Screenshots de chaque écran
+  - [ ] Screenshot sur téléphone physique
+
+---
+
+## 🚀 Anciennes Features MOONGO (Reporter après le Rendu)
+
+<details>
+<summary>Cliquez pour voir les features avancées (V2.0+)</summary>
+
+### Configuration Firebase Complète (Post-Rendu)
 
 - [ ] **Créer projet Firebase**
 
@@ -245,6 +311,132 @@ dev_dependencies:
   - [ ] Activer Firebase Authentication
   - [ ] Activer Cloud Firestore
   - [ ] Configurer règles de sécurité Firestore
+
+- [ ] **Configurer Android**
+  - [ ] Ajouter app Android dans Firebase
+  - [ ] Télécharger google-services.json
+  - [ ] Remplacer le fichier placeholder
+  - [ ] Ajouter plugin Google Services dans build.gradle
+
+### Fonctionnalités Gamification Complètes
+
+- [ ] **Création de Routines**
+
+  - [ ] Dialog/Page pour créer une nouvelle routine
+  - [ ] Formulaire : titre, description
+  - [ ] Ajouter/Supprimer des tâches
+  - [ ] Définir XP par tâche
+  - [ ] Sauvegarder dans Firestore
+  - [ ] Validation des inputs
+
+- [ ] **Gestion des Routines**
+
+  - [ ] Afficher la liste des routines
+  - [ ] Voir les détails d'une routine
+  - [ ] Modifier une routine existante
+  - [ ] Supprimer une routine (soft delete)
+  - [ ] Dupliquer une routine
+
+- [ ] **Système de Créatures**
+
+  - [ ] Création de la première créature
+  - [ ] Évolution automatique
+  - [ ] Collection de créatures
+  - [ ] Nourrir avec XP
+
+- [ ] **Complétion de Tâches**
+  - [ ] Workflow de complétion
+  - [ ] Sélectionner créature à nourrir
+  - [ ] Animation +XP
+  - [ ] Réinitialisation quotidienne
+
+### Notifications Push
+
+- [ ] Configuration Firebase Cloud Messaging
+- [ ] Rappels de routines
+- [ ] Notifications d'évolution
+
+### Système de Badges/Trophées
+
+- [ ] Définir badges
+- [ ] Logique de déverrouillage
+- [ ] UI d'affichage
+
+### Statistiques Avancées
+
+- [ ] Graphiques détaillés
+- [ ] XP par semaine/mois
+- [ ] Insights personnalisés
+
+### UI/UX Améliorés
+
+- [ ] Design cartoon/mignon
+- [ ] Illustrations de créatures personnalisées
+- [ ] Animations d'évolution
+- [ ] Thème sombre avancé
+
+### Mode Offline
+
+- [ ] Cache persistant (Hive/SQLite)
+- [ ] Synchronisation en arrière-plan
+
+### Fonctionnalités Sociales (V3.0)
+
+- [ ] Profils publics
+- [ ] Système d'amis
+- [ ] Classements
+- [ ] Partage de routines
+- [ ] Défis entre amis
+
+### Monétisation (V4.0)
+
+- [ ] Créatures exclusives premium
+- [ ] Fonctionnalités premium
+- [ ] In-App Purchases
+
+</details>
+
+---
+
+## 🎓 Notes Importantes
+
+### Approche Recommandée pour le Rendu
+
+1. **Simplicité d'abord** : Concentrez-vous sur les consignes obligatoires
+2. **API Simple** : PokéAPI est parfait pour MOONGO (créatures = Pokémon)
+3. **Pas de sur-engineering** : 2-3 écrans suffisent pour un bon rendu
+4. **Tests réguliers** : Testez sur téléphone à chaque étape
+5. **Documentation claire** : README bien écrit = points bonus
+
+### Estimation de Temps
+
+- **Configuration API + DIO** : 2-3h
+- **ThemeData & UI** : 2-3h
+- **Dark Mode (bonus)** : 1-2h
+- **Polish & Tests** : 1-2h
+- **Documentation** : 1h
+
+**Total** : 7-11 heures de développement
+
+### Erreurs à Éviter
+
+- ❌ API trop complexe nécessitant authentification
+- ❌ Trop de features non demandées
+- ❌ Oublier ThemeData (c'est OBLIGATOIRE)
+- ❌ Ne pas tester sur téléphone
+- ❌ Pas de documentation
+
+---
+
+**Dernière mise à jour** : 31 octobre 2025  
+**Prochaine priorité** : Intégration API avec DIO  
+**Deadline projet** : À définir
+
+- [ ] Aller sur Firebase Console
+- [ ] Créer nouveau projet "MOONGO"
+- [ ] Activer Firebase Authentication
+- [ ] Activer Cloud Firestore
+- [ ] Configurer règles de sécurité Firestore
 
 - [ ] **Configurer Android**
 
