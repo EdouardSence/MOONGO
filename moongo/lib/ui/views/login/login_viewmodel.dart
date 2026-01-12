@@ -10,6 +10,8 @@ class LoginViewModel extends BaseViewModel {
   String password = '';
   String? errorMessage;
   bool isLoading = false;
+  bool isPasswordVisible = false;
+  bool loginMode = true;
 
   final _navigationService = locator<NavigationService>();
 
@@ -21,6 +23,17 @@ class LoginViewModel extends BaseViewModel {
   // Met à jour le mot de passe
   void setPassword(String value) {
     password = value;
+  }
+
+  // Change le mode de visibilité du mot de passe
+  void togglePasswordVisibility() {
+    isPasswordVisible = !isPasswordVisible;
+    notifyListeners();
+  }
+
+  void toggleLoginMode() {
+    loginMode = !loginMode;
+    notifyListeners();
   }
 
   // Logique de login

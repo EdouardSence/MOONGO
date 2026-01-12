@@ -16,6 +16,14 @@ class LoginView extends StackedView<LoginViewModel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Message de bienvenue
+            Text(
+              viewModel.loginMode
+                  ? 'Bienvenue sur Moongo !\nVeuillez vous connecter.'
+                  : 'Bienvenue sur Moongo !\nVeuillez créer un compte.',
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 24),
             // Champ Email
             TextField(
               onChanged: viewModel.setEmail,
@@ -29,11 +37,21 @@ class LoginView extends StackedView<LoginViewModel> {
             // Champ Mot de passe
             TextField(
               onChanged: viewModel.setPassword,
-              obscureText: true,
+              obscureText: viewModel.isPasswordVisible ? false : true,
               decoration: InputDecoration(
                 labelText: 'Mot de passe',
                 hintText: 'Entrez votre mot de passe',
                 border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    viewModel.isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    viewModel.togglePasswordVisibility();
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -59,8 +77,29 @@ class LoginView extends StackedView<LoginViewModel> {
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text('Login'),
+                    : Text(
+                        viewModel.loginMode
+                            ? 'Se connecter'
+                            : 'Créer un compte',
+                      ),
               ),
+            ),
+            Row(
+              children: [
+                Text(
+                  viewModel.loginMode
+                      ? 'Pas encore de compte ?'
+                      : 'Déjà un compte ?',
+                ),
+                TextButton(
+                  onPressed: () {
+                    viewModel.toggleLoginMode();
+                  },
+                  child: Text(
+                    viewModel.loginMode ? 'Inscription' : 'Connexion',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
