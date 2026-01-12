@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'moongo-d3335.firebasestorage.app',
     iosBundleId: 'com.example.moongo',
   );
-
 }

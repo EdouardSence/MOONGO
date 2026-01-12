@@ -76,7 +76,7 @@ class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {
             ),
             verticalSpaceMedium,
             GestureDetector(
-              onTap: () => completer(DialogResponse(confirmed: true)),
+              onTap: () => viewModel.logout(),
               child: Container(
                 height: 50,
                 width: double.infinity,
@@ -86,9 +86,29 @@ class InfoAlertDialog extends StackedView<InfoAlertDialogModel> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(
-                  'Got it',
+                  'Oui',
                   style: TextStyle(
                     color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => completer(DialogResponse(confirmed: false)),
+              child: Container(
+                height: 50,
+                width: double.infinity,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: kcLightGrey,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  'Non',
+                  style: TextStyle(
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),

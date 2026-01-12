@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 /// Service de gestion de l'authentification
 /// Centralise toutes les opérations Firebase Auth
-class AuthService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+class AuthenticationService {
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   // Récupère l'utilisateur actuellement connecté (PERSISTANT)
-  User? get currentUser => _firebaseAuth.currentUser;
+  User? get currentUser => firebaseAuth.currentUser;
 
   // Stream pour écouter les changements d'état d'auth (comme onAuthStateChanged en RN)
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   // Vérifie si un utilisateur est connecté
   bool get isLoggedIn => currentUser != null;
@@ -25,7 +25,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _firebaseAuth.createUserWithEmailAndPassword(
+    return await firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -36,7 +36,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _firebaseAuth.signInWithEmailAndPassword(
+    return await firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -44,7 +44,7 @@ class AuthService {
 
   // Déconnexion
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    await firebaseAuth.signOut();
   }
 
   // Rafraîchir les données de l'utilisateur
@@ -59,6 +59,6 @@ class AuthService {
 
   // Réinitialiser le mot de passe
   Future<void> resetPassword(String email) async {
-    await _firebaseAuth.sendPasswordResetEmail(email: email);
+    await firebaseAuth.sendPasswordResetEmail(email: email);
   }
 }

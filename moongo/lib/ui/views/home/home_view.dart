@@ -45,9 +45,9 @@ class HomeView extends StackedView<HomeViewModel> {
                   children: [
                     MaterialButton(
                       color: kcDarkGreyColor,
-                      onPressed: viewModel.showDialog,
+                      onPressed: viewModel.logout,
                       child: const Text(
-                        'Show Dialog',
+                        'Se déconnecter',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -55,7 +55,7 @@ class HomeView extends StackedView<HomeViewModel> {
                       color: kcDarkGreyColor,
                       onPressed: viewModel.showBottomSheet,
                       child: const Text(
-                        'Show Bottom Sheet',
+                        'Afficher la feuille de bas',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
