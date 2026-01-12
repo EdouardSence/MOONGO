@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stacked/stacked.dart';
 import 'package:moongo/app/app.locator.dart';
 import 'package:moongo/app/app.router.dart';
@@ -8,9 +9,20 @@ class StartupViewModel extends BaseViewModel {
 
   // Place anything here that needs to happen before we get into the application
   Future runStartupLogic() async {
-    // This is where you can make decisions on where your app should navigate when
-    // you have custom startup logic
+    // Vérifie si un utilisateur est déjà connecté (PERSISTANT)
+    final currentUser = FirebaseAuth.instance.currentUser;
 
-    _navigationService.replaceWithLoginView();
+    // Petit délai pour le splash screen
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (currentUser != null) {
+      // Utilisateur déjà connecté → Va directement à Home
+      print('Utilisateur déjà connecté: ${currentUser.email}');
+      _navigationService.replaceWithHomeView();
+    } else {
+      // Pas d'utilisateur → Va au Login
+      print('Pas d\'utilisateur connecté');
+      _navigationService.replaceWithLoginView();
+    }
   }
 }
