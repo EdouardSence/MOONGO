@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "500040003092",
+    "project_id": "moongo-d3335",
+    "storage_bucket": "moongo-d3335.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500040003092:android:ca19d343fe2ac926b78101",
+        "android_client_info": {
+          "package_name": "com.example.moongo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCXk1wj2yfdQnGdKa0f9WNeMq5vCgETTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

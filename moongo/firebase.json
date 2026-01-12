@@ -1,0 +1,29 @@
+{
+    "firestore": {
+        "rules": "firestore.rules",
+        "indexes": "firestore.indexes.json"
+    },
+    "storage": {
+        "rules": "storage.rules"
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "moongo-d3335",
+                    "appId": "1:500040003092:android:ca19d343fe2ac926b78101",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "moongo-d3335",
+                    "configurations": {
+                        "android": "1:500040003092:android:ca19d343fe2ac926b78101",
+                        "ios": "1:500040003092:ios:b6f9ce9fdb57b620b78101"
+                    }
+                }
+            }
+        }
+    }
+}

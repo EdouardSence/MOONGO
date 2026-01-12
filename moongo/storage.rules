@@ -1,0 +1,52 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper : utilisateur authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper : taille de fichier valide (max 5MB)
+    function isValidSize() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+    
+    // Helper : type de fichier image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Avatars des utilisateurs
+    match /avatars/{userId}/{fileName} {
+      // Lecture : tout le monde peut voir les avatars
+      allow read: if true;
+      
+      // Écriture : seulement son propre avatar, max 5MB, images uniquement
+      allow write: if isAuthenticated() 
+                   && request.auth.uid == userId
+                   && isValidSize()
+                   && isImage();
+    }
+    
+    // Fichiers privés des utilisateurs
+    match /users/{userId}/private/{fileName} {
+      // Lecture/Écriture : seulement le propriétaire
+      allow read, write: if isAuthenticated() 
+                         && request.auth.uid == userId
+                         && isValidSize();
+    }
+    
+    // Fichiers publics (posts, etc.)
+    match /public/{allPaths=**} {
+      // Lecture : tout le monde
+      allow read: if true;
+      
+      // Écriture : utilisateurs authentifiés uniquement
+      allow write: if isAuthenticated() && isValidSize();
+    }
+    
+    // Par défaut : TOUT EST BLOQUÉ
+  }
+}

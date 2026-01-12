@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Fonction helper : vérifie si l'utilisateur est authentifié
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Fonction helper : vérifie si l'utilisateur est propriétaire
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Collection des utilisateurs
+    match /users/{userId} {
+      // Lecture : seulement son propre profil
+      allow read: if isOwner(userId);
+      
+      // Création : seulement pour soi-même
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Mise à jour : seulement son propre profil
+      // Et on empêche la modification de certains champs sensibles
+      allow update: if isOwner(userId) 
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt', 'userId']);
+      
+      // Suppression : seulement son propre compte
+      allow delete: if isOwner(userId);
+    }
+    
+    // Collection des posts/contenus (exemple)
+    match /posts/{postId} {
+      // Lecture : tous les utilisateurs authentifiés peuvent lire
+      allow read: if isAuthenticated();
+      
+      // Création : utilisateur authentifié + ajout automatique du userId
+      allow create: if isAuthenticated() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.createdAt == request.time;
+      
+      // Mise à jour : seulement le propriétaire
+      allow update: if isOwner(resource.data.userId)
+                    && request.resource.data.userId == resource.data.userId // Empêche changement de propriétaire
+                    && request.resource.data.createdAt == resource.data.createdAt; // Empêche changement de date
+      
+      // Suppression : seulement le propriétaire
+      allow delete: if isOwner(resource.data.userId);
+    }
+    
+    // Par défaut : TOUT EST BLOQUÉ
+    // Si tu ajoutes une nouvelle collection, elle sera automatiquement protégée
+  }
+}
