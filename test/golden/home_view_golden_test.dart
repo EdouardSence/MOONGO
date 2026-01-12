@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:my_first_app/app/app.locator.dart';
-import 'package:my_first_app/ui/views/home/home_view.dart';
+import 'package:MOONGO/app/app.locator.dart';
+import 'package:MOONGO/ui/views/home/home_view.dart';
 
 void main() {
   setUpAll(() => setupLocator());
