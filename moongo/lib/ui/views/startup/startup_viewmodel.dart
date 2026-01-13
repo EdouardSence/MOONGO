@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:moongo/app/app.locator.dart';
@@ -16,7 +15,7 @@ class StartupViewModel extends BaseViewModel {
 
     authService.firebaseAuth.authStateChanges().listen((User? user) {
       if (user != null) {
-        _navigationService.replaceWithHomeView();
+        _navigationService.replaceWithTabsView();
       } else {
         _navigationService.replaceWithLoginView();
       }

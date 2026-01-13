@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:moongo/app/app.locator.dart';
+import 'package:moongo/app/app.router.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -15,6 +16,7 @@ class LoginViewModel extends BaseViewModel {
   bool loginMode = true;
 
   final AuthenticationService authService = locator<AuthenticationService>();
+  final _navigationService = locator<NavigationService>();
 
   // Met à jour l'email
   void setEmail(String value) {
@@ -61,6 +63,7 @@ class LoginViewModel extends BaseViewModel {
         if (kDebugMode) {
           debugPrint('Compte créé: ${credential.user?.email}');
         }
+        _navigationService.replaceWithTabsView();
         return;
       }
       final credential = await authService.signIn(
@@ -71,6 +74,7 @@ class LoginViewModel extends BaseViewModel {
       if (kDebugMode) {
         debugPrint('Connecté en tant que: ${credential.user?.email}');
       }
+      _navigationService.replaceWithTabsView();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         errorMessage = 'Le mot de passe est trop faible';
