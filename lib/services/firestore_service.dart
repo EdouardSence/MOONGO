@@ -48,6 +48,35 @@ class FirestoreService {
     return user;
   }
 
+  /// Crée un utilisateur avec avatar emoji (onboarding)
+  Future<UserModel> createUserWithAvatar({
+    required String userId,
+    required String email,
+    required String displayName,
+    required String avatarEmoji,
+    DateTime? birthDate,
+  }) async {
+    final now = DateTime.now();
+    final user = UserModel(
+      userId: userId,
+      email: email,
+      displayName: displayName,
+      avatarUrl: avatarEmoji, // On utilise avatarUrl pour stocker l'emoji
+      birthDate: birthDate,
+      seeds: 100, // Bonus de départ
+      createdAt: now,
+      lastLoginAt: now,
+    );
+    await _db.collection('users').doc(userId).set(user.toFirestore());
+    return user;
+  }
+
+  /// Vérifie si l'utilisateur existe dans Firestore
+  Future<bool> userExists(String userId) async {
+    final doc = await _db.collection('users').doc(userId).get();
+    return doc.exists;
+  }
+
   /// Met à jour le profil utilisateur
   Future<void> updateUser(UserModel user) async {
     await _db.collection('users').doc(user.userId).update(user.toFirestore());

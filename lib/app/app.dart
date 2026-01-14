@@ -6,12 +6,14 @@ import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:moongo/services/firestore_service.dart';
+import 'package:moongo/services/theme_service.dart';
 import 'package:moongo/ui/views/login/login_view.dart';
 import 'package:moongo/ui/views/collection/collection_view.dart';
 import 'package:moongo/ui/views/tasks/tasks_view.dart';
 import 'package:moongo/ui/views/shop/shop_view.dart';
 import 'package:moongo/ui/views/profile/profile_view.dart';
 import 'package:moongo/ui/views/tabs/tabs_view.dart';
+import 'package:moongo/ui/views/onboarding/onboarding_view.dart';
 // @stacked-import
 
 @StackedApp(
@@ -24,6 +26,7 @@ import 'package:moongo/ui/views/tabs/tabs_view.dart';
     MaterialRoute(page: ShopView),
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: TabsView),
+    MaterialRoute(page: OnboardingView),
 // @stacked-route
   ],
   dependencies: [
@@ -32,6 +35,7 @@ import 'package:moongo/ui/views/tabs/tabs_view.dart';
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: AuthenticationService),
     LazySingleton(classType: FirestoreService),
+    LazySingleton(classType: ThemeService),
 // @stacked-service
   ],
   bottomsheets: [

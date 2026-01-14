@@ -31,7 +31,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
               child: Column(
                 children: [
                   // Header avec avatar
-                  _buildProfileHeader(viewModel),
+                  _buildProfileHeader(context, viewModel),
 
                   const SizedBox(height: 24),
 
@@ -55,7 +55,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
     );
   }
 
-  Widget _buildProfileHeader(ProfileViewModel viewModel) {
+  Widget _buildProfileHeader(BuildContext context, ProfileViewModel viewModel) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: const BoxDecoration(
@@ -71,44 +71,46 @@ class ProfileView extends StackedView<ProfileViewModel> {
       ),
       child: Row(
         children: [
-          // Avatar
-          Stack(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 3),
-                ),
-                child: ClipOval(
-                  child: viewModel.user?.avatarUrl != null
-                      ? Image.network(viewModel.user!.avatarUrl!,
-                          fit: BoxFit.cover)
-                      : const Center(
-                          child: Icon(Icons.person,
-                              size: 40, color: Color(0xFF6366F1)),
-                        ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 28,
-                  height: 28,
+          // Avatar cliquable
+          GestureDetector(
+            onTap: () => _showAvatarPicker(context, viewModel),
+            child: Stack(
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border:
-                        Border.all(color: const Color(0xFF6366F1), width: 2),
+                    border: Border.all(color: Colors.white, width: 3),
                   ),
-                  child:
-                      const Icon(Icons.add, size: 16, color: Color(0xFF6366F1)),
+                  child: ClipOval(
+                    child: Center(
+                      child: Text(
+                        viewModel.user?.avatarUrl ?? '😊',
+                        style: const TextStyle(fontSize: 40),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border:
+                          Border.all(color: const Color(0xFF6366F1), width: 2),
+                    ),
+                    child: const Icon(Icons.edit,
+                        size: 14, color: Color(0xFF6366F1)),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(width: 16),
 
@@ -135,7 +137,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withAlpha(50),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -155,6 +157,79 @@ class ProfileView extends StackedView<ProfileViewModel> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showAvatarPicker(BuildContext context, ProfileViewModel viewModel) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 16),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Choisis ton avatar',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                ),
+                itemCount: viewModel.availableAvatars.length,
+                itemBuilder: (context, index) {
+                  final avatar = viewModel.availableAvatars[index];
+                  final isSelected = avatar == viewModel.user?.avatarUrl;
+                  return GestureDetector(
+                    onTap: () {
+                      viewModel.updateAvatar(avatar);
+                      Navigator.pop(ctx);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? const Color(0xFF6366F1).withAlpha(25)
+                            : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(16),
+                        border: isSelected
+                            ? Border.all(
+                                color: const Color(0xFF6366F1), width: 2)
+                            : null,
+                      ),
+                      child: Center(
+                        child:
+                            Text(avatar, style: const TextStyle(fontSize: 28)),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
@@ -354,121 +429,127 @@ class ProfileView extends StackedView<ProfileViewModel> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => Container(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Paramètres',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 24),
-
-              // Thème
-              ListTile(
-                leading: const Icon(Icons.palette),
-                title: const Text('Thème'),
-                trailing: SegmentedButton<bool>(
-                  segments: const [
-                    ButtonSegment(value: false, icon: Icon(Icons.light_mode)),
-                    ButtonSegment(value: true, icon: Icon(Icons.dark_mode)),
-                  ],
-                  selected: const {false},
-                  onSelectionChanged: (value) {},
+                const SizedBox(height: 24),
+                const Text(
+                  'Paramètres',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-              ),
+                const SizedBox(height: 24),
 
-              const Divider(),
-
-              // Nom
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: 'Nom d\'affichage',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: const Icon(Icons.person),
+                // Thème
+                ListTile(
+                  leading: const Icon(Icons.palette),
+                  title: const Text('Thème'),
+                  trailing: SegmentedButton<bool>(
+                    segments: const [
+                      ButtonSegment(value: false, icon: Icon(Icons.light_mode)),
+                      ButtonSegment(value: true, icon: Icon(Icons.dark_mode)),
+                    ],
+                    selected: {viewModel.isDarkMode},
+                    onSelectionChanged: (value) {
+                      viewModel.setDarkMode(value.first);
+                      setSheetState(() {});
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
 
-              // Date de naissance
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.cake),
-                title: Text(
-                  viewModel.user?.birthDate != null
-                      ? _formatDate(viewModel.user!.birthDate!)
-                      : 'Ajouter date de naissance',
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  final date = await showDatePicker(
-                    context: context,
-                    initialDate: viewModel.user?.birthDate ?? DateTime(2000),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (date != null) {
-                    viewModel.updateBirthDate(date);
-                  }
-                },
-              ),
+                const Divider(),
 
-              const Divider(),
-
-              // Sauvegarder
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    viewModel.updateDisplayName(nameController.text);
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6366F1),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
+                // Nom
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: 'Nom d\'affichage',
+                    border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
+                    prefixIcon: const Icon(Icons.person),
                   ),
-                  child: const Text('Sauvegarder'),
                 ),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Supprimer compte
-              Center(
-                child: TextButton(
-                  onPressed: () => _showDeleteAccountDialog(context, viewModel),
-                  child: const Text(
-                    'Supprimer mon compte',
-                    style: TextStyle(color: Colors.red),
+                // Date de naissance
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.cake),
+                  title: Text(
+                    viewModel.user?.birthDate != null
+                        ? _formatDate(viewModel.user!.birthDate!)
+                        : 'Ajouter date de naissance',
+                  ),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: ctx,
+                      initialDate: viewModel.user?.birthDate ?? DateTime(2000),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (date != null) {
+                      viewModel.updateBirthDate(date);
+                      setSheetState(() {});
+                    }
+                  },
+                ),
+
+                const Divider(),
+
+                // Sauvegarder
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      viewModel.updateDisplayName(nameController.text);
+                      Navigator.pop(ctx);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6366F1),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Sauvegarder'),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-            ],
+                const SizedBox(height: 16),
+
+                // Supprimer compte
+                Center(
+                  child: TextButton(
+                    onPressed: () => _showDeleteAccountDialog(ctx, viewModel),
+                    child: const Text(
+                      'Supprimer mon compte',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

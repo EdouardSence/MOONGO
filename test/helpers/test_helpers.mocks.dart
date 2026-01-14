@@ -951,6 +951,67 @@ class MockFirestoreService extends _i1.Mock implements _i11.FirestoreService {
       ) as _i8.Future<_i3.UserModel>);
 
   @override
+  _i8.Future<_i3.UserModel> createUserWithAvatar({
+    required String? userId,
+    required String? email,
+    required String? displayName,
+    required String? avatarEmoji,
+    DateTime? birthDate,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createUserWithAvatar,
+          [],
+          {
+            #userId: userId,
+            #email: email,
+            #displayName: displayName,
+            #avatarEmoji: avatarEmoji,
+            #birthDate: birthDate,
+          },
+        ),
+        returnValue: _i8.Future<_i3.UserModel>.value(_FakeUserModel_2(
+          this,
+          Invocation.method(
+            #createUserWithAvatar,
+            [],
+            {
+              #userId: userId,
+              #email: email,
+              #displayName: displayName,
+              #avatarEmoji: avatarEmoji,
+              #birthDate: birthDate,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i8.Future<_i3.UserModel>.value(_FakeUserModel_2(
+          this,
+          Invocation.method(
+            #createUserWithAvatar,
+            [],
+            {
+              #userId: userId,
+              #email: email,
+              #displayName: displayName,
+              #avatarEmoji: avatarEmoji,
+              #birthDate: birthDate,
+            },
+          ),
+        )),
+      ) as _i8.Future<_i3.UserModel>);
+
+  @override
+  _i8.Future<bool> userExists(String? userId) => (super.noSuchMethod(
+        Invocation.method(
+          #userExists,
+          [userId],
+        ),
+        returnValue: _i8.Future<bool>.value(false),
+        returnValueForMissingStub: _i8.Future<bool>.value(false),
+      ) as _i8.Future<bool>);
+
+  @override
   _i8.Future<void> updateUser(_i3.UserModel? user) => (super.noSuchMethod(
         Invocation.method(
           #updateUser,
