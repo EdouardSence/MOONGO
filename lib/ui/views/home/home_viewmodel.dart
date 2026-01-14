@@ -1,42 +1,55 @@
-import 'package:moongo/app/app.bottomsheets.dart';
-import 'package:moongo/app/app.dialogs.dart';
 import 'package:moongo/app/app.locator.dart';
+import 'package:moongo/models/creature_model.dart';
+import 'package:moongo/models/task_model.dart';
+import 'package:moongo/models/user_model.dart';
 import 'package:moongo/services/authentication_service.dart';
-import 'package:moongo/ui/common/app_strings.dart';
+import 'package:moongo/services/firestore_service.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 
 class HomeViewModel extends BaseViewModel {
-  final _dialogService = locator<DialogService>();
-  final _bottomSheetService = locator<BottomSheetService>();
-  final AuthenticationService authService = locator<AuthenticationService>();
+  final _firestoreService = locator<FirestoreService>();
+  final _authService = locator<AuthenticationService>();
 
-  String get counterLabel => 'Counter is: $_counter';
+  UserModel? _user;
+  List<CreatureModel> _creatures = [];
+  List<TaskModel> _tasks = [];
 
-  int _counter = 0;
+  int get seeds => _user?.seeds ?? 0;
+  List<CreatureModel> get creatures => _creatures;
+  List<TaskModel> get todayTasks =>
+      _tasks.where((t) => t.isDueToday && !t.isArchived).toList();
+  int get completedTodayCount => todayTasks.where((t) => t.completed).length;
 
-  void incrementCounter() {
-    _counter++;
-    rebuildUi();
+  String? get _userId => _authService.userId;
+
+  void init() {
+    _loadData();
   }
 
-  void showDialog() {
-    _dialogService.showCustomDialog(
-      variant: DialogType.infoAlert,
-      title: 'Êtes-vous sûr de vouloir vous déconnecter ?',
-      description: 'Vous devrez vous reconnecter pour accéder à votre compte.',
-    );
+  void _loadData() {
+    if (_userId == null) return;
+
+    // Charger l'utilisateur
+    _firestoreService.userStream(_userId!).listen((user) {
+      _user = user;
+      notifyListeners();
+    });
+
+    // Charger les créatures
+    _firestoreService.creaturesStream(_userId!).listen((creatures) {
+      _creatures = creatures;
+      notifyListeners();
+    });
+
+    // Charger les tâches
+    _firestoreService.tasksStream(_userId!).listen((tasks) {
+      _tasks = tasks;
+      notifyListeners();
+    });
   }
 
-  void showBottomSheet() {
-    _bottomSheetService.showCustomSheet(
-      variant: BottomSheetType.notice,
-      title: ksHomeBottomSheetTitle,
-      description: ksHomeBottomSheetDescription,
-    );
-  }
-
-  void logout() {
-    authService.signOut();
+  Future<void> completeTask(TaskModel task) async {
+    if (_userId == null) return;
+    await _firestoreService.completeTask(_userId!, task);
   }
 }

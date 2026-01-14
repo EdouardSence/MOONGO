@@ -3,7 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:stacked/stacked.dart';
 
 import '../collection/collection_view.dart';
-import '../calendar/calendar_view.dart';
+import '../tasks/tasks_view.dart';
 import '../home/home_view.dart';
 import '../shop/shop_view.dart';
 import '../profile/profile_view.dart';
@@ -27,7 +27,7 @@ class TabsViewModel extends BaseViewModel {
   // Construit la liste des écrans (vues)
   List<Widget> buildScreens() => [
         const CollectionView(),
-        const CalendarView(),
+        const TasksView(),
         const HomeView(),
         const ShopView(),
         const ProfileView(),
@@ -36,33 +36,33 @@ class TabsViewModel extends BaseViewModel {
   // Configuration des items de la bottom nav bar
   List<PersistentBottomNavBarItem> navBarItems() => [
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.collections),
+          icon: const Icon(Icons.auto_stories),
           title: 'Collection',
-          activeColorPrimary: Colors.blue,
+          activeColorPrimary: const Color(0xFF6366F1),
           inactiveColorPrimary: Colors.grey,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.calendar_month),
-          title: 'Calendrier',
-          activeColorPrimary: Colors.green,
+          icon: const Icon(Icons.format_list_bulleted),
+          title: 'Tâches',
+          activeColorPrimary: const Color(0xFF6366F1),
           inactiveColorPrimary: Colors.grey,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.home),
-          title: 'Home',
-          activeColorPrimary: Colors.red,
+          icon: const Icon(Icons.landscape),
+          title: 'Accueil',
+          activeColorPrimary: const Color(0xFF6366F1),
           inactiveColorPrimary: Colors.grey,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.shopping_bag),
+          icon: const Icon(Icons.storefront),
           title: 'Boutique',
-          activeColorPrimary: Colors.orange,
+          activeColorPrimary: const Color(0xFF6366F1),
           inactiveColorPrimary: Colors.grey,
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.person),
           title: 'Profil',
-          activeColorPrimary: Colors.purple,
+          activeColorPrimary: const Color(0xFF6366F1),
           inactiveColorPrimary: Colors.grey,
         ),
       ];
