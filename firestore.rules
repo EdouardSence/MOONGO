@@ -3,53 +3,103 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Fonction helper : vérifie si l'utilisateur est authentifié
+    // ═══════════════════════════════════════════
+    // FONCTIONS HELPERS
+    // ═══════════════════════════════════════════
+    
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    // Fonction helper : vérifie si l'utilisateur est propriétaire
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Collection des utilisateurs
+    function isValidSeeds(seeds) {
+      return seeds is int && seeds >= 0;
+    }
+    
+    function isValidEvolutionStage(stage) {
+      return stage is int && stage >= 1 && stage <= 5;
+    }
+
+    // ═══════════════════════════════════════════
+    // USERS - Profil + économie (graines)
+    // ═══════════════════════════════════════════
     match /users/{userId} {
-      // Lecture : seulement son propre profil
       allow read: if isOwner(userId);
       
-      // Création : seulement pour soi-même
-      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if isOwner(userId)
+                    && request.resource.data.userId == userId
+                    && request.resource.data.seeds >= 0;
       
-      // Mise à jour : seulement son propre profil
-      // Et on empêche la modification de certains champs sensibles
-      allow update: if isOwner(userId) 
-                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt', 'userId']);
+      allow update: if isOwner(userId)
+                    && isValidSeeds(request.resource.data.seeds)
+                    && request.resource.data.userId == resource.data.userId
+                    && request.resource.data.createdAt == resource.data.createdAt;
       
-      // Suppression : seulement son propre compte
       allow delete: if isOwner(userId);
+      
+      // Sous-collection : historique quotidien
+      match /daily_progress/{date} {
+        allow read, write: if isOwner(userId);
+      }
     }
-    
-    // Collection des posts/contenus (exemple)
-    match /posts/{postId} {
-      // Lecture : tous les utilisateurs authentifiés peuvent lire
-      allow read: if isAuthenticated();
+
+    // ═══════════════════════════════════════════
+    // ROUTINES - Tâches et routines
+    // ═══════════════════════════════════════════
+    match /routines/{routineId} {
+      allow read: if isOwner(resource.data.userId);
       
-      // Création : utilisateur authentifié + ajout automatique du userId
-      allow create: if isAuthenticated() 
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.createdAt == request.time;
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid;
       
-      // Mise à jour : seulement le propriétaire
       allow update: if isOwner(resource.data.userId)
-                    && request.resource.data.userId == resource.data.userId // Empêche changement de propriétaire
-                    && request.resource.data.createdAt == resource.data.createdAt; // Empêche changement de date
+                    && request.resource.data.userId == resource.data.userId;
       
-      // Suppression : seulement le propriétaire
+      allow delete: if isOwner(resource.data.userId);
+      
+      // Sous-collection tasks (si utilisée)
+      match /tasks/{taskId} {
+        allow read, write: if isOwner(get(/databases/$(database)/documents/routines/$(routineId)).data.userId);
+      }
+    }
+
+    // ═══════════════════════════════════════════
+    // CREATURES - Collection de créatures
+    // ═══════════════════════════════════════════
+    match /creatures/{creatureId} {
+      allow read: if isOwner(resource.data.userId);
+      
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.evolutionStage == 1
+                    && request.resource.data.currentXp == 0;
+      
+      allow update: if isOwner(resource.data.userId)
+                    && request.resource.data.userId == resource.data.userId
+                    && isValidEvolutionStage(request.resource.data.evolutionStage)
+                    && request.resource.data.evolutionStage >= resource.data.evolutionStage;
+      
       allow delete: if isOwner(resource.data.userId);
     }
-    
-    // Par défaut : TOUT EST BLOQUÉ
-    // Si tu ajoutes une nouvelle collection, elle sera automatiquement protégée
+
+    // ═══════════════════════════════════════════
+    // SHOP_TRANSACTIONS - Historique achats (immutable)
+    // ═══════════════════════════════════════════
+    match /shop_transactions/{transactionId} {
+      allow read: if isOwner(resource.data.userId);
+      
+      allow create: if isAuthenticated()
+                    && request.resource.data.userId == request.auth.uid;
+      
+      // Pas de modification ni suppression (historique immuable)
+      allow update, delete: if false;
+    }
+
+    // ═══════════════════════════════════════════
+    // PAR DÉFAUT : TOUT EST BLOQUÉ
+    // ═══════════════════════════════════════════
   }
 }
