@@ -8,7 +8,6 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i10;
 import 'package:flutter/material.dart';
-import 'package:moongo/ui/views/calendar/calendar_view.dart' as _i6;
 import 'package:moongo/ui/views/collection/collection_view.dart' as _i5;
 import 'package:moongo/ui/views/home/home_view.dart' as _i2;
 import 'package:moongo/ui/views/login/login_view.dart' as _i4;
@@ -16,6 +15,7 @@ import 'package:moongo/ui/views/profile/profile_view.dart' as _i8;
 import 'package:moongo/ui/views/shop/shop_view.dart' as _i7;
 import 'package:moongo/ui/views/startup/startup_view.dart' as _i3;
 import 'package:moongo/ui/views/tabs/tabs_view.dart' as _i9;
+import 'package:moongo/ui/views/tasks/tasks_view.dart' as _i6;
 import 'package:stacked/stacked.dart' as _i1;
 import 'package:stacked_services/stacked_services.dart' as _i11;
 
@@ -28,7 +28,7 @@ class Routes {
 
   static const collectionView = '/collection-view';
 
-  static const calendarView = '/calendar-view';
+  static const tasksView = '/tasks-view';
 
   static const shopView = '/shop-view';
 
@@ -41,7 +41,7 @@ class Routes {
     startupView,
     loginView,
     collectionView,
-    calendarView,
+    tasksView,
     shopView,
     profileView,
     tabsView,
@@ -54,7 +54,7 @@ class StackedRouter extends _i1.RouterBase {
     _i1.RouteDef(Routes.startupView, page: _i3.StartupView),
     _i1.RouteDef(Routes.loginView, page: _i4.LoginView),
     _i1.RouteDef(Routes.collectionView, page: _i5.CollectionView),
-    _i1.RouteDef(Routes.calendarView, page: _i6.CalendarView),
+    _i1.RouteDef(Routes.tasksView, page: _i6.TasksView),
     _i1.RouteDef(Routes.shopView, page: _i7.ShopView),
     _i1.RouteDef(Routes.profileView, page: _i8.ProfileView),
     _i1.RouteDef(Routes.tabsView, page: _i9.TabsView),
@@ -97,12 +97,12 @@ class StackedRouter extends _i1.RouterBase {
         settings: data,
       );
     },
-    _i6.CalendarView: (data) {
-      final args = data.getArgs<CalendarViewArguments>(
-        orElse: () => const CalendarViewArguments(),
+    _i6.TasksView: (data) {
+      final args = data.getArgs<TasksViewArguments>(
+        orElse: () => const TasksViewArguments(),
       );
       return _i10.MaterialPageRoute<dynamic>(
-        builder: (context) => _i6.CalendarView(key: args.key),
+        builder: (context) => _i6.TasksView(key: args.key),
         settings: data,
       );
     },
@@ -230,8 +230,8 @@ class CollectionViewArguments {
   }
 }
 
-class CalendarViewArguments {
-  const CalendarViewArguments({this.key});
+class TasksViewArguments {
+  const TasksViewArguments({this.key});
 
   final _i10.Key? key;
 
@@ -241,7 +241,7 @@ class CalendarViewArguments {
   }
 
   @override
-  bool operator ==(covariant CalendarViewArguments other) {
+  bool operator ==(covariant TasksViewArguments other) {
     if (identical(this, other)) return true;
     return other.key == key;
   }
@@ -391,7 +391,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
     );
   }
 
-  Future<dynamic> navigateToCalendarView({
+  Future<dynamic> navigateToTasksView({
     _i10.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -400,8 +400,8 @@ extension NavigatorStateExtension on _i11.NavigationService {
         transition,
   }) async {
     return navigateTo<dynamic>(
-      Routes.calendarView,
-      arguments: CalendarViewArguments(key: key),
+      Routes.tasksView,
+      arguments: TasksViewArguments(key: key),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -535,7 +535,7 @@ extension NavigatorStateExtension on _i11.NavigationService {
     );
   }
 
-  Future<dynamic> replaceWithCalendarView({
+  Future<dynamic> replaceWithTasksView({
     _i10.Key? key,
     int? routerId,
     bool preventDuplicates = true,
@@ -544,8 +544,8 @@ extension NavigatorStateExtension on _i11.NavigationService {
         transition,
   }) async {
     return replaceWith<dynamic>(
-      Routes.calendarView,
-      arguments: CalendarViewArguments(key: key),
+      Routes.tasksView,
+      arguments: TasksViewArguments(key: key),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
