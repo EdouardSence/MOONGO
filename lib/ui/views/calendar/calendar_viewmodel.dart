@@ -72,12 +72,17 @@ class CalendarViewModel extends BaseViewModel {
   List<TaskModel> getTasksForDay(DateTime day) {
     final result = <TaskModel>[];
     
-    // Add all daily recurring tasks from cache (performance optimization)
-    result.addAll(_dailyRecurringTasks);
+    // Add daily recurring tasks from cache (performance optimization)
+    // Only include if the task was created on or before the given day
+    for (final task in _dailyRecurringTasks) {
+      if (!day.isBefore(DateTime(task.createdAt.year, task.createdAt.month, task.createdAt.day))) {
+        result.add(task);
+      }
+    }
     
-    // Filter other tasks
+    // Filter other tasks (excluding daily recurring which are already processed)
     for (final task in _allTasks) {
-      // Skip daily recurring tasks as they're already added
+      // Skip daily recurring tasks as they're already processed above
       if (task.type == TaskType.recurring &&
           task.recurrence?.frequency == RecurrenceFrequency.daily) {
         continue;
