@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:moongo/ui/common/app_theme.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:stacked/stacked.dart';
 
 import 'tabs_viewmodel.dart';
 
 class TabsView extends StackedView<TabsViewModel> {
-  const TabsView({Key? key}) : super(key: key);
+  const TabsView({super.key});
 
   @override
   Widget builder(
@@ -13,12 +14,16 @@ class TabsView extends StackedView<TabsViewModel> {
     TabsViewModel viewModel,
     Widget? child,
   ) {
+    final theme = Theme.of(context);
+    final appTheme = theme.appTheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return PersistentTabView(
       context,
       controller: viewModel.tabController,
       screens: viewModel.buildScreens(),
-      items: viewModel.navBarItems(),
-      backgroundColor: Colors.white,
+      items: viewModel.navBarItems(isDark),
+      backgroundColor: appTheme.cardBackground,
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
