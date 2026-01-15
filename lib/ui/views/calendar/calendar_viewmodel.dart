@@ -69,13 +69,23 @@ class CalendarViewModel extends BaseViewModel {
     _tasksForSelectedDay = getTasksForDay(_selectedDay);
   }
 
+  /// Helper to check if a task should be visible on the given day based on creation date
+  bool _isTaskVisibleOnDay(TaskModel task, DateTime day) {
+    final taskCreatedDate = DateTime(
+      task.createdAt.year,
+      task.createdAt.month,
+      task.createdAt.day,
+    );
+    return day.isAfter(taskCreatedDate) || isSameDay(day, taskCreatedDate);
+  }
+
   List<TaskModel> getTasksForDay(DateTime day) {
     final result = <TaskModel>[];
     
     // Add daily recurring tasks from cache (performance optimization)
     // Only include if the task was created on or before the given day
     for (final task in _dailyRecurringTasks) {
-      if (!day.isBefore(DateTime(task.createdAt.year, task.createdAt.month, task.createdAt.day))) {
+      if (_isTaskVisibleOnDay(task, day)) {
         result.add(task);
       }
     }
@@ -100,6 +110,10 @@ class CalendarViewModel extends BaseViewModel {
       // Recurring (non-daily)
       if (task.type == TaskType.recurring) {
         if (task.recurrence == null) continue;
+        
+        // Check if task is visible on this day (created before or on this day)
+        if (!_isTaskVisibleOnDay(task, day)) continue;
+        
         switch (task.recurrence!.frequency) {
           case RecurrenceFrequency.daily:
             // Already handled above
