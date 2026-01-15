@@ -194,7 +194,8 @@ class CreatureModel {
 
   double get progressToNextLevel {
     if (isMaxLevel) return 1.0;
-    return currentXp / xpToNextLevel;
+    if (xpToNextLevel <= 0) return 0.0;
+    return (currentXp / xpToNextLevel).clamp(0.0, 1.0);
   }
 
   bool get canEvolve {
@@ -254,8 +255,7 @@ class CreatureModel {
     if (speciesId == 'unknown' && data['name'] != null) {
       // Convertir le nom en speciesId (ex: "Moongo" -> "moongo"),
       // mais uniquement si le résultat correspond au format attendu.
-      final candidateSpeciesId =
-          (data['name'] as String).toLowerCase().trim();
+      final candidateSpeciesId = (data['name'] as String).toLowerCase().trim();
       final validSpeciesIdPattern = RegExp(r'^[a-z0-9_]+$');
       if (validSpeciesIdPattern.hasMatch(candidateSpeciesId)) {
         speciesId = candidateSpeciesId;

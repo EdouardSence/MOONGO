@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/shop_item_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
-import 'package:moongo/ui/common/creature_image.dart';
 import 'package:stacked/stacked.dart';
 
 import 'shop_viewmodel.dart';
@@ -26,10 +25,56 @@ class ShopView extends StackedView<ShopViewModel> {
 
           // Contenu scrollable
           CustomScrollView(
+            controller: viewModel.scrollController,
             slivers: [
-              // En-tête du marché
-              SliverToBoxAdapter(
-                child: _buildMarketHeader(context, viewModel),
+              // En-tête du marché Sticky
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 180,
+                backgroundColor: AppColors.tertiary,
+                title: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: viewModel.showStickyHeader ? 1.0 : 0.0,
+                  child: AnimatedBuilder(
+                    animation: viewModel,
+                    builder: (context, child) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Le Bazar des Merveilles',
+                          style: GoogleFonts.fraunces(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 1.5),
+                          ),
+                          child: Text(
+                            '${viewModel.seeds} 🌱',
+                            style: GoogleFonts.fraunces(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                centerTitle: false,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _buildMarketHeader(context, viewModel),
+                ),
               ),
 
               // Bannière des graines
@@ -701,48 +746,44 @@ class ShopView extends StackedView<ShopViewModel> {
               ),
             ],
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
 
           // Infos de l'œuf
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      egg.name,
-                      style: GoogleFonts.fraunces(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
+                Text(
+                  egg.name,
+                  style: GoogleFonts.fraunces(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.lightTextPrimary,
+                  ),
+                ),
+                if (egg.id == 'legendary_egg') ...[
+                  const SizedBox(height: 4),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.tertiary.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '✨ LÉGENDAIRE',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.tertiary,
+                        letterSpacing: 0.5,
                       ),
                     ),
-                    if (egg.id == 'legendary_egg') ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.tertiary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'RARE',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.tertiary,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 8),
+                  ),
+                ],
+                const SizedBox(height: 6),
                 _buildDropRates(egg, isDark),
               ],
             ),
@@ -852,231 +893,311 @@ class ShopView extends StackedView<ShopViewModel> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
-        title: Row(
-          children: [
-            Text(food.emoji, style: const TextStyle(fontSize: 28)),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Nourrir avec',
-                    style: GoogleFonts.dmSans(
-                      fontSize: 14,
-                      color: isDark
-                          ? AppColors.darkTextSecondary
-                          : AppColors.lightTextSecondary,
-                    ),
-                  ),
-                  Text(
-                    food.name,
-                    style: GoogleFonts.fraunces(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: isDark
-                          ? AppColors.darkTextPrimary
-                          : AppColors.lightTextPrimary,
-                    ),
-                  ),
-                ],
+        context: context,
+        builder: (context) => AlertDialog(
+              backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
               ),
-            ),
-          ],
-        ),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: viewModel.creatures.length,
-            itemBuilder: (context, index) {
-              final creature = viewModel.creatures[index];
-              final colors = CreatureModel.rarityColors[creature.rarity]!;
-
-              return GestureDetector(
-                onTap: creature.isMaxLevel
-                    ? null
-                    : () {
-                        Navigator.pop(context);
-                        viewModel.feedCreature(creature, food);
-                      },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: creature.isMaxLevel
-                        ? (isDark ? Colors.grey[800] : Colors.grey[100])
-                        : (isDark
-                            ? AppColors.darkBackground
-                            : AppColors.lightBackground),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: creature.isMaxLevel
-                          ? Colors.transparent
-                          : Color(colors[0]).withOpacity(0.3),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      // Avatar créature
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(colors[0]), Color(colors[1])],
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: creature.isMaxLevel
-                              ? null
-                              : [
-                                  BoxShadow(
-                                    color: Color(colors[0]).withOpacity(0.4),
-                                    blurRadius: 8,
+              content: AnimatedBuilder(
+                animation: viewModel,
+                builder: (context, child) => SingleChildScrollView(
+                  child: SizedBox(
+                    width: double.maxFinite,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            Text(food.emoji,
+                                style: const TextStyle(fontSize: 28)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Nourrir avec',
+                                    style: GoogleFonts.dmSans(
+                                      fontSize: 14,
+                                      color: isDark
+                                          ? AppColors.darkTextSecondary
+                                          : AppColors.lightTextSecondary,
+                                    ),
+                                  ),
+                                  Text(
+                                    food.name,
+                                    style: GoogleFonts.fraunces(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? AppColors.darkTextPrimary
+                                          : AppColors.lightTextPrimary,
+                                    ),
                                   ),
                                 ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: CreatureImage(
-                            creature: creature,
-                            size: 48,
-                            useParcImage: false,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-
-                      // Infos
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              creature.name,
-                              style: GoogleFonts.fraunces(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: creature.isMaxLevel
-                                    ? (isDark
-                                        ? Colors.grey[500]
-                                        : Colors.grey[400])
-                                    : (isDark
-                                        ? AppColors.darkTextPrimary
-                                        : AppColors.lightTextPrimary),
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            creature.isMaxLevel
-                                ? Row(
-                                    children: [
-                                      const Text('👑',
-                                          style: TextStyle(fontSize: 12)),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Niveau maximum !',
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 12,
-                                          color: AppColors.tertiary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    children: [
-                                      Text(
-                                        'Nv. ${creature.level}',
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 12,
-                                          color: isDark
-                                              ? AppColors.darkTextSecondary
-                                              : AppColors.lightTextSecondary,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Container(
-                                          height: 6,
-                                          decoration: BoxDecoration(
-                                            color: isDark
-                                                ? Colors.grey[700]
-                                                : Colors.grey[200],
-                                            borderRadius:
-                                                BorderRadius.circular(3),
-                                          ),
-                                          child: FractionallySizedBox(
-                                            alignment: Alignment.centerLeft,
-                                            widthFactor: creature.currentXp /
-                                                creature.xpToNextLevel,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    Color(colors[0]),
-                                                    Color(colors[1])
-                                                  ],
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(3),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '${creature.currentXp}/${creature.xpToNextLevel}',
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 10,
-                                          color: isDark
-                                              ? AppColors.darkTextSecondary
-                                              : AppColors.lightTextSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                           ],
                         ),
-                      ),
-
-                      // Indicateur
-                      if (!creature.isMaxLevel)
-                        Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 16,
-                          color: isDark
-                              ? AppColors.darkTextSecondary
-                              : AppColors.lightTextSecondary,
+                        const SizedBox(height: 16),
+                        // Barre d'info live (Graines &Prix)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: (viewModel.seeds >= food.price
+                                    ? AppColors.primary
+                                    : Colors.red)
+                                .withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: (viewModel.seeds >= food.price
+                                        ? AppColors.primary
+                                        : Colors.red)
+                                    .withOpacity(0.3)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text('🌱'),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${viewModel.seeds}',
+                                    style: GoogleFonts.dmSans(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Coût: ',
+                                    style: GoogleFonts.dmSans(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.black54),
+                                  ),
+                                  Text(
+                                    '${food.price}',
+                                    style: GoogleFonts.dmSans(
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          isDark ? Colors.white : Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                    ],
+                        const SizedBox(height: 16),
+                        Column(
+                          children: viewModel.creatures.map((creature) {
+                            final colors =
+                                CreatureModel.rarityColors[creature.rarity]!;
+
+                            return GestureDetector(
+                              onTap: creature.isMaxLevel
+                                  ? null
+                                  : () {
+                                      viewModel.feedCreature(creature, food);
+                                      Navigator.of(context).pop();
+                                    },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: creature.isMaxLevel
+                                      ? (isDark
+                                          ? Colors.grey[800]
+                                          : Colors.grey[100])
+                                      : (isDark
+                                          ? AppColors.darkBackground
+                                          : AppColors.lightBackground),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: creature.isMaxLevel
+                                        ? Colors.transparent
+                                        : Color(colors[0]).withOpacity(0.3),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Avatar créature
+                                    Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(colors[0]),
+                                            Color(colors[1])
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(14),
+                                        boxShadow: creature.isMaxLevel
+                                            ? null
+                                            : [
+                                                BoxShadow(
+                                                  color: Color(colors[0])
+                                                      .withOpacity(0.4),
+                                                  blurRadius: 8,
+                                                ),
+                                              ],
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          creature.emoji,
+                                          style: const TextStyle(fontSize: 24),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+
+                                    // Infos et Barre XP Animée
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            creature.name,
+                                            style: GoogleFonts.fraunces(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: creature.isMaxLevel
+                                                  ? (isDark
+                                                      ? Colors.grey[500]
+                                                      : Colors.grey[400])
+                                                  : (isDark
+                                                      ? AppColors
+                                                          .darkTextPrimary
+                                                      : AppColors
+                                                          .lightTextPrimary),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          creature.isMaxLevel
+                                              ? Row(
+                                                  children: [
+                                                    const Text('👑',
+                                                        style: TextStyle(
+                                                            fontSize: 12)),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      'Niveau maximum !',
+                                                      style: GoogleFonts.dmSans(
+                                                        fontSize: 12,
+                                                        color:
+                                                            AppColors.tertiary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    Text(
+                                                      'Nv. ${creature.level}',
+                                                      style: GoogleFonts.dmSans(
+                                                        fontSize: 12,
+                                                        color: isDark
+                                                            ? AppColors
+                                                                .darkTextSecondary
+                                                            : AppColors
+                                                                .lightTextSecondary,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Expanded(
+                                                      child: Container(
+                                                        height: 6,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: isDark
+                                                              ? Colors.grey[700]
+                                                              : Colors
+                                                                  .grey[200],
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(3),
+                                                        ),
+                                                        child: LayoutBuilder(
+                                                          builder: (context,
+                                                              constraints) {
+                                                            final progress = creature
+                                                                    .currentXp /
+                                                                creature
+                                                                    .xpToNextLevel;
+                                                            return Stack(
+                                                              children: [
+                                                                AnimatedContainer(
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          500),
+                                                                  curve: Curves
+                                                                      .easeOut,
+                                                                  width: constraints
+                                                                          .maxWidth *
+                                                                      progress,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      colors: [
+                                                                        Color(colors[
+                                                                            0]),
+                                                                        Color(colors[
+                                                                            1])
+                                                                      ],
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(3),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '${creature.currentXp}/${creature.xpToNextLevel}',
+                                                      style: GoogleFonts.dmSans(
+                                                        fontSize: 10,
+                                                        color: isDark
+                                                            ? AppColors
+                                                                .darkTextSecondary
+                                                            : AppColors
+                                                                .lightTextSecondary,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Annuler',
-              style: GoogleFonts.dmSans(
-                color: isDark
-                    ? AppColors.darkTextSecondary
-                    : AppColors.lightTextSecondary,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
+            ));
   }
 
   /// Achat d'œuf avec animation de révélation
@@ -1149,11 +1270,10 @@ class ShopView extends StackedView<ShopViewModel> {
                         ),
                       ],
                     ),
-                    child: ClipOval(
-                      child: CreatureImage(
-                        creature: creature,
-                        size: 90,
-                        useParcImage: false,
+                    child: Center(
+                      child: Text(
+                        creature.emoji,
+                        style: const TextStyle(fontSize: 48),
                       ),
                     ),
                   ),
