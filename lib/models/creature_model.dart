@@ -252,8 +252,14 @@ class CreatureModel {
     // Essayer de déduire le speciesId à partir du nom si non présent
     String speciesId = data['speciesId'] ?? 'unknown';
     if (speciesId == 'unknown' && data['name'] != null) {
-      // Convertir le nom en speciesId (ex: "Moongo" -> "moongo")
-      speciesId = (data['name'] as String).toLowerCase().trim();
+      // Convertir le nom en speciesId (ex: "Moongo" -> "moongo"),
+      // mais uniquement si le résultat correspond au format attendu.
+      final candidateSpeciesId =
+          (data['name'] as String).toLowerCase().trim();
+      final validSpeciesIdPattern = RegExp(r'^[a-z0-9_]+$');
+      if (validSpeciesIdPattern.hasMatch(candidateSpeciesId)) {
+        speciesId = candidateSpeciesId;
+      }
     }
 
     return CreatureModel(

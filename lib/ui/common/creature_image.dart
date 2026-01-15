@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:moongo/models/creature_model.dart';
@@ -56,9 +55,6 @@ class CreatureImage extends StatelessWidget {
         fit: fit,
         placeholder: (context, url) => _buildPlaceholder(),
         errorWidget: (context, url, error) {
-          if (kDebugMode) {
-            print('❌ Image load error for ${creature.name}: $error');
-          }
           return _buildFallbackEmoji();
         },
       );
