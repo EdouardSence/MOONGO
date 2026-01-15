@@ -276,7 +276,6 @@ class TaskModel {
   }
 
   // Vérifie si c'est dans la semaine
-  // Vérifie si c'est dans la semaine
   bool get isDueThisWeek {
     // Si c'est un objectif, c'est un projet long terme donc visible
     if (type == TaskType.objective) return true;
