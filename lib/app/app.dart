@@ -4,6 +4,7 @@ import 'package:moongo/services/streak_service.dart';
 import 'package:moongo/services/theme_service.dart';
 import 'package:moongo/ui/bottom_sheets/notice/notice_sheet.dart';
 import 'package:moongo/ui/dialogs/info_alert/info_alert_dialog.dart';
+import 'package:moongo/ui/views/calendar/calendar_view.dart'; // Ajout
 import 'package:moongo/ui/views/collection/collection_view.dart';
 import 'package:moongo/ui/views/home/home_view.dart';
 import 'package:moongo/ui/views/login/login_view.dart';
@@ -28,6 +29,7 @@ import 'package:stacked_services/stacked_services.dart';
     MaterialRoute(page: ProfileView),
     MaterialRoute(page: TabsView),
     MaterialRoute(page: OnboardingView),
+    MaterialRoute(page: CalendarView),
 // @stacked-route
   ],
   dependencies: [

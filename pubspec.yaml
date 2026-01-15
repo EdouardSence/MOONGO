@@ -20,6 +20,8 @@ dependencies:
   stacked: ^3.4.0
   stacked_services: ^1.1.0
   flutter_cache_manager: ^3.4.1
+  table_calendar: ^3.2.0
+  intl: ^0.20.2
 
 dev_dependencies:
   build_runner: ^2.4.5

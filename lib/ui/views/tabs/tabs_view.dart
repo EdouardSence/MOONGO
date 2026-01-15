@@ -6,7 +6,8 @@ import 'package:stacked/stacked.dart';
 import 'tabs_viewmodel.dart';
 
 class TabsView extends StackedView<TabsViewModel> {
-  const TabsView({super.key});
+  final int initialIndex;
+  const TabsView({super.key, this.initialIndex = 2});
 
   @override
   Widget builder(
@@ -37,5 +38,5 @@ class TabsView extends StackedView<TabsViewModel> {
   TabsViewModel viewModelBuilder(
     BuildContext context,
   ) =>
-      TabsViewModel();
+      TabsViewModel(initialIndex: initialIndex);
 }

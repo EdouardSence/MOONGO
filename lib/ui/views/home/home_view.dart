@@ -1,11 +1,12 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stacked/stacked.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/task_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
 import 'package:moongo/ui/common/creature_image.dart';
+import 'package:stacked/stacked.dart';
 
 import 'home_viewmodel.dart';
 
@@ -648,7 +649,7 @@ class HomeView extends StackedView<HomeViewModel> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: GestureDetector(
-        onTap: task.completed ? null : () => viewModel.completeTask(task),
+        onTap: () => viewModel.navigateToTasks(),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -670,34 +671,21 @@ class HomeView extends StackedView<HomeViewModel> {
           ),
           child: Row(
             children: [
-              // Checkbox stylisée
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+              // Navigation Arrow
+              Container(
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color:
-                      task.completed ? AppColors.tertiary : Colors.transparent,
+                  color: appTheme.postItBorder.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: task.completed
-                        ? AppColors.tertiary
-                        : appTheme.postItBorder,
-                    width: 2,
-                  ),
-                  boxShadow: task.completed
-                      ? [
-                          BoxShadow(
-                            color: AppColors.tertiary.withOpacity(0.4),
-                            blurRadius: 8,
-                            spreadRadius: 0,
-                          ),
-                        ]
-                      : null,
                 ),
-                child: task.completed
-                    ? const Icon(Icons.check, size: 16, color: Colors.white)
-                    : null,
+                child: Center(
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18,
+                    color: appTheme.postItText.withOpacity(0.7),
+                  ),
+                ),
               ),
               const SizedBox(width: 12),
 
