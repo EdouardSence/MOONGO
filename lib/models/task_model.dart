@@ -229,8 +229,9 @@ class TaskModel {
 
   // Calcul de la progression pour les objectifs
   double get progress {
-    if (type != TaskType.objective || subTasks.isEmpty)
+    if (type != TaskType.objective || subTasks.isEmpty) {
       return completed ? 1.0 : 0.0;
+    }
     final completedCount = subTasks.where((t) => t.completed).length;
     return completedCount / subTasks.length;
   }

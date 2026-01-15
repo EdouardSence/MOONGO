@@ -1,156 +1,325 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:moongo/ui/common/app_theme.dart';
 import 'package:stacked/stacked.dart';
 
 import 'profile_viewmodel.dart';
 
+/// Profile View avec esthétique "Carte d'Aventurier" - Style parchemin héroïque
 class ProfileView extends StackedView<ProfileViewModel> {
-  const ProfileView({Key? key}) : super(key: key);
+  const ProfileView({super.key});
 
   @override
   Widget builder(
       BuildContext context, ProfileViewModel viewModel, Widget? child) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        title: const Text(
-          'Mon Profil',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFF6366F1),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings, color: Colors.white),
-            onPressed: () => _showSettingsSheet(context, viewModel),
-          ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: Stack(
+        children: [
+          // Fond avec texture parchemin
+          _buildParchmentBackground(context),
+
+          // Contenu
+          viewModel.isBusy
+              ? _buildLoadingState(context)
+              : CustomScrollView(
+                  slivers: [
+                    // En-tête héroïque
+                    SliverToBoxAdapter(
+                      child: _buildHeroHeader(context, viewModel),
+                    ),
+
+                    // Carte de flamme (streak)
+                    SliverToBoxAdapter(
+                      child: _buildFlameCard(viewModel, isDark),
+                    ),
+
+                    // Statistiques d'aventurier
+                    SliverToBoxAdapter(
+                      child: _buildStatsSection(context, viewModel),
+                    ),
+
+                    // Actions
+                    SliverToBoxAdapter(
+                      child: _buildActionsSection(context, viewModel, isDark),
+                    ),
+
+                    // Espace en bas
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: 120),
+                    ),
+                  ],
+                ),
         ],
       ),
-      body: viewModel.isBusy
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Header avec avatar
-                  _buildProfileHeader(context, viewModel),
-
-                  const SizedBox(height: 24),
-
-                  // Streak
-                  _buildStreakCard(viewModel),
-
-                  const SizedBox(height: 16),
-
-                  // Statistiques
-                  _buildStatsGrid(viewModel),
-
-                  const SizedBox(height: 24),
-
-                  // Bouton déconnexion
-                  _buildLogoutButton(context, viewModel),
-
-                  const SizedBox(height: 100),
-                ],
-              ),
-            ),
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context, ProfileViewModel viewModel) {
+  /// Fond texturé style parchemin
+  Widget _buildParchmentBackground(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF6366F1), Color(0xFFEC4899)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [
+                  const Color(0xFF1E3A2F),
+                  AppColors.darkBackground,
+                  const Color(0xFF1A2D26),
+                ]
+              : [
+                  AppColors.secondary.withOpacity(0.2),
+                  AppColors.lightBackground,
+                  AppColors.secondary.withOpacity(0.1),
+                ],
         ),
       ),
-      child: Row(
+      child: CustomPaint(
+        painter: _ParchmentTexturePainter(isDark: isDark),
+        child: const SizedBox.expand(),
+      ),
+    );
+  }
+
+  /// État de chargement
+  Widget _buildLoadingState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Avatar cliquable
+          const Text('📜', style: TextStyle(fontSize: 48)),
+          const SizedBox(height: 16),
+          Text(
+            'Consultation du grimoire...',
+            style: GoogleFonts.playfairDisplay(
+              fontSize: 16,
+              fontStyle: FontStyle.italic,
+              color: AppColors.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// En-tête héroïque avec avatar et infos
+  Widget _buildHeroHeader(BuildContext context, ProfileViewModel viewModel) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 16,
+        left: 24,
+        right: 24,
+        bottom: 32,
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.accent,
+            AppColors.accent.withOpacity(0.85),
+            const Color(0xFF5B2DA0),
+          ],
+        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(48)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withOpacity(0.4),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Barre supérieure avec paramètres
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '⚔️ Aventurier',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 14,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.white.withOpacity(0.8),
+                  letterSpacing: 2,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => _showSettingsSheet(context, viewModel),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.settings_rounded,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // Avatar avec cadre orné
           GestureDetector(
             onTap: () => _showAvatarPicker(context, viewModel),
             child: Stack(
+              alignment: Alignment.center,
               children: [
+                // Aura externe
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
-                    color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3),
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withOpacity(0.3),
+                        Colors.white.withOpacity(0.1),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
-                  child: ClipOval(
+                ),
+                // Cadre doré
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.tertiary,
+                      width: 4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.tertiary.withOpacity(0.5),
+                        blurRadius: 16,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 3,
+                      ),
+                    ),
                     child: Center(
                       child: Text(
                         viewModel.user?.avatarUrl ?? '😊',
-                        style: const TextStyle(fontSize: 40),
+                        style: const TextStyle(fontSize: 48),
                       ),
                     ),
                   ),
                 ),
+                // Badge édition
                 Positioned(
-                  bottom: 0,
-                  right: 0,
+                  bottom: 4,
+                  right: 4,
                   child: Container(
-                    width: 28,
-                    height: 28,
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.tertiary,
                       shape: BoxShape.circle,
-                      border:
-                          Border.all(color: const Color(0xFF6366F1), width: 2),
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.edit,
-                        size: 14, color: Color(0xFF6366F1)),
+                    child: const Icon(
+                      Icons.edit_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
 
-          // Infos
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 20),
+
+          // Nom de l'aventurier
+          Text(
+            viewModel.user?.displayName ?? 'Aventurier',
+            style: GoogleFonts.fraunces(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 1,
+            ),
+          ),
+
+          if (viewModel.user?.birthDate != null) ...[
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Text('🎂', style: TextStyle(fontSize: 14)),
+                const SizedBox(width: 6),
                 Text(
-                  viewModel.user?.displayName ?? 'Joueur',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+                  'Né le ${_formatDate(viewModel.user!.birthDate!)}',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 13,
+                    color: Colors.white.withOpacity(0.8),
                   ),
                 ),
-                if (viewModel.user?.birthDate != null)
-                  Text(
-                    'Né le ${_formatDate(viewModel.user!.birthDate!)}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 16),
+
+          // Badge de graines
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🌱', style: TextStyle(fontSize: 20)),
+                const SizedBox(width: 8),
+                Text(
+                  '${viewModel.user?.seeds ?? 0}',
+                  style: GoogleFonts.fraunces(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
-                const SizedBox(height: 8),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(50),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('🌱', style: TextStyle(fontSize: 14)),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${viewModel.user?.seeds ?? 0} graines',
-                        style: const TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'graines',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.8),
                   ),
                 ),
               ],
@@ -161,191 +330,206 @@ class ProfileView extends StackedView<ProfileViewModel> {
     );
   }
 
-  void _showAvatarPicker(BuildContext context, ProfileViewModel viewModel) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 16),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Choisis ton avatar',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 5,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                ),
-                itemCount: viewModel.availableAvatars.length,
-                itemBuilder: (context, index) {
-                  final avatar = viewModel.availableAvatars[index];
-                  final isSelected = avatar == viewModel.user?.avatarUrl;
-                  return GestureDetector(
-                    onTap: () {
-                      viewModel.updateAvatar(avatar);
-                      Navigator.pop(ctx);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFF6366F1).withAlpha(25)
-                            : Colors.grey[100],
-                        borderRadius: BorderRadius.circular(16),
-                        border: isSelected
-                            ? Border.all(
-                                color: const Color(0xFF6366F1), width: 2)
-                            : null,
-                      ),
-                      child: Center(
-                        child:
-                            Text(avatar, style: const TextStyle(fontSize: 28)),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
-  }
+  /// Carte de la flamme (streak)
+  Widget _buildFlameCard(ProfileViewModel viewModel, bool isDark) {
+    final currentStreak = viewModel.user?.currentStreak ?? 0;
+    final longestStreak = viewModel.user?.longestStreak ?? 0;
 
-  Widget _buildStreakCard(ProfileViewModel viewModel) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.orange[400]!, Colors.orange[600]!],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          colors: [
+            AppColors.tertiary,
+            AppColors.tertiary.withOpacity(0.85),
+            const Color(0xFFE08A00),
+          ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.orange.withOpacity(0.3),
-            blurRadius: 15,
+            color: AppColors.tertiary.withOpacity(0.4),
+            blurRadius: 20,
             offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Row(
         children: [
-          const Text('🔥', style: TextStyle(fontSize: 48)),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${viewModel.user?.currentStreak ?? 0} jours',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+          // Flamme animée (simulée avec glow)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.orange.withOpacity(0.6),
+                  blurRadius: 20,
+                  spreadRadius: 4,
                 ),
-              ),
-              const Text(
-                'Série en cours',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-            ],
+              ],
+            ),
+            child: const Text('🔥', style: TextStyle(fontSize: 44)),
           ),
-          const Spacer(),
-          Column(
-            children: [
-              const Text('🏆', style: TextStyle(fontSize: 24)),
-              Text(
-                '${viewModel.user?.longestStreak ?? 0}',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          const SizedBox(width: 20),
+
+          // Statistiques de streak
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Flamme Sacrée',
+                  style: GoogleFonts.playfairDisplay(
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
                 ),
-              ),
-              const Text(
-                'Record',
-                style: TextStyle(color: Colors.white70, fontSize: 10),
-              ),
-            ],
+                const SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '$currentStreak',
+                      style: GoogleFonts.fraunces(
+                        fontSize: 42,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        'jours',
+                        style: GoogleFonts.dmSans(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          // Record
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              children: [
+                const Text('👑', style: TextStyle(fontSize: 22)),
+                const SizedBox(height: 4),
+                Text(
+                  '$longestStreak',
+                  style: GoogleFonts.fraunces(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                Text(
+                  'Record',
+                  style: GoogleFonts.dmSans(
+                    fontSize: 10,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsGrid(ProfileViewModel viewModel) {
+  /// Section des statistiques
+  Widget _buildStatsSection(BuildContext context, ProfileViewModel viewModel) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Statistiques',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          // Titre de section
+          Row(
+            children: [
+              const Text('📊', style: TextStyle(fontSize: 20)),
+              const SizedBox(width: 10),
+              Text(
+                'Exploits',
+                style: GoogleFonts.fraunces(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: isDark
+                      ? AppColors.darkTextPrimary
+                      : AppColors.lightTextPrimary,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
+
+          // Grille de stats
           Row(
             children: [
               Expanded(
                 child: _buildStatCard(
+                  context,
                   '🌱',
                   '${viewModel.user?.totalSeedsEarned ?? 0}',
-                  'Graines gagnées',
-                  const Color(0xFF10B981),
+                  'Graines récoltées',
+                  AppColors.primary,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: _buildStatCard(
+                  context,
                   '✅',
                   '${viewModel.user?.totalTasksCompleted ?? 0}',
-                  'Tâches complétées',
-                  const Color(0xFF6366F1),
+                  'Quêtes accomplies',
+                  AppColors.accent,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Row(
             children: [
               Expanded(
                 child: _buildStatCard(
+                  context,
                   '🐾',
                   '${viewModel.creaturesCount}',
-                  'Créatures',
-                  const Color(0xFFEC4899),
+                  'Compagnons',
+                  AppColors.secondary,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: _buildStatCard(
+                  context,
                   '📅',
                   _formatMemberSince(viewModel.user?.createdAt),
-                  'Membre depuis',
-                  const Color(0xFFF59E0B),
+                  'Ancienneté',
+                  AppColors.tertiary,
                 ),
               ),
             ],
@@ -355,17 +539,26 @@ class ProfileView extends StackedView<ProfileViewModel> {
     );
   }
 
-  Widget _buildStatCard(String emoji, String value, String label, Color color) {
+  /// Carte de statistique individuelle
+  Widget _buildStatCard(BuildContext context, String emoji, String value,
+      String label, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        color: isDark ? AppColors.darkSurface : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withOpacity(isDark ? 0.3 : 0.2),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: color.withOpacity(0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -373,202 +566,556 @@ class ProfileView extends StackedView<ProfileViewModel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 20)),
-              const Spacer(),
+              Text(emoji, style: const TextStyle(fontSize: 24)),
               Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.5),
+                      blurRadius: 6,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: GoogleFonts.fraunces(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              color: isDark
+                  ? AppColors.darkTextPrimary
+                  : AppColors.lightTextPrimary,
+            ),
           ),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: GoogleFonts.dmSans(
+              fontSize: 12,
+              color: isDark
+                  ? AppColors.darkTextSecondary
+                  : AppColors.lightTextSecondary,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLogoutButton(BuildContext context, ProfileViewModel viewModel) {
+  /// Section des actions
+  Widget _buildActionsSection(
+      BuildContext context, ProfileViewModel viewModel, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-        width: double.infinity,
-        height: 56,
-        child: ElevatedButton.icon(
-          onPressed: viewModel.logout,
-          icon: const Icon(Icons.logout),
-          label: const Text('Se déconnecter', style: TextStyle(fontSize: 16)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.red[50],
-            foregroundColor: Colors.red,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: const BorderSide(color: Colors.red, width: 1),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+      child: GestureDetector(
+        onTap: viewModel.logout,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(isDark ? 0.15 : 0.08),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Colors.red.withOpacity(0.3),
+              width: 1.5,
             ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.logout_rounded, color: Colors.red[400]),
+              const SizedBox(width: 10),
+              Text(
+                'Quitter l\'aventure',
+                style: GoogleFonts.dmSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red[400],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  /// Sélecteur d'avatar
+  void _showAvatarPicker(BuildContext context, ProfileViewModel viewModel) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Container(
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              Container(
+                width: 48,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[600] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('✨', style: TextStyle(fontSize: 24)),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Choisis ton emblème',
+                    style: GoogleFonts.fraunces(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.lightTextPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
+                  ),
+                  itemCount: viewModel.availableAvatars.length,
+                  itemBuilder: (context, index) {
+                    final avatar = viewModel.availableAvatars[index];
+                    final isSelected = avatar == viewModel.user?.avatarUrl;
+                    return GestureDetector(
+                      onTap: () {
+                        viewModel.updateAvatar(avatar);
+                        Navigator.pop(ctx);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.accent.withOpacity(0.15)
+                              : (isDark
+                                  ? AppColors.darkBackground
+                                  : AppColors.lightBackground),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.accent
+                                : Colors.transparent,
+                            width: 2.5,
+                          ),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: AppColors.accent.withOpacity(0.3),
+                                    blurRadius: 12,
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Center(
+                          child: Text(avatar,
+                              style: const TextStyle(fontSize: 30)),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Sheet des paramètres
   void _showSettingsSheet(BuildContext context, ProfileViewModel viewModel) {
     final nameController =
         TextEditingController(text: viewModel.user?.displayName);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Container(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(2),
+        builder: (ctx, setSheetState) {
+          final sheetIsDark = viewModel.isDarkMode;
+          return Container(
+            padding:
+                EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            decoration: BoxDecoration(
+              color: sheetIsDark ? AppColors.darkSurface : Colors.white,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(32)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 48,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color:
+                            sheetIsDark ? Colors.grey[600] : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Paramètres',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Thème
-                ListTile(
-                  leading: const Icon(Icons.palette),
-                  title: const Text('Thème'),
-                  trailing: SegmentedButton<bool>(
-                    segments: const [
-                      ButtonSegment(value: false, icon: Icon(Icons.light_mode)),
-                      ButtonSegment(value: true, icon: Icon(Icons.dark_mode)),
+                  // Titre
+                  Row(
+                    children: [
+                      const Text('⚙️', style: TextStyle(fontSize: 28)),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Paramètres',
+                        style: GoogleFonts.fraunces(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: sheetIsDark
+                              ? AppColors.darkTextPrimary
+                              : AppColors.lightTextPrimary,
+                        ),
+                      ),
                     ],
-                    selected: {viewModel.isDarkMode},
-                    onSelectionChanged: (value) {
-                      viewModel.setDarkMode(value.first);
-                      setSheetState(() {});
+                  ),
+                  const SizedBox(height: 28),
+
+                  // Thème
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: sheetIsDark
+                          ? AppColors.darkBackground
+                          : AppColors.lightBackground,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          sheetIsDark ? '🌙' : '☀️',
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            'Thème',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: sheetIsDark
+                                  ? AppColors.darkTextPrimary
+                                  : AppColors.lightTextPrimary,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: sheetIsDark
+                                ? AppColors.darkSurface
+                                : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  viewModel.setDarkMode(false);
+                                  setSheetState(() {});
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: !sheetIsDark
+                                        ? AppColors.tertiary
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.light_mode_rounded,
+                                    size: 20,
+                                    color: !sheetIsDark
+                                        ? Colors.white
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  viewModel.setDarkMode(true);
+                                  setSheetState(() {});
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: sheetIsDark
+                                        ? AppColors.accent
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.dark_mode_rounded,
+                                    size: 20,
+                                    color: sheetIsDark
+                                        ? Colors.white
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Nom
+                  TextField(
+                    controller: nameController,
+                    style: GoogleFonts.dmSans(
+                      color: sheetIsDark
+                          ? AppColors.darkTextPrimary
+                          : AppColors.lightTextPrimary,
+                    ),
+                    decoration: InputDecoration(
+                      labelText: 'Nom d\'aventurier',
+                      labelStyle: GoogleFonts.dmSans(
+                        color: sheetIsDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.lightTextSecondary,
+                      ),
+                      filled: true,
+                      fillColor: sheetIsDark
+                          ? AppColors.darkBackground
+                          : AppColors.lightBackground,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none,
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide:
+                            BorderSide(color: AppColors.accent, width: 2),
+                      ),
+                      prefixIcon:
+                          Icon(Icons.person_rounded, color: AppColors.accent),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Date de naissance
+                  GestureDetector(
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: ctx,
+                        initialDate:
+                            viewModel.user?.birthDate ?? DateTime(2000),
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: ColorScheme.light(
+                                primary: AppColors.accent,
+                                onPrimary: Colors.white,
+                                surface: sheetIsDark
+                                    ? AppColors.darkSurface
+                                    : Colors.white,
+                              ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (date != null) {
+                        viewModel.updateBirthDate(date);
+                        setSheetState(() {});
+                      }
                     },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: sheetIsDark
+                            ? AppColors.darkBackground
+                            : AppColors.lightBackground,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.cake_rounded, color: AppColors.tertiary),
+                          const SizedBox(width: 14),
+                          Text(
+                            viewModel.user?.birthDate != null
+                                ? _formatDate(viewModel.user!.birthDate!)
+                                : 'Ajouter date de naissance',
+                            style: GoogleFonts.dmSans(
+                              color: viewModel.user?.birthDate != null
+                                  ? (sheetIsDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary)
+                                  : (sheetIsDark
+                                      ? AppColors.darkTextSecondary
+                                      : AppColors.lightTextSecondary),
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: sheetIsDark
+                                ? AppColors.darkTextSecondary
+                                : AppColors.lightTextSecondary,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 28),
 
-                const Divider(),
-
-                // Nom
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nom d\'affichage',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: const Icon(Icons.person),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Date de naissance
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.cake),
-                  title: Text(
-                    viewModel.user?.birthDate != null
-                        ? _formatDate(viewModel.user!.birthDate!)
-                        : 'Ajouter date de naissance',
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: ctx,
-                      initialDate: viewModel.user?.birthDate ?? DateTime(2000),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      viewModel.updateBirthDate(date);
-                      setSheetState(() {});
-                    }
-                  },
-                ),
-
-                const Divider(),
-
-                // Sauvegarder
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {
+                  // Sauvegarder
+                  GestureDetector(
+                    onTap: () {
                       viewModel.updateDisplayName(nameController.text);
                       Navigator.pop(ctx);
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6366F1),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary,
+                            AppColors.primary.withOpacity(0.85)
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('✨', style: TextStyle(fontSize: 18)),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Sauvegarder',
+                            style: GoogleFonts.dmSans(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    child: const Text('Sauvegarder'),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  const SizedBox(height: 20),
 
-                // Supprimer compte
-                Center(
-                  child: TextButton(
-                    onPressed: () => _showDeleteAccountDialog(ctx, viewModel),
-                    child: const Text(
-                      'Supprimer mon compte',
-                      style: TextStyle(color: Colors.red),
+                  // Supprimer compte
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => _showDeleteAccountDialog(ctx, viewModel),
+                      child: Text(
+                        'Supprimer mon compte',
+                        style: GoogleFonts.dmSans(
+                          color: Colors.red[400],
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-              ],
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
+  /// Dialogue de suppression de compte
   void _showDeleteAccountDialog(
       BuildContext context, ProfileViewModel viewModel) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Supprimer le compte'),
-        content: const Text(
+        backgroundColor: isDark ? AppColors.darkSurface : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        title: Row(
+          children: [
+            const Text('⚠️', style: TextStyle(fontSize: 24)),
+            const SizedBox(width: 12),
+            Text(
+              'Supprimer le compte',
+              style: GoogleFonts.fraunces(
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.lightTextPrimary,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
           'Êtes-vous sûr de vouloir supprimer votre compte ?\n\nCette action est irréversible. Toutes vos données seront perdues.',
+          style: GoogleFonts.dmSans(
+            color: isDark
+                ? AppColors.darkTextSecondary
+                : AppColors.lightTextSecondary,
+            height: 1.5,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Annuler'),
+            child: Text(
+              'Annuler',
+              style: GoogleFonts.dmSans(
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.lightTextSecondary,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -576,9 +1123,19 @@ class ProfileView extends StackedView<ProfileViewModel> {
               Navigator.pop(context);
               viewModel.deleteAccount();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child:
-                const Text('Supprimer', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Supprimer',
+              style: GoogleFonts.dmSans(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -603,4 +1160,41 @@ class ProfileView extends StackedView<ProfileViewModel> {
 
   @override
   void onViewModelReady(ProfileViewModel viewModel) => viewModel.init();
+}
+
+/// Painter pour la texture de parchemin
+class _ParchmentTexturePainter extends CustomPainter {
+  final bool isDark;
+
+  _ParchmentTexturePainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = (isDark ? Colors.white : AppColors.secondary).withOpacity(0.03)
+      ..style = PaintingStyle.fill;
+
+    // Motif de vieilles lignes de parchemin
+    for (var i = 0; i < size.height; i += 50) {
+      canvas.drawLine(
+        Offset(20, i.toDouble()),
+        Offset(size.width - 20, i.toDouble()),
+        paint..strokeWidth = 0.5,
+      );
+    }
+
+    // Points décoratifs
+    for (var i = 0; i < size.width; i += 60) {
+      for (var j = 0; j < size.height; j += 80) {
+        canvas.drawCircle(
+          Offset(i.toDouble() + (j % 120 == 0 ? 30 : 0), j.toDouble()),
+          1.5,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

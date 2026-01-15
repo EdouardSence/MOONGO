@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:stacked/stacked.dart';
+import 'package:moongo/ui/common/app_theme.dart';
 
 import '../collection/collection_view.dart';
 import '../tasks/tasks_view.dart';
@@ -33,37 +34,52 @@ class TabsViewModel extends BaseViewModel {
         const ProfileView(),
       ];
 
-  // Configuration des items de la bottom nav bar
-  List<PersistentBottomNavBarItem> navBarItems() => [
+  // Configuration des items de la bottom nav bar avec le nouveau thème Enchanted Forest
+  List<PersistentBottomNavBarItem> navBarItems(bool isDark) => [
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.auto_stories),
           title: 'Collection',
-          activeColorPrimary: const Color(0xFF6366F1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: AppColors.primary,
+          activeColorSecondary: Colors.white,
+          inactiveColorPrimary: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.format_list_bulleted),
           title: 'Tâches',
-          activeColorPrimary: const Color(0xFF6366F1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: AppColors.primary,
+          activeColorSecondary: Colors.white,
+          inactiveColorPrimary: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.landscape),
-          title: 'Accueil',
-          activeColorPrimary: const Color(0xFF6366F1),
-          inactiveColorPrimary: Colors.grey,
+          icon: const Icon(Icons.eco_rounded),
+          title: 'Forêt',
+          activeColorPrimary: AppColors.tertiary,
+          activeColorSecondary: Colors.white,
+          inactiveColorPrimary: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.storefront),
+          icon: const Icon(Icons.storefront_rounded),
           title: 'Boutique',
-          activeColorPrimary: const Color(0xFF6366F1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: AppColors.secondary,
+          activeColorSecondary: Colors.white,
+          inactiveColorPrimary: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
         PersistentBottomNavBarItem(
-          icon: const Icon(Icons.person),
+          icon: const Icon(Icons.person_rounded),
           title: 'Profil',
-          activeColorPrimary: const Color(0xFF6366F1),
-          inactiveColorPrimary: Colors.grey,
+          activeColorPrimary: AppColors.accent,
+          activeColorSecondary: Colors.white,
+          inactiveColorPrimary: isDark
+              ? AppColors.darkTextSecondary
+              : AppColors.lightTextSecondary,
         ),
       ];
 }
