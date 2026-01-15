@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
 import 'package:moongo/models/task_model.dart';
+import 'package:stacked/stacked.dart';
+
 import 'tasks_viewmodel.dart';
 
 class TasksView extends StackedView<TasksViewModel> {
@@ -151,8 +152,8 @@ class TasksView extends StackedView<TasksViewModel> {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                if (task.type == TaskType.objective && task.subTasks.isNotEmpty)
-                  _buildProgressBar(task)
+                if (task.type == TaskType.objective || task.subTasks.isNotEmpty)
+                  _buildProgressBar(context, viewModel, task)
                 else
                   _buildTaskActions(context, viewModel, task),
               ],
@@ -207,20 +208,25 @@ class TasksView extends StackedView<TasksViewModel> {
     );
   }
 
-  Widget _buildProgressBar(TaskModel task) {
+  Widget _buildProgressBar(
+      BuildContext context, TasksViewModel viewModel, TaskModel task) {
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '${(task.progress * 100).toInt()}% complété',
+              task.subTasks.isEmpty
+                  ? 'Aucune tâche'
+                  : '${(task.progress * 100).toInt()}% complété',
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
-            Text(
-              '${task.subTasks.where((t) => t.completed).length}/${task.subTasks.length}',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            ),
+            if (task.subTasks.isNotEmpty)
+              Text(
+                '${task.subTasks.where((t) => t.completed).length}/${task.subTasks.length}',
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
           ],
         ),
         const SizedBox(height: 8),
@@ -234,33 +240,123 @@ class TasksView extends StackedView<TasksViewModel> {
           ),
         ),
         const SizedBox(height: 12),
-        ...task.subTasks.map((subTask) => _buildSubTaskItem(subTask)),
+        ...task.subTasks
+            .map((subTask) => _buildSubTaskItem(viewModel, task, subTask)),
+        const SizedBox(height: 8),
+        // Bouton pour ajouter une sous-tâche
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton.icon(
+              onPressed: () => _showAddSubTaskDialog(context, viewModel, task),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Ajouter une tâche'),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF6366F1),
+              ),
+            ),
+            Row(
+              children: [
+                const Icon(Icons.eco, size: 16, color: Colors.green),
+                const SizedBox(width: 4),
+                Text(
+                  '+${task.seedsReward} graines',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        if (task.progress >= 1.0 && !task.completed)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => viewModel.completeTask(task),
+                icon: const Icon(Icons.check),
+                label: const Text('Objectif atteint !'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _buildSubTaskItem(SubTask subTask) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(
-            subTask.completed
-                ? Icons.check_circle
-                : Icons.radio_button_unchecked,
-            size: 20,
-            color: subTask.completed ? Colors.green : Colors.grey,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              subTask.title,
-              style: TextStyle(
-                decoration:
-                    subTask.completed ? TextDecoration.lineThrough : null,
-                color: subTask.completed ? Colors.grey : Colors.black87,
+  Widget _buildSubTaskItem(
+      TasksViewModel viewModel, TaskModel task, SubTask subTask) {
+    return GestureDetector(
+      onTap: subTask.completed
+          ? null
+          : () => viewModel.completeSubTask(task, subTask.id),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              subTask.completed
+                  ? Icons.check_circle
+                  : Icons.radio_button_unchecked,
+              size: 20,
+              color: subTask.completed ? Colors.green : Colors.grey,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                subTask.title,
+                style: TextStyle(
+                  decoration:
+                      subTask.completed ? TextDecoration.lineThrough : null,
+                  color: subTask.completed ? Colors.grey : Colors.black87,
+                ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddSubTaskDialog(
+      BuildContext context, TasksViewModel viewModel, TaskModel task) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Nouvelle tâche'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Titre de la tâche',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                viewModel.addSubTaskToObjective(task.taskId, controller.text);
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6366F1),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Ajouter'),
           ),
         ],
       ),
@@ -362,6 +458,8 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
   int _seedsReward = 10;
   DateTime? _dueDate;
   RecurrenceFrequency? _recurrenceFrequency;
+  List<int> _selectedDays = []; // 1=Lundi, 7=Dimanche
+  bool _isGroupedTask = false; // Pour les routines groupées
 
   final List<String> _icons = [
     '✨',
@@ -586,10 +684,45 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                   return ChoiceChip(
                     label: Text(label),
                     selected: isSelected,
-                    onSelected: (_) =>
-                        setState(() => _recurrenceFrequency = freq),
+                    onSelected: (_) {
+                      setState(() {
+                        _recurrenceFrequency = freq;
+                        if (freq != RecurrenceFrequency.custom) {
+                          _selectedDays = [];
+                        }
+                      });
+                    },
                   );
                 }).toList(),
+              ),
+              // Sélecteur de jours pour fréquence Perso
+              if (_recurrenceFrequency == RecurrenceFrequency.custom) ...[
+                const SizedBox(height: 16),
+                const Text('Jours de répétition',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildDayButton('L', 1),
+                    _buildDayButton('M', 2),
+                    _buildDayButton('M', 3),
+                    _buildDayButton('J', 4),
+                    _buildDayButton('V', 5),
+                    _buildDayButton('S', 6),
+                    _buildDayButton('D', 7),
+                  ],
+                ),
+              ],
+              // Checkbox pour tâche groupée
+              const SizedBox(height: 16),
+              CheckboxListTile(
+                value: _isGroupedTask,
+                onChanged: (v) => setState(() => _isGroupedTask = v ?? false),
+                title: const Text('Tâche groupée'),
+                subtitle: const Text('Permet d\'ajouter plusieurs sous-tâches'),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
               ),
             ],
 
@@ -616,7 +749,13 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                           recurrence: _selectedType == TaskType.recurring &&
                                   _recurrenceFrequency != null
                               ? RecurrenceConfig(
-                                  frequency: _recurrenceFrequency!)
+                                  frequency: _recurrenceFrequency!,
+                                  daysOfWeek: _recurrenceFrequency ==
+                                              RecurrenceFrequency.custom &&
+                                          _selectedDays.isNotEmpty
+                                      ? _selectedDays
+                                      : null,
+                                )
                               : null,
                         );
                         Navigator.pop(context);
@@ -663,6 +802,38 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDayButton(String label, int dayNumber) {
+    final isSelected = _selectedDays.contains(dayNumber);
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isSelected) {
+            _selectedDays.remove(dayNumber);
+          } else {
+            _selectedDays.add(dayNumber);
+          }
+        });
+      },
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF6366F1) : Colors.grey[200],
+          shape: BoxShape.circle,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.grey[700],
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ),

@@ -1,8 +1,8 @@
-import 'package:stacked/stacked.dart';
 import 'package:moongo/app/app.locator.dart';
 import 'package:moongo/models/task_model.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:moongo/services/firestore_service.dart';
+import 'package:stacked/stacked.dart';
 
 class TasksViewModel extends BaseViewModel {
   final _firestoreService = locator<FirestoreService>();
@@ -91,5 +91,31 @@ class TasksViewModel extends BaseViewModel {
 
   Future<void> deleteTask(String taskId) async {
     await _firestoreService.deleteTask(taskId);
+  }
+
+  Future<void> addSubTaskToObjective(String taskId, String subTaskTitle) async {
+    final subTask = SubTask(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: subTaskTitle,
+      order: 0,
+    );
+    await _firestoreService.addSubTask(taskId, subTask);
+  }
+
+  Future<void> completeSubTask(TaskModel task, String subTaskId) async {
+    if (_userId == null) return;
+    await _firestoreService.completeSubTask(task, subTaskId);
+
+    // Vérifier si toutes les sous-tâches sont complétées pour ajouter les graines
+    final updatedSubTasks = task.subTasks.map((st) {
+      if (st.id == subTaskId) {
+        return st.copyWith(completed: true);
+      }
+      return st;
+    }).toList();
+
+    if (updatedSubTasks.every((st) => st.completed)) {
+      await _firestoreService.updateSeeds(_userId!, task.seedsReward);
+    }
   }
 }

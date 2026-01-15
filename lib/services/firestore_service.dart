@@ -1,10 +1,11 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
-import 'package:moongo/models/user_model.dart';
-import 'package:moongo/models/task_model.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/shop_item_model.dart';
+import 'package:moongo/models/task_model.dart';
+import 'package:moongo/models/user_model.dart';
+import 'package:uuid/uuid.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -211,6 +212,14 @@ class FirestoreService {
     });
   }
 
+  /// Ajoute une sous-tâche à un objectif
+  Future<void> addSubTask(String taskId, SubTask subTask) async {
+    await _db.collection('tasks').doc(taskId).update({
+      'subTasks': FieldValue.arrayUnion([subTask.toMap()]),
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    });
+  }
+
   /// Supprime une tâche (soft delete)
   Future<void> archiveTask(String taskId) async {
     await _db.collection('tasks').doc(taskId).update({
@@ -244,9 +253,19 @@ class FirestoreService {
         final completedDate =
             DateTime(completedAt.year, completedAt.month, completedAt.day);
         if (completedDate.isBefore(today)) {
+          // Réinitialiser les sous-tâches aussi
+          final subTasks = (doc.data()['subTasks'] as List<dynamic>?) ?? [];
+          final resetSubTasks = subTasks.map((st) {
+            if (st is Map<String, dynamic>) {
+              return {...st, 'completed': false, 'completedAt': null};
+            }
+            return st;
+          }).toList();
+
           batch.update(doc.reference, {
             'completed': false,
             'completedAt': null,
+            'subTasks': resetSubTasks,
             'updatedAt': Timestamp.fromDate(now),
           });
         }
