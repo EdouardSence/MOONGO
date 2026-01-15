@@ -16,6 +16,9 @@ class CreatureSpecies {
       evolutionLevels; // Niveaux requis pour évoluer (ex: [10, 25] = évolue au niveau 10 puis 25)
   final List<String> evolutionEmojis; // Emojis à chaque stade
   final CreatureRarity baseRarity;
+  final int baseLevel; // Niveau de départ de la créature
+  final String basePicture; // URL de l'image principale (grande)
+  final String parcPicture; // URL de l'image pour le parc (petite)
 
   const CreatureSpecies({
     required this.speciesId,
@@ -23,6 +26,9 @@ class CreatureSpecies {
     required this.evolutionLevels,
     required this.evolutionEmojis,
     required this.baseRarity,
+    this.baseLevel = 1,
+    this.basePicture = '',
+    this.parcPicture = '',
   });
 
   int get maxStage => evolutionNames.length;
@@ -43,6 +49,42 @@ class CreatureSpecies {
     if (currentStage >= maxStage) return null;
     if (currentStage - 1 >= evolutionLevels.length) return null;
     return evolutionLevels[currentStage - 1];
+  }
+
+  /// Vérifie si l'espèce a une image configurée
+  bool get hasBasePicture => basePicture.isNotEmpty;
+  bool get hasParcPicture => parcPicture.isNotEmpty;
+
+  /// Crée une espèce depuis un document Firestore
+  factory CreatureSpecies.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return CreatureSpecies(
+      speciesId: data['speciesId'] ?? doc.id,
+      evolutionNames: List<String>.from(data['evolutionNames'] ?? []),
+      evolutionLevels: List<int>.from(data['evolutionLevels'] ?? []),
+      evolutionEmojis: List<String>.from(data['evolutionEmojis'] ?? []),
+      baseRarity: CreatureRarity.values.firstWhere(
+        (e) => e.name == data['baseRarity'],
+        orElse: () => CreatureRarity.common,
+      ),
+      baseLevel: data['baseLevel'] ?? 1,
+      basePicture: data['basePicture'] ?? '',
+      parcPicture: data['parcPicture'] ?? '',
+    );
+  }
+
+  /// Convertit l'espèce en Map pour Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'speciesId': speciesId,
+      'evolutionNames': evolutionNames,
+      'evolutionLevels': evolutionLevels,
+      'evolutionEmojis': evolutionEmojis,
+      'baseRarity': baseRarity.name,
+      'baseLevel': baseLevel,
+      'basePicture': basePicture,
+      'parcPicture': parcPicture,
+    };
   }
 }
 
