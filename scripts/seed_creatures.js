@@ -27,11 +27,13 @@ const path = require('path');
 // CONFIGURATION GITHUB POUR LES IMAGES
 // ═══════════════════════════════════════════
 
+// Ces valeurs peuvent être surchargées via les variables d'environnement :
+// GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH, GITHUB_IMAGE_PATH
 const GITHUB_CONFIG = {
-    owner: 'EdouardSence',        // Ton username GitHub
-    repo: 'MOONGO',               // Nom du repo
-    branch: 'master',             // Branche
-    imagePath: 'scripts/images'   // Chemin vers les images dans le repo
+    owner: process.env.GITHUB_OWNER || 'EdouardSence',        // Ton username GitHub
+    repo: process.env.GITHUB_REPO || 'MOONGO',               // Nom du repo
+    branch: process.env.GITHUB_BRANCH || 'master',             // Branche
+    imagePath: process.env.GITHUB_IMAGE_PATH || 'scripts/images'   // Chemin vers les images dans le repo
 };
 
 // Génère l'URL raw GitHub pour une image
@@ -46,12 +48,15 @@ function getGitHubImageUrl(filename) {
 const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
 
 if (!fs.existsSync(serviceAccountPath)) {
-    console.error('❌ Erreur: serviceAccountKey.json non trouvé!');
+    console.error('❌ Error / Erreur: serviceAccountKey.json not found / non trouvé!');
     console.log('');
-    console.log('Pour obtenir ce fichier:');
-    console.log('1. Allez dans Firebase Console > Project Settings > Service Accounts');
-    console.log('2. Cliquez "Generate new private key"');
-    console.log('3. Sauvegardez le fichier JSON comme "serviceAccountKey.json" dans le dossier scripts/');
+    console.log('To get this file / Pour obtenir ce fichier:');
+    console.log('1. Go to Firebase Console > Project Settings > Service Accounts');
+    console.log('   Allez dans Firebase Console > Project Settings > Service Accounts');
+    console.log('2. Click "Generate new private key"');
+    console.log('   Cliquez "Generate new private key"');
+    console.log('3. Save the JSON file as "serviceAccountKey.json" in the scripts/ folder');
+    console.log('   Sauvegardez le fichier JSON comme "serviceAccountKey.json" dans le dossier scripts/');
     process.exit(1);
 }
 

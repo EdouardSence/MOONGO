@@ -295,12 +295,6 @@ class FirestoreService {
     final species = await getAllSpecies();
     _speciesCache = {for (var s in species) s.speciesId: s};
 
-    // Debug log
-    print('🔄 Species cache loaded: ${_speciesCache!.length} species');
-    for (var entry in _speciesCache!.entries) {
-      print('   ${entry.key}: basePicture=${entry.value.basePicture}');
-    }
-
     return _speciesCache!;
   }
 
@@ -316,18 +310,18 @@ class FirestoreService {
   }
 
   /// Récupère toutes les créatures de l'utilisateur (avec données d'espèce)
-  Stream<List<CreatureModel>> creaturesStream(String userId) {
-    return _db
+  Stream<List<CreatureModel>> creaturesStream(String userId) async* {
+    // Charger le cache des espèces une seule fois avant le stream
+    final speciesCache = await _loadSpeciesCache();
+
+    // Écouter les changements de créatures
+    await for (final snapshot in _db
         .collection('creatures')
         .where('userId', isEqualTo: userId)
         .orderBy('obtainedAt', descending: true)
-        .snapshots()
-        .asyncMap((snapshot) async {
-      // Charger le cache des espèces
-      final speciesCache = await _loadSpeciesCache();
-
+        .snapshots()) {
       // Enrichir chaque créature avec ses données d'espèce
-      return snapshot.docs.map((doc) {
+      final creatures = snapshot.docs.map((doc) {
         final creature = CreatureModel.fromFirestore(doc);
         final speciesData = speciesCache[creature.speciesId];
         if (speciesData != null) {
@@ -335,7 +329,9 @@ class FirestoreService {
         }
         return creature;
       }).toList();
-    });
+
+      yield creatures;
+    }
   }
 
   // ═══════════════════════════════════════════
@@ -395,7 +391,8 @@ class FirestoreService {
     if (species == null) {
       // Rembourser les graines
       await updateSeeds(userId, egg.price, isSpending: false);
-      return null;
+      throw Exception(
+          'No species found in Firestore for rarity: ${rarity.name}. Seeds have been refunded.');
     }
 
     // Créer la créature avec les données d'espèce
