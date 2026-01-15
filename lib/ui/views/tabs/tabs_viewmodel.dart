@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:moongo/ui/common/app_theme.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:stacked/stacked.dart';
-import 'package:moongo/ui/common/app_theme.dart';
 
 import '../collection/collection_view.dart';
-import '../tasks/tasks_view.dart';
 import '../home/home_view.dart';
-import '../shop/shop_view.dart';
 import '../profile/profile_view.dart';
+import '../shop/shop_view.dart';
+import '../tasks/tasks_view.dart';
 
 class TabsViewModel extends BaseViewModel {
   late PersistentTabController _tabController;
 
   PersistentTabController get tabController => _tabController;
 
-  TabsViewModel() {
-    // Initialise avec l'onglet Home au démarrage (index 2)
-    _tabController = PersistentTabController(initialIndex: 2);
+  TabsViewModel({int initialIndex = 2}) {
+    // Initialise avec l'onglet spécifié (défaut: Home = 2)
+    _tabController = PersistentTabController(initialIndex: initialIndex);
   }
 
   @override

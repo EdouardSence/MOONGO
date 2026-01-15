@@ -1,12 +1,15 @@
 import 'package:moongo/app/app.locator.dart';
+import 'package:moongo/app/app.router.dart';
 import 'package:moongo/models/task_model.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:moongo/services/firestore_service.dart';
 import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class TasksViewModel extends BaseViewModel {
   final _firestoreService = locator<FirestoreService>();
   final _authService = locator<AuthenticationService>();
+  final _navigationService = locator<NavigationService>();
 
   List<TaskModel> _tasks = [];
   int _selectedTabIndex = 0;
@@ -41,6 +44,10 @@ class TasksViewModel extends BaseViewModel {
   }
 
   String? get _userId => _authService.userId;
+
+  void navigateToCalendar() {
+    _navigationService.navigateTo(Routes.calendarView);
+  }
 
   void init() {
     _loadTasks();
@@ -106,7 +113,11 @@ class TasksViewModel extends BaseViewModel {
     if (_userId == null) return;
     await _firestoreService.completeSubTask(task, subTaskId);
 
-    // Vérifier si toutes les sous-tâches sont complétées pour ajouter les graines
+    // Récupérer la sous-tâche pour donner sa récompense spécifique
+    final subTask = task.subTasks.firstWhere((st) => st.id == subTaskId);
+    await _firestoreService.updateSeeds(_userId!, subTask.seedsReward);
+
+    // Vérifier si toutes les sous-tâches sont complétées pour ajouter les graines (Bonus de fin)
     final updatedSubTasks = task.subTasks.map((st) {
       if (st.id == subTaskId) {
         return st.copyWith(completed: true);
