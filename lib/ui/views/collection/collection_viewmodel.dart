@@ -7,6 +7,10 @@ import 'package:moongo/services/firestore_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
+enum SortField { name, level, rarity }
+
+enum SortOrder { ascending, descending }
+
 class CollectionViewModel extends BaseViewModel {
   final _firestoreService = locator<FirestoreService>();
   final _authService = locator<AuthenticationService>();
@@ -16,13 +20,54 @@ class CollectionViewModel extends BaseViewModel {
   UserModel? _user;
   List<CreatureModel> _creatures = [];
 
-  List<CreatureModel> get creatures => _creatures;
+  // Sorting state
+  SortField _sortField = SortField.name;
+  SortOrder _sortOrder = SortOrder.ascending;
+
+  SortField get sortField => _sortField;
+  SortOrder get sortOrder => _sortOrder;
+
+  List<CreatureModel> get creatures {
+    final sorted = List<CreatureModel>.from(_creatures);
+
+    sorted.sort((a, b) {
+      int comparison;
+      switch (_sortField) {
+        case SortField.name:
+          comparison = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+          break;
+        case SortField.level:
+          comparison = a.level.compareTo(b.level);
+          break;
+        case SortField.rarity:
+          comparison = a.rarity.index.compareTo(b.rarity.index);
+          break;
+      }
+      return _sortOrder == SortOrder.ascending ? comparison : -comparison;
+    });
+
+    return sorted;
+  }
+
   int get seeds => _user?.seeds ?? 0;
 
   String? get _userId => _authService.userId;
 
   void init() {
     _loadData();
+  }
+
+  void setSortField(SortField field) {
+    if (_sortField == field) {
+      // Toggle order if same field
+      _sortOrder = _sortOrder == SortOrder.ascending
+          ? SortOrder.descending
+          : SortOrder.ascending;
+    } else {
+      _sortField = field;
+      _sortOrder = SortOrder.ascending;
+    }
+    notifyListeners();
   }
 
   void _loadData() {

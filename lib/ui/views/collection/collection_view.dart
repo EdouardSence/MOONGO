@@ -197,7 +197,73 @@ class CollectionView extends StackedView<CollectionViewModel> {
               _buildOrnamentLine(false),
             ],
           ),
+
+          // Barre de filtres
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _buildSortButton(context, viewModel, SortField.name, 'Nom', '📝'),
+              const SizedBox(width: 8),
+              _buildSortButton(
+                  context, viewModel, SortField.level, 'Niveau', '⚔️'),
+              const SizedBox(width: 8),
+              _buildSortButton(
+                  context, viewModel, SortField.rarity, 'Rareté', '💎'),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSortButton(BuildContext context, CollectionViewModel viewModel,
+      SortField field, String label, String emoji) {
+    final isSelected = viewModel.sortField == field;
+    final isAscending = viewModel.sortOrder == SortOrder.ascending;
+
+    return GestureDetector(
+      onTap: () => viewModel.setSortField(field),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Colors.white.withOpacity(0.25)
+              : Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? Colors.white.withOpacity(0.5)
+                : Colors.white.withOpacity(0.2),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(emoji, style: const TextStyle(fontSize: 12)),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: GoogleFonts.dmSans(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 4),
+              Text(
+                isAscending ? '↑' : '↓',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
