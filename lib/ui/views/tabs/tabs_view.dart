@@ -28,9 +28,9 @@ class TabsView extends StackedView<TabsViewModel> {
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
-      navBarHeight: 70,
+      navBarHeight: 65,
       popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
-      navBarStyle: NavBarStyle.style6,
+      navBarStyle: NavBarStyle.style3,
     );
   }
 

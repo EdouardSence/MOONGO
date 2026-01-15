@@ -40,46 +40,41 @@ class TabsViewModel extends BaseViewModel {
           icon: const Icon(Icons.auto_stories),
           title: 'Collection',
           activeColorPrimary: AppColors.primary,
-          activeColorSecondary: Colors.white,
-          inactiveColorPrimary: isDark
-              ? AppColors.darkTextSecondary
-              : AppColors.lightTextSecondary,
+          activeColorSecondary: isDark ? Colors.white : AppColors.primary,
+          inactiveColorPrimary:
+              isDark ? AppColors.darkTextSecondary : const Color(0xFF5A5A5A),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.format_list_bulleted),
           title: 'Tâches',
           activeColorPrimary: AppColors.primary,
-          activeColorSecondary: Colors.white,
-          inactiveColorPrimary: isDark
-              ? AppColors.darkTextSecondary
-              : AppColors.lightTextSecondary,
+          activeColorSecondary: isDark ? Colors.white : AppColors.primary,
+          inactiveColorPrimary:
+              isDark ? AppColors.darkTextSecondary : const Color(0xFF5A5A5A),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.eco_rounded),
           title: 'Forêt',
           activeColorPrimary: AppColors.tertiary,
-          activeColorSecondary: Colors.white,
-          inactiveColorPrimary: isDark
-              ? AppColors.darkTextSecondary
-              : AppColors.lightTextSecondary,
+          activeColorSecondary: isDark ? Colors.white : AppColors.tertiary,
+          inactiveColorPrimary:
+              isDark ? AppColors.darkTextSecondary : const Color(0xFF5A5A5A),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.storefront_rounded),
           title: 'Boutique',
           activeColorPrimary: AppColors.secondary,
-          activeColorSecondary: Colors.white,
-          inactiveColorPrimary: isDark
-              ? AppColors.darkTextSecondary
-              : AppColors.lightTextSecondary,
+          activeColorSecondary: isDark ? Colors.white : AppColors.secondary,
+          inactiveColorPrimary:
+              isDark ? AppColors.darkTextSecondary : const Color(0xFF5A5A5A),
         ),
         PersistentBottomNavBarItem(
           icon: const Icon(Icons.person_rounded),
           title: 'Profil',
           activeColorPrimary: AppColors.accent,
-          activeColorSecondary: Colors.white,
-          inactiveColorPrimary: isDark
-              ? AppColors.darkTextSecondary
-              : AppColors.lightTextSecondary,
+          activeColorSecondary: isDark ? Colors.white : AppColors.accent,
+          inactiveColorPrimary:
+              isDark ? AppColors.darkTextSecondary : const Color(0xFF5A5A5A),
         ),
       ];
 }

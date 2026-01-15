@@ -285,21 +285,95 @@ class FirestoreService {
   // CREATURES
   // ═══════════════════════════════════════════
 
-  /// Récupère toutes les créatures de l'utilisateur
-  Stream<List<CreatureModel>> creaturesStream(String userId) {
-    return _db
+  // Cache des espèces pour éviter les requêtes répétées
+  Map<String, CreatureSpecies>? _speciesCache;
+
+  /// Charge et cache toutes les espèces
+  Future<Map<String, CreatureSpecies>> _loadSpeciesCache() async {
+    if (_speciesCache != null) return _speciesCache!;
+
+    final species = await getAllSpecies();
+    _speciesCache = {for (var s in species) s.speciesId: s};
+
+    return _speciesCache!;
+  }
+
+  /// Invalide le cache des espèces (à appeler si les espèces sont mises à jour)
+  void invalidateSpeciesCache() {
+    _speciesCache = null;
+  }
+
+  /// Récupère une espèce par son ID (depuis le cache)
+  Future<CreatureSpecies?> getSpeciesById(String speciesId) async {
+    final cache = await _loadSpeciesCache();
+    return cache[speciesId];
+  }
+
+  /// Récupère toutes les créatures de l'utilisateur (avec données d'espèce)
+  Stream<List<CreatureModel>> creaturesStream(String userId) async* {
+    // Charger le cache des espèces une seule fois avant le stream
+    final speciesCache = await _loadSpeciesCache();
+
+    // Écouter les changements de créatures
+    await for (final snapshot in _db
         .collection('creatures')
         .where('userId', isEqualTo: userId)
         .orderBy('obtainedAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => CreatureModel.fromFirestore(doc))
-          .toList();
-    });
+        .snapshots()) {
+      // Enrichir chaque créature avec ses données d'espèce
+      final creatures = snapshot.docs.map((doc) {
+        final creature = CreatureModel.fromFirestore(doc);
+        final speciesData = speciesCache[creature.speciesId];
+        if (speciesData != null) {
+          return creature.withSpeciesData(speciesData);
+        }
+        return creature;
+      }).toList();
+
+      yield creatures;
+    }
   }
 
-  /// Achète un œuf et retourne la créature obtenue
+  // ═══════════════════════════════════════════
+  // CREATURE SPECIES (depuis Firestore)
+  // ═══════════════════════════════════════════
+
+  /// Récupère toutes les espèces de créatures disponibles
+  Future<List<CreatureSpecies>> getAllSpecies() async {
+    final snapshot = await _db.collection('creature_species').get();
+    return snapshot.docs
+        .map((doc) => CreatureSpecies.fromFirestore(doc))
+        .toList();
+  }
+
+  /// Récupère les espèces d'une rareté spécifique
+  Future<List<CreatureSpecies>> getSpeciesByRarity(
+      CreatureRarity rarity) async {
+    final snapshot = await _db
+        .collection('creature_species')
+        .where('baseRarity', isEqualTo: rarity.name)
+        .get();
+    return snapshot.docs
+        .map((doc) => CreatureSpecies.fromFirestore(doc))
+        .toList();
+  }
+
+  /// Récupère une espèce aléatoire selon la rareté depuis Firestore
+  Future<CreatureSpecies?> getRandomSpeciesByRarityFromFirestore(
+      CreatureRarity rarity) async {
+    final speciesList = await getSpeciesByRarity(rarity);
+    if (speciesList.isEmpty) {
+      // Fallback: chercher une espèce commune
+      final commonSpecies = await getSpeciesByRarity(CreatureRarity.common);
+      if (commonSpecies.isEmpty) return null;
+      commonSpecies.shuffle();
+      return commonSpecies.first;
+    }
+    speciesList.shuffle();
+    return speciesList.first;
+  }
+
+  /// Achète un œuf et retourne la créature obtenue (version Firestore)
   Future<CreatureModel?> buyEgg(
       String userId, EggItem egg, int currentSeeds) async {
     if (currentSeeds < egg.price) return null;
@@ -310,10 +384,18 @@ class FirestoreService {
     // Tirer la rareté
     final rarity = _rollRarity(egg.dropRates);
 
-    // Récupérer une espèce aléatoire correspondant à la rareté
-    final species = CreatureSpeciesData.getRandomSpeciesByRarity(rarity);
+    // Récupérer une espèce aléatoire depuis Firestore
+    final species = await getRandomSpeciesByRarityFromFirestore(rarity);
 
-    // Créer la créature
+    // Si aucune espèce trouvée dans Firestore, annuler l'achat
+    if (species == null) {
+      // Rembourser les graines
+      await updateSeeds(userId, egg.price, isSpending: false);
+      throw Exception(
+          'No species found in Firestore for rarity: ${rarity.name}. Seeds have been refunded.');
+    }
+
+    // Créer la créature avec les données d'espèce
     final now = DateTime.now();
     final creatureId = _uuid.v4();
     final name = species.getNameForStage(1); // Nom du stade 1
@@ -327,6 +409,7 @@ class FirestoreService {
       obtainedFrom: egg.id,
       obtainedAt: now,
       createdAt: now,
+      speciesData: species, // Inclure les données d'espèce
     );
 
     await _db

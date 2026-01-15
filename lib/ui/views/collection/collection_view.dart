@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/models/creature_model.dart';
-import 'package:moongo/models/shop_item_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/creature_image.dart';
 import 'package:stacked/stacked.dart';
 
 import 'collection_viewmodel.dart';
@@ -382,7 +382,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
           curve: Curves.easeOutBack,
           builder: (context, value, child) {
             return Transform.scale(
-              scale: value,
+              scale: value.clamp(0.0, 1.5),
               child: Opacity(
                 opacity: value.clamp(0.0, 1.0),
                 child: _buildCreatureCard(context, creature, viewModel),
@@ -429,55 +429,38 @@ class CollectionView extends StackedView<CollectionViewModel> {
           children: [
             // Contenu principal
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   // Cadre de la créature avec glow
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        colors: [
-                          Color(colors[0]).withOpacity(0.3),
-                          Colors.transparent,
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
+                  Flexible(
                     child: Container(
-                      width: 60,
-                      height: 60,
+                      padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
+                        gradient: RadialGradient(
+                          colors: [
+                            Color(colors[0]).withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Color(colors[0]).withOpacity(0.5),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(colors[0]).withOpacity(0.4),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
                       ),
-                      child: Center(
-                        child: Text(
-                          creature.emoji,
-                          style: const TextStyle(fontSize: 34),
-                        ),
+                      child: CreatureImageWithGlow(
+                        creature: creature,
+                        size: 52,
+                        useParcImage: true,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
 
                   // Nom
                   Text(
                     creature.name,
                     style: GoogleFonts.fraunces(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
@@ -485,20 +468,20 @@ class CollectionView extends StackedView<CollectionViewModel> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
 
                   // Badge niveau
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.25),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       'Nv. ${creature.level}',
                       style: GoogleFonts.dmSans(
-                        fontSize: 10,
+                        fontSize: 9,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -555,488 +538,344 @@ class CollectionView extends StackedView<CollectionViewModel> {
   }
 
   /// Détail de la créature
-  void _showCreatureDetail(BuildContext context, CreatureModel creatureArg,
+  void _showCreatureDetail(BuildContext context, CreatureModel creature,
       CollectionViewModel viewModel) {
+    final colors = CreatureModel.rarityColors[creature.rarity]!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (context) => AnimatedBuilder(
-            animation: viewModel,
-            builder: (context, child) {
-              final creature = viewModel.creatures.firstWhere(
-                  (c) => c.creatureId == creatureArg.creatureId,
-                  orElse: () => creatureArg);
-              final colors = CreatureModel.rarityColors[creature.rarity]!;
-              final isDark = Theme.of(context).brightness == Brightness.dark;
-
-              return Container(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkSurface : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
+          boxShadow: [
+            BoxShadow(
+              color: Color(colors[0]).withOpacity(0.3),
+              blurRadius: 30,
+              offset: const Offset(0, -10),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Poignée
+              Container(
+                margin: const EdgeInsets.only(top: 14),
+                width: 48,
+                height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkSurface : Colors.white,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(36)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(colors[0]).withOpacity(0.3),
-                      blurRadius: 30,
-                      offset: const Offset(0, -10),
-                    ),
-                  ],
+                  color: isDark ? Colors.grey[600] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Poignée
-                    Container(
-                      margin: const EdgeInsets.only(top: 14),
-                      width: 48,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.grey[600] : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    const SizedBox(height: 28),
+              ),
+              const SizedBox(height: 28),
 
-                    // Créature avec aura épique
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Aura externe
-                        Container(
-                          width: 160,
-                          height: 160,
-                          decoration: BoxDecoration(
-                            gradient: RadialGradient(
-                              colors: [
-                                Color(colors[0]).withOpacity(0.3),
-                                Color(colors[0]).withOpacity(0.1),
-                                Colors.transparent,
-                              ],
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        // Créature principale
-                        Container(
-                          width: 110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Color(colors[0]), Color(colors[1])],
-                            ),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.4),
-                              width: 3,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(colors[0]).withOpacity(0.5),
-                                blurRadius: 24,
-                                spreadRadius: 4,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              creature.emoji,
-                              style: const TextStyle(fontSize: 60),
-                            ),
-                          ),
+              // Créature avec aura épique
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Aura externe
+                  Container(
+                    width: 160,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      gradient: RadialGradient(
+                        colors: [
+                          Color(colors[0]).withValues(alpha: 0.3),
+                          Color(colors[0]).withValues(alpha: 0.1),
+                          Colors.transparent,
+                        ],
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  // Créature principale avec image (rectangle arrondi horizontal)
+                  Container(
+                    width: 220,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(colors[0]), Color(colors[1])],
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.4),
+                        width: 3,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(colors[0]).withValues(alpha: 0.5),
+                          blurRadius: 24,
+                          spreadRadius: 4,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-
-                    // Nom et rareté
-                    Text(
-                      creature.name,
-                      style: GoogleFonts.fraunces(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(21),
+                      child: CreatureImage(
+                        creature: creature,
+                        size: 220,
+                        useParcImage: false,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(colors[0]).withOpacity(0.2),
-                            Color(colors[1]).withOpacity(0.2),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Color(colors[0]).withOpacity(0.4),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(creature.rarityEmoji,
-                              style: const TextStyle(fontSize: 16)),
-                          const SizedBox(width: 8),
-                          Text(
-                            creature.rarityLabel,
-                            style: GoogleFonts.dmSans(
-                              fontSize: 14,
-                              color: Color(colors[0]),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 28),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-                    // Progression
-                    if (!creature.isMaxLevel) ...[
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32),
-                        child: Column(
-                          children: [
-                            // Niveau et XP
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Text('⚔️',
-                                        style: TextStyle(fontSize: 16)),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Niveau ${creature.level}',
-                                      style: GoogleFonts.fraunces(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 17,
-                                        color: isDark
-                                            ? AppColors.darkTextPrimary
-                                            : AppColors.lightTextPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  '${creature.currentXp}/${creature.xpToNextLevel} XP',
-                                  style: GoogleFonts.dmSans(
-                                    color: isDark
-                                        ? AppColors.darkTextSecondary
-                                        : AppColors.lightTextSecondary,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-
-                            // Barre de progression
-                            Container(
-                              height: 12,
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.grey[800]
-                                    : Colors.grey[200],
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: Stack(
-                                  children: [
-                                    FractionallySizedBox(
-                                      alignment: Alignment.centerLeft,
-                                      widthFactor: creature.progressToNextLevel,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Color(colors[0]),
-                                              Color(colors[1])
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // Brillance
-                                    Positioned(
-                                      right: 2,
-                                      top: 2,
-                                      bottom: 2,
-                                      child: Container(
-                                        width: 8,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.4),
-                                          borderRadius:
-                                              BorderRadius.circular(4),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-
-                            // Info évolution
-                            if (!creature.isMaxEvolution)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accent
-                                      .withOpacity(isDark ? 0.15 : 0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.accent.withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('✨',
-                                        style: TextStyle(fontSize: 18)),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Évolue en ${creature.nextEvolutionName}',
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 13,
-                                        color: AppColors.accent,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            AppColors.accent.withOpacity(0.2),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        'Nv. ${creature.levelForNextEvolution}',
-                                        style: GoogleFonts.dmSans(
-                                          fontSize: 11,
-                                          color: AppColors.accent,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            else
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary
-                                      .withOpacity(isDark ? 0.15 : 0.1),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.primary.withOpacity(0.3),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Text('🌟',
-                                        style: TextStyle(fontSize: 18)),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Évolution complète !',
-                                      style: GoogleFonts.dmSans(
-                                        fontSize: 13,
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ] else ...[
-                      // Niveau maximum
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 14),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.tertiary.withOpacity(0.2),
-                              AppColors.tertiary.withOpacity(0.1),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(
-                            color: AppColors.tertiary.withOpacity(0.4),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('👑', style: TextStyle(fontSize: 22)),
-                            const SizedBox(width: 10),
-                            Text(
-                              'Niveau Maximum !',
-                              style: GoogleFonts.fraunces(
-                                color: AppColors.tertiary,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-
-                    if (!creature.isMaxLevel) ...[
-                      const SizedBox(height: 24),
-                      _buildFeedingSection(context, viewModel, creature),
-                    ],
-                    const SizedBox(height: 36),
-                  ],
-                ),
-              );
-            } // AnimatedBuilder builder
-            ));
-  }
-
-  /// Section pour nourrir la créature
-  Widget _buildFeedingSection(BuildContext context,
-      CollectionViewModel viewModel, CreatureModel creature) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+              // Nom et rareté
               Text(
-                'Lui donner une friandise',
+                creature.name,
                 style: GoogleFonts.fraunces(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
                   color: isDark
                       ? AppColors.darkTextPrimary
                       : AppColors.lightTextPrimary,
                 ),
               ),
+              const SizedBox(height: 8),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primary.withOpacity(0.15),
-                      AppColors.secondary.withOpacity(0.1),
+                      Color(colors[0]).withValues(alpha: 0.2),
+                      Color(colors[1]).withValues(alpha: 0.2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: Color(colors[0]).withValues(alpha: 0.4),
                   ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Text(creature.rarityEmoji,
+                        style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: 8),
                     Text(
-                      '${viewModel.seeds}',
-                      style: GoogleFonts.fraunces(
-                        fontWeight: FontWeight.bold,
+                      creature.rarityLabel,
+                      style: GoogleFonts.dmSans(
                         fontSize: 14,
-                        color: AppColors.primary,
+                        color: Color(colors[0]),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text('🌱', style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
+              const SizedBox(height: 28),
+
+              // Progression
+              if (!creature.isMaxLevel) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Column(
+                    children: [
+                      // Niveau et XP
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('⚔️', style: TextStyle(fontSize: 16)),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Niveau ${creature.level}',
+                                style: GoogleFonts.fraunces(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                  color: isDark
+                                      ? AppColors.darkTextPrimary
+                                      : AppColors.lightTextPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            '${creature.currentXp}/${creature.xpToNextLevel} XP',
+                            style: GoogleFonts.dmSans(
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.lightTextSecondary,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Barre de progression
+                      Container(
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.grey[800] : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: Stack(
+                            children: [
+                              FractionallySizedBox(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: creature.progressToNextLevel
+                                    .clamp(0.0, 1.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Color(colors[0]),
+                                        Color(colors[1])
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Brillance
+                              Positioned(
+                                right: 2,
+                                top: 2,
+                                bottom: 2,
+                                child: Container(
+                                  width: 8,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.4),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Info évolution
+                      if (!creature.isMaxEvolution)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent
+                                .withValues(alpha: isDark ? 0.15 : 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.accent.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('✨', style: TextStyle(fontSize: 18)),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Évolue en ${creature.nextEvolutionName}',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  'Nv. ${creature.levelForNextEvolution}',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 11,
+                                    color: AppColors.accent,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary
+                                .withValues(alpha: isDark ? 0.15 : 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('🌟', style: TextStyle(fontSize: 18)),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Évolution complète !',
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                // Niveau maximum
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.tertiary.withValues(alpha: 0.2),
+                        AppColors.tertiary.withValues(alpha: 0.1),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: AppColors.tertiary.withValues(alpha: 0.4),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('👑', style: TextStyle(fontSize: 22)),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Niveau Maximum !',
+                        style: GoogleFonts.fraunces(
+                          color: AppColors.tertiary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 36),
             ],
           ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 110,
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            scrollDirection: Axis.horizontal,
-            itemCount: FoodItem.allFoods.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final food = FoodItem.allFoods[index];
-              return _buildSmallFoodCard(context, food, viewModel, creature);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSmallFoodCard(BuildContext context, FoodItem food,
-      CollectionViewModel viewModel, CreatureModel creature) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canAfford = viewModel.seeds >= food.price;
-
-    return GestureDetector(
-      onTap: canAfford ? () => viewModel.feedCreature(creature, food) : null,
-      child: Container(
-        width: 80,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkSurface : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: canAfford
-                ? AppColors.primary.withOpacity(0.3)
-                : Colors.transparent,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(food.emoji, style: const TextStyle(fontSize: 28)),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: canAfford
-                    ? AppColors.primary.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '${food.price} 🌱',
-                style: GoogleFonts.dmSans(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: canAfford
-                      ? AppColors.primary
-                      : (isDark ? Colors.grey[400] : Colors.grey),
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
