@@ -1184,6 +1184,23 @@ class MockFirestoreService extends _i1.Mock implements _i11.FirestoreService {
       ) as _i8.Future<void>);
 
   @override
+  _i8.Future<void> addSubTask(
+    String? taskId,
+    _i4.SubTask? subTask,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addSubTask,
+          [
+            taskId,
+            subTask,
+          ],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
   _i8.Future<void> archiveTask(String? taskId) => (super.noSuchMethod(
         Invocation.method(
           #archiveTask,

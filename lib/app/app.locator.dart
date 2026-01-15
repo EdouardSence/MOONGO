@@ -1,4 +1,3 @@
-// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -7,30 +6,22 @@
 
 // ignore_for_file: public_member_api_docs, implementation_imports, depend_on_referenced_packages
 
-import 'package:stacked_services/src/bottom_sheet/bottom_sheet_service.dart';
-import 'package:stacked_services/src/dialog/dialog_service.dart';
-import 'package:stacked_services/src/navigation/navigation_service.dart';
-import 'package:stacked_shared/stacked_shared.dart';
+import 'package:get_it/get_it.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 import '../services/authentication_service.dart';
 import '../services/firestore_service.dart';
+import '../services/streak_service.dart';
 import '../services/theme_service.dart';
 
-final locator = StackedLocator.instance;
+final locator = GetIt.instance;
 
-Future<void> setupLocator({
-  String? environment,
-  EnvironmentFilter? environmentFilter,
-}) async {
-// Register environments
-  locator.registerEnvironment(
-      environment: environment, environmentFilter: environmentFilter);
-
-// Register dependencies
+Future<void> setupLocator() async {
   locator.registerLazySingleton(() => BottomSheetService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => AuthenticationService());
   locator.registerLazySingleton(() => FirestoreService());
   locator.registerLazySingleton(() => ThemeService());
+  locator.registerLazySingleton(() => StreakService());
 }

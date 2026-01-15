@@ -184,9 +184,10 @@ class FirestoreService {
     // Ajouter les graines à l'utilisateur
     await updateSeeds(userId, task.seedsReward);
 
-    // Incrémenter le compteur de tâches
+    // Incrémenter le compteur de tâches et enregistrer l'activité du jour
     await _db.collection('users').doc(userId).update({
       'totalTasksCompleted': FieldValue.increment(1),
+      'lastStreakDate': Timestamp.fromDate(now), // Pour le suivi de la streak
     });
 
     return task.seedsReward;
