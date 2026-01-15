@@ -1,7 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:moongo/models/creature_model.dart';
+
+/// Cache manager personnalisé pour les images de créatures
+/// - Durée de cache : 7 jours
+/// - Vérifie les mises à jour après 1 jour (stale-while-revalidate)
+class CreatureImageCacheManager {
+  static const key = 'creatureImageCache';
+
+  static CacheManager instance = CacheManager(
+    Config(
+      key,
+      stalePeriod: const Duration(days: 7), // Garde en cache 7 jours
+      maxNrOfCacheObjects: 100, // Max 100 images en cache
+      repo: JsonCacheInfoRepository(databaseName: key),
+      fileService: HttpFileService(),
+    ),
+  );
+}
 
 /// Widget pour afficher l'image d'une créature avec fallback sur l'emoji
 class CreatureImage extends StatelessWidget {
@@ -23,16 +41,6 @@ class CreatureImage extends StatelessWidget {
     final imageUrl =
         useParcImage ? creature.parcPictureUrl : creature.basePictureUrl;
 
-    // Debug log
-    if (kDebugMode) {
-      print('🖼️ CreatureImage: ${creature.name}');
-      print('   speciesId: ${creature.speciesId}');
-      print('   species.basePicture: ${creature.species.basePicture}');
-      print('   basePictureUrl: ${creature.basePictureUrl}');
-      print('   parcPictureUrl: ${creature.parcPictureUrl}');
-      print('   imageUrl used: $imageUrl');
-    }
-
     // Vérifier que l'URL est valide (non vide et commence par http)
     final hasValidUrl = imageUrl != null &&
         imageUrl.isNotEmpty &&
@@ -41,6 +49,8 @@ class CreatureImage extends StatelessWidget {
     if (hasValidUrl) {
       return CachedNetworkImage(
         imageUrl: imageUrl,
+        cacheManager: CreatureImageCacheManager.instance,
+        cacheKey: '${creature.speciesId}_${useParcImage ? 'parc' : 'base'}',
         width: size,
         height: size,
         fit: fit,
@@ -135,6 +145,9 @@ class CreatureImageWithGlow extends StatelessWidget {
         child: hasValidUrl
             ? CachedNetworkImage(
                 imageUrl: imageUrl,
+                cacheManager: CreatureImageCacheManager.instance,
+                cacheKey:
+                    '${creature.speciesId}_${useParcImage ? 'parc' : 'base'}',
                 width: size,
                 height: size,
                 fit: BoxFit.cover,
