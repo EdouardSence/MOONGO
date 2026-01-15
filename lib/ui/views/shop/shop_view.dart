@@ -1011,6 +1011,7 @@ class ShopView extends StackedView<ShopViewModel> {
                                   ? null
                                   : () {
                                       viewModel.feedCreature(creature, food);
+                                      Navigator.of(context).pop();
                                     },
                               child: Container(
                                 margin: const EdgeInsets.only(bottom: 10),

@@ -14,6 +14,9 @@ class CalendarViewModel extends BaseViewModel {
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
+  
+  // Cache for daily recurring tasks to improve performance
+  List<TaskModel> _dailyRecurringTasks = [];
 
   List<TaskModel> get tasksForSelectedDay => _tasksForSelectedDay;
   DateTime get selectedDay => _selectedDay;
@@ -26,11 +29,20 @@ class CalendarViewModel extends BaseViewModel {
       setBusy(true);
       _firestoreService.tasksStream(userId).listen((tasks) {
         _allTasks = tasks;
+        _updateDailyRecurringTasksCache();
         _updateSelectedDayTasks();
         notifyListeners();
         setBusy(false);
       });
     }
+  }
+
+  void _updateDailyRecurringTasksCache() {
+    _dailyRecurringTasks = _allTasks
+        .where((task) =>
+            task.type == TaskType.recurring &&
+            task.recurrence?.frequency == RecurrenceFrequency.daily)
+        .toList();
   }
 
   void onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -57,43 +69,81 @@ class CalendarViewModel extends BaseViewModel {
     _tasksForSelectedDay = getTasksForDay(_selectedDay);
   }
 
+  /// Helper to check if a task should be visible on the given day based on creation date
+  bool _isTaskVisibleOnDay(TaskModel task, DateTime day) {
+    final taskCreatedDate = DateTime(
+      task.createdAt.year,
+      task.createdAt.month,
+      task.createdAt.day,
+    );
+    return day.isAfter(taskCreatedDate) || isSameDay(day, taskCreatedDate);
+  }
+
   List<TaskModel> getTasksForDay(DateTime day) {
-    return _allTasks.where((task) {
-      // Pour l'agenda, on veut peut-être voir même les tâches terminées ?
-      // Disons qu'on affiche tout pour l'historique.
+    final result = <TaskModel>[];
+    
+    // Add daily recurring tasks from cache (performance optimization)
+    // Only include if the task was created on or before the given day
+    for (final task in _dailyRecurringTasks) {
+      if (_isTaskVisibleOnDay(task, day)) {
+        result.add(task);
+      }
+    }
+    
+    // Filter other tasks (excluding daily recurring which are already processed)
+    for (final task in _allTasks) {
+      // Skip daily recurring tasks as they're already processed above
+      if (task.type == TaskType.recurring &&
+          task.recurrence?.frequency == RecurrenceFrequency.daily) {
+        continue;
+      }
 
       // Single
       if (task.type == TaskType.single) {
-        if (task.dueDate == null) return false;
-        return isSameDay(task.dueDate!, day);
+        if (task.dueDate == null) continue;
+        if (isSameDay(task.dueDate!, day)) {
+          result.add(task);
+        }
+        continue;
       }
 
-      // Recurring
+      // Recurring (non-daily)
       if (task.type == TaskType.recurring) {
-        if (task.recurrence == null) return false;
+        if (task.recurrence == null) continue;
+        
+        // Check if task is visible on this day (created before or on this day)
+        if (!_isTaskVisibleOnDay(task, day)) continue;
+        
         switch (task.recurrence!.frequency) {
           case RecurrenceFrequency.daily:
-            return true;
+            // Already handled above
+            break;
           case RecurrenceFrequency.weekly:
-            return task.recurrence!.daysOfWeek?.contains(day.weekday) ?? false;
+            if (task.recurrence!.daysOfWeek?.contains(day.weekday) ?? false) {
+              result.add(task);
+            }
+            break;
           case RecurrenceFrequency.monthly:
-            return day.day == task.createdAt.day;
+            if (day.day == task.createdAt.day) {
+              result.add(task);
+            }
+            break;
           case RecurrenceFrequency.custom:
             // Simplification : on n'affiche pas les custom pour l'instant
-            return false;
+            break;
         }
+        continue;
       }
 
       // Objective
       if (task.type == TaskType.objective) {
-        if (task.dueDate != null) {
-          return isSameDay(task.dueDate!, day);
+        if (task.dueDate != null && isSameDay(task.dueDate!, day)) {
+          result.add(task);
         }
-        return false;
       }
-
-      return false;
-    }).toList();
+    }
+    
+    return result;
   }
 
   Future<void> toggleTask(TaskModel task) async {
