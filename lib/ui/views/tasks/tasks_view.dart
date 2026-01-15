@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:moongo/models/task_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
 import 'package:stacked/stacked.dart';
@@ -21,37 +22,92 @@ class TasksView extends StackedView<TasksViewModel> {
       length: 4,
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor:
+              AppColors.primary, // Using AppColors.primary for consistency
+          elevation: 0,
+          title: Row(
+            children: [
+              // Icône livre/grimoire
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+                child: const Text('📜', style: TextStyle(fontSize: 20)),
+              ),
+              const SizedBox(width: 12),
+              // Titre avec typographie distinctive
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Grimoire',
+                    style: GoogleFonts.fraunces(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  Text(
+                    'des Quêtes',
+                    style: GoogleFonts.playfairDisplay(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white.withOpacity(0.85),
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.calendar_month, color: Colors.white),
+              onPressed: () => viewModel.navigateToCalendar(),
+            ),
+            const SizedBox(width: 8),
+          ],
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            indicatorWeight: 3,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            labelStyle: GoogleFonts.dmSans(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+            unselectedLabelStyle: GoogleFonts.dmSans(
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+            tabs: const [
+              Tab(text: "Aujourd'hui"),
+              Tab(text: 'Semaine'),
+              Tab(text: 'Mois'),
+              Tab(text: 'Tous'),
+            ],
+          ),
+        ),
         body: Stack(
           children: [
             // Fond avec texture subtile
             _buildEnchantedBackground(context),
 
-            // Contenu principal
-            Column(
+            // Contenu principal (TabBarView)
+            TabBarView(
               children: [
-                // En-tête style grimoire
-                _buildGrimoireHeader(context),
-
-                // Onglets style parchemin
-                _buildParchmentTabs(context, isDark),
-
-                // Liste des tâches
-                Expanded(
-                  child: viewModel.isBusy
-                      ? _buildLoadingState(context)
-                      : TabBarView(
-                          children: [
-                            _buildTaskList(
-                                context, viewModel, viewModel.allTasks),
-                            _buildTaskList(
-                                context, viewModel, viewModel.todayTasks),
-                            _buildTaskList(
-                                context, viewModel, viewModel.weekTasks),
-                            _buildTaskList(
-                                context, viewModel, viewModel.monthTasks),
-                          ],
-                        ),
-                ),
+                _buildTaskList(context, viewModel, viewModel.todayTasks),
+                _buildTaskList(context, viewModel, viewModel.weekTasks),
+                _buildTaskList(context, viewModel, viewModel.monthTasks),
+                _buildTaskList(context, viewModel, viewModel.allTasks),
               ],
             ),
           ],
@@ -86,168 +142,6 @@ class TasksView extends StackedView<TasksViewModel> {
       child: CustomPaint(
         painter: _ScrollTexturePainter(isDark: isDark),
         child: const SizedBox.expand(),
-      ),
-    );
-  }
-
-  /// En-tête style grimoire avec titre orné
-  Widget _buildGrimoireHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 16,
-        left: 24,
-        right: 24,
-        bottom: 16,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  AppColors.primary.withOpacity(0.8),
-                  AppColors.primary.withOpacity(0.6)
-                ]
-              : [AppColors.primary, AppColors.primary.withOpacity(0.85)],
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Icône livre/grimoire
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: const Text('📜', style: TextStyle(fontSize: 28)),
-          ),
-          const SizedBox(width: 16),
-
-          // Titre avec typographie distinctive
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Grimoire',
-                  style: GoogleFonts.fraunces(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                Text(
-                  'des Quêtes',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white.withOpacity(0.85),
-                    letterSpacing: 2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Ornement décoratif
-          const Text('✨', style: TextStyle(fontSize: 24)),
-        ],
-      ),
-    );
-  }
-
-  /// Onglets style parchemin avec icônes
-  Widget _buildParchmentTabs(BuildContext context, bool isDark) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.darkSurface.withOpacity(0.8)
-            : AppColors.secondary.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.secondary.withOpacity(isDark ? 0.3 : 0.4),
-          width: 1.5,
-        ),
-      ),
-      child: TabBar(
-        indicatorSize: TabBarIndicatorSize.tab,
-        indicator: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor:
-            isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-        labelStyle: GoogleFonts.dmSans(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: GoogleFonts.dmSans(
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
-        ),
-        dividerColor: Colors.transparent,
-        padding: const EdgeInsets.all(4),
-        tabs: const [
-          Tab(text: '✨ Tous'),
-          Tab(text: '🌅 Jour'),
-          Tab(text: '🌙 Sem.'),
-          Tab(text: '🌿 Mois'),
-        ],
-      ),
-    );
-  }
-
-  /// État de chargement avec animation
-  Widget _buildLoadingState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
-            duration: const Duration(seconds: 2),
-            builder: (context, value, child) {
-              return Transform.rotate(
-                angle: value * 6.28,
-                child: const Text('🌿', style: TextStyle(fontSize: 48)),
-              );
-            },
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Consultation du grimoire...',
-            style: GoogleFonts.playfairDisplay(
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              color: AppColors.primary,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -496,6 +390,46 @@ class TasksView extends StackedView<TasksViewModel> {
             ),
           ),
 
+          if (task.dueDate != null) ...[
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.black.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.2)
+                      : Colors.black.withOpacity(0.1),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    size: 12,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat('dd/MM', 'fr_FR').format(task.dueDate!),
+                    style: GoogleFonts.dmSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark
+                          ? AppColors.darkTextSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           // Badge type
           _buildTypeChip(task.type, isDark),
         ],
@@ -521,7 +455,7 @@ class TasksView extends StackedView<TasksViewModel> {
         emoji = '🔄';
         break;
       case TaskType.objective:
-        label = 'Épopée';
+        label = 'Tâche groupée';
         color = AppColors.secondary;
         emoji = '🏆';
         break;
@@ -1109,7 +1043,6 @@ class _CreateTaskSheet extends StatefulWidget {
 }
 
 class _CreateTaskSheetState extends State<_CreateTaskSheet> {
-  TaskType _selectedType = TaskType.single;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _selectedIcon = '✨';
@@ -1118,7 +1051,11 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
   DateTime? _dueDate;
   RecurrenceFrequency? _recurrenceFrequency;
   List<int> _selectedDays = [];
-  bool _isGroupedTask = false;
+
+  // Variables pour les sous-tâches
+  final List<Map<String, dynamic>> _subTasks = [];
+  final _subTaskController = TextEditingController();
+  int _currentSubTaskSeeds = 5;
 
   final List<String> _icons = [
     '✨',
@@ -1200,26 +1137,6 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             ),
             const SizedBox(height: 24),
 
-            // Type de quête
-            Text(
-              'Type de quête',
-              style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w600,
-                color: isDark
-                    ? AppColors.darkTextPrimary
-                    : AppColors.lightTextPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                _buildTypeButton('⚡ Unique', TaskType.single, isDark),
-                const SizedBox(width: 10),
-                _buildTypeButton('🔄 Rituel', TaskType.recurring, isDark),
-                const SizedBox(width: 10),
-                _buildTypeButton('🏆 Épopée', TaskType.objective, isDark),
-              ],
-            ),
             const SizedBox(height: 24),
 
             // Titre
@@ -1285,6 +1202,176 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                     Icon(Icons.notes_outlined, color: AppColors.secondary),
               ),
               maxLines: 2,
+            ),
+            const SizedBox(height: 24),
+
+            // Section Étapes (toujours visible)
+
+            Text(
+              'Étapes de la quête',
+              style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.lightTextPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: isDark
+                    ? AppColors.darkBackground
+                    : AppColors.lightBackground,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color: isDark ? Colors.grey[800]! : Colors.grey[200]!),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    constraints: const BoxConstraints(maxHeight: 200),
+                    child: _subTasks.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              'Aucune étape définie',
+                              style: TextStyle(
+                                color: isDark
+                                    ? Colors.grey[600]
+                                    : Colors.grey[400],
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          )
+                        : ListView.separated(
+                            shrinkWrap: true,
+                            physics: const ClampingScrollPhysics(),
+                            itemCount: _subTasks.length,
+                            separatorBuilder: (_, __) =>
+                                const Divider(height: 1),
+                            itemBuilder: (context, index) {
+                              final sub = _subTasks[index];
+                              return ListTile(
+                                dense: true,
+                                title: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        sub['title'],
+                                        style: GoogleFonts.dmSans(
+                                          color: isDark
+                                              ? AppColors.darkTextPrimary
+                                              : AppColors.lightTextPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            AppColors.tertiary.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        '${sub['seedsReward']} 🌱',
+                                        style: GoogleFonts.dmSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.tertiary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.close,
+                                      size: 18, color: Colors.grey),
+                                  onPressed: () => setState(() {
+                                    _subTasks.removeAt(index);
+                                  }),
+                                ),
+                              );
+                            },
+                          ),
+                  ),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _subTaskController,
+                            style: GoogleFonts.dmSans(fontSize: 14),
+                            decoration: const InputDecoration(
+                              hintText: 'Ajouter une étape...',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 12),
+                            ),
+                            onSubmitted: (_) {
+                              if (_subTaskController.text.isNotEmpty) {
+                                setState(() {
+                                  _subTasks.add({
+                                    'title': _subTaskController.text,
+                                    'completed': false,
+                                    'seedsReward': _currentSubTaskSeeds,
+                                  });
+                                  _subTaskController.clear();
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: AppColors.tertiary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<int>(
+                              value: _currentSubTaskSeeds,
+                              isDense: true,
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  size: 16),
+                              items: [5, 10, 15, 20]
+                                  .map((v) => DropdownMenuItem(
+                                        value: v,
+                                        child: Text('$v 🌱',
+                                            style:
+                                                const TextStyle(fontSize: 12)),
+                                      ))
+                                  .toList(),
+                              onChanged: (v) =>
+                                  setState(() => _currentSubTaskSeeds = v ?? 5),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon:
+                              Icon(Icons.add_circle, color: AppColors.tertiary),
+                          onPressed: () {
+                            if (_subTaskController.text.isNotEmpty) {
+                              setState(() {
+                                _subTasks.add({
+                                  'title': _subTaskController.text,
+                                  'completed': false,
+                                  'seedsReward': _currentSubTaskSeeds,
+                                });
+                                _subTaskController.clear();
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -1389,6 +1476,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             const SizedBox(height: 24),
 
             // Récompense
+
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -1435,46 +1523,71 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             ),
             const SizedBox(height: 24),
 
-            // Options spécifiques selon le type
-            if (_selectedType == TaskType.single) ...[
-              _buildDatePicker(isDark),
-            ],
-
-            if (_selectedType == TaskType.recurring) ...[
-              _buildRecurrenceOptions(isDark),
-            ],
+            _buildDatePicker(isDark),
+            const SizedBox(height: 24),
+            _buildRecurrenceOptions(isDark),
 
             const SizedBox(height: 32),
 
             // Bouton créer
             GestureDetector(
-              onTap: _titleController.text.isEmpty
-                  ? null
-                  : () {
-                      widget.viewModel.createTask(
-                        title: _titleController.text,
-                        description: _descriptionController.text.isEmpty
-                            ? null
-                            : _descriptionController.text,
-                        icon: _selectedIcon,
-                        color: _selectedColor,
-                        type: _selectedType,
-                        seedsReward: _seedsReward,
-                        dueDate: _dueDate,
-                        recurrence: _selectedType == TaskType.recurring &&
-                                _recurrenceFrequency != null
-                            ? RecurrenceConfig(
-                                frequency: _recurrenceFrequency!,
-                                daysOfWeek: _recurrenceFrequency ==
-                                            RecurrenceFrequency.custom &&
-                                        _selectedDays.isNotEmpty
-                                    ? _selectedDays
-                                    : null,
-                              )
-                            : null,
-                      );
-                      Navigator.pop(context);
-                    },
+              onTap: () {
+                if (_titleController.text.isEmpty) return;
+
+                // Validation fréquence perso
+                if (_recurrenceFrequency == RecurrenceFrequency.custom &&
+                    _selectedDays.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content:
+                          Text('Veuillez choisir les jours pour le rituel')));
+                  return;
+                }
+
+                // Déduction du type : Soit Routine, soit Unique
+                TaskType type = TaskType.single;
+                if (_recurrenceFrequency != null) {
+                  type = TaskType.recurring;
+                }
+
+                // Construction des sous-tâches
+                List<SubTask>? subTaskObjects;
+                if (_subTasks.isNotEmpty) {
+                  subTaskObjects = _subTasks.map((s) {
+                    final id =
+                        '${DateTime.now().millisecondsSinceEpoch}_${_subTasks.indexOf(s)}';
+                    return SubTask(
+                      id: id,
+                      title: s['title'],
+                      seedsReward: s['seedsReward'] as int,
+                      completed: false,
+                    );
+                  }).toList();
+                }
+
+                widget.viewModel.createTask(
+                  title: _titleController.text,
+                  description: _descriptionController.text.isEmpty
+                      ? null
+                      : _descriptionController.text,
+                  icon: _selectedIcon,
+                  color: _selectedColor,
+                  type: type,
+                  seedsReward: _seedsReward,
+                  dueDate: _dueDate,
+                  recurrence: _recurrenceFrequency != null
+                      ? RecurrenceConfig(
+                          frequency: _recurrenceFrequency!,
+                          daysOfWeek: _recurrenceFrequency ==
+                                      RecurrenceFrequency.custom &&
+                                  _selectedDays.isNotEmpty
+                              ? _selectedDays
+                              : null,
+                        )
+                      : null,
+                  subTasks: subTaskObjects,
+                );
+                Navigator.pop(context);
+              },
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 18),
@@ -1518,54 +1631,6 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
     );
   }
 
-  Widget _buildTypeButton(String label, TaskType type, bool isDark) {
-    final isSelected = _selectedType == type;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedType = type),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary
-                : (isDark
-                    ? AppColors.darkBackground
-                    : AppColors.lightBackground),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isSelected ? AppColors.primary : Colors.transparent,
-              width: 2,
-            ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: GoogleFonts.dmSans(
-                fontSize: 13,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark
-                        ? AppColors.darkTextPrimary
-                        : AppColors.lightTextPrimary),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildDatePicker(bool isDark) {
     return GestureDetector(
       onTap: () async {
@@ -1587,7 +1652,13 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             );
           },
         );
-        if (date != null) setState(() => _dueDate = date);
+        if (date != null) {
+          setState(() {
+            _dueDate = date;
+            _recurrenceFrequency = null; // Exclusion mutuelle
+            _selectedDays = [];
+          });
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -1633,13 +1704,44 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Fréquence du rituel',
-          style: GoogleFonts.dmSans(
-            fontWeight: FontWeight.w600,
-            color:
-                isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Répéter cette quête ?', // Titre plus explicite
+              style: GoogleFonts.dmSans(
+                fontWeight: FontWeight.w600,
+                color: isDark
+                    ? AppColors.darkTextPrimary
+                    : AppColors.lightTextPrimary,
+              ),
+            ),
+            if (_recurrenceFrequency != null)
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _recurrenceFrequency = null;
+                    _selectedDays = [];
+                  });
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Non, unique',
+                    style: TextStyle(
+                      color: Colors.red[400],
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -1667,6 +1769,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
               onTap: () {
                 setState(() {
                   _recurrenceFrequency = freq;
+                  _dueDate = null; // Exclusion mutuelle
                   if (freq != RecurrenceFrequency.custom) {
                     _selectedDays = [];
                   }
@@ -1739,74 +1842,6 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             ],
           ),
         ],
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: () => setState(() => _isGroupedTask = !_isGroupedTask),
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: _isGroupedTask
-                  ? AppColors.accent.withOpacity(0.15)
-                  : (isDark
-                      ? AppColors.darkBackground
-                      : AppColors.lightBackground),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: _isGroupedTask ? AppColors.accent : Colors.transparent,
-                width: 2,
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color:
-                        _isGroupedTask ? AppColors.accent : Colors.transparent,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: _isGroupedTask
-                          ? AppColors.accent
-                          : (isDark ? Colors.grey[600]! : Colors.grey[400]!),
-                      width: 2,
-                    ),
-                  ),
-                  child: _isGroupedTask
-                      ? const Icon(Icons.check_rounded,
-                          size: 16, color: Colors.white)
-                      : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Rituel groupé',
-                        style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? AppColors.darkTextPrimary
-                              : AppColors.lightTextPrimary,
-                        ),
-                      ),
-                      Text(
-                        'Permet d\'ajouter plusieurs étapes',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 12,
-                          color: isDark
-                              ? AppColors.darkTextSecondary
-                              : AppColors.lightTextSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }

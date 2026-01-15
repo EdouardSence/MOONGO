@@ -19,6 +19,7 @@ class SubTask {
   final bool completed;
   final DateTime? completedAt;
   final int order;
+  final int seedsReward;
 
   SubTask({
     required this.id,
@@ -26,6 +27,7 @@ class SubTask {
     this.completed = false,
     this.completedAt,
     this.order = 0,
+    this.seedsReward = 5,
   });
 
   factory SubTask.fromMap(Map<String, dynamic> data) {
@@ -35,6 +37,7 @@ class SubTask {
       completed: data['completed'] ?? false,
       completedAt: (data['completedAt'] as Timestamp?)?.toDate(),
       order: data['order'] ?? 0,
+      seedsReward: data['seedsReward'] ?? 5,
     );
   }
 
@@ -46,6 +49,7 @@ class SubTask {
       'completedAt':
           completedAt != null ? Timestamp.fromDate(completedAt!) : null,
       'order': order,
+      'seedsReward': seedsReward,
     };
   }
 
@@ -55,6 +59,7 @@ class SubTask {
     bool? completed,
     DateTime? completedAt,
     int? order,
+    int? seedsReward,
   }) {
     return SubTask(
       id: id ?? this.id,
@@ -62,6 +67,7 @@ class SubTask {
       completed: completed ?? this.completed,
       completedAt: completedAt ?? this.completedAt,
       order: order ?? this.order,
+      seedsReward: seedsReward ?? this.seedsReward,
     );
   }
 }
@@ -270,20 +276,46 @@ class TaskModel {
   }
 
   // Vérifie si c'est dans la semaine
+  // Vérifie si c'est dans la semaine
   bool get isDueThisWeek {
+    // Si c'est un objectif, c'est un projet long terme donc visible
+    if (type == TaskType.objective) return true;
+
+    // Si c'est une routine
+    if (type == TaskType.recurring) {
+      // Daily et Weekly sont forcément dûs cette semaine
+      if (recurrence?.frequency == RecurrenceFrequency.daily ||
+          recurrence?.frequency == RecurrenceFrequency.weekly) return true;
+
+      // Pour monthly et custom, on simplifie en disant qu'ils apparaissent
+      return true;
+    }
+
+    // Pour les tâches uniques
     final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final endOfWeek = startOfWeek.add(const Duration(days: 6));
+    // Début de semaine (Lundi)
+    final startOfWeek =
+        DateTime(now.year, now.month, now.day - (now.weekday - 1));
+    final endOfWeek =
+        startOfWeek.add(const Duration(days: 6, hours: 23, minutes: 59));
 
     if (dueDate == null) return true;
-    return dueDate!.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
-        dueDate!.isBefore(endOfWeek.add(const Duration(days: 1)));
+
+    // Si la date est avant la fin de semaine (inclut les tâches en retard)
+    return dueDate!.isBefore(endOfWeek) || dueDate!.isAtSameMomentAs(endOfWeek);
   }
 
   // Vérifie si c'est dans le mois
   bool get isDueThisMonth {
+    // Objectifs et routines sont toujours pertinents pour la vue mensuelle
+    if (type == TaskType.objective || type == TaskType.recurring) return true;
+
+    // Pour les tâches uniques
     final now = DateTime.now();
-    if (dueDate == null) return true;
-    return dueDate!.year == now.year && dueDate!.month == now.month;
+    if (dueDate == null) return true; // Sans date = visible partout
+
+    // Si c'est ce mois-ci ou avant (en retard)
+    return (dueDate!.year == now.year && dueDate!.month == now.month) ||
+        dueDate!.isBefore(DateTime(now.year, now.month, 1));
   }
 }

@@ -1,14 +1,21 @@
-import 'package:stacked/stacked.dart';
+import 'package:flutter/widgets.dart';
 import 'package:moongo/app/app.locator.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/shop_item_model.dart';
 import 'package:moongo/models/user_model.dart';
 import 'package:moongo/services/authentication_service.dart';
 import 'package:moongo/services/firestore_service.dart';
+import 'package:stacked/stacked.dart';
+import 'package:stacked_services/stacked_services.dart';
 
 class ShopViewModel extends BaseViewModel {
   final _firestoreService = locator<FirestoreService>();
   final _authService = locator<AuthenticationService>();
+  final _dialogService = locator<DialogService>();
+
+  final ScrollController scrollController = ScrollController();
+  bool _showStickyHeader = false;
+  bool get showStickyHeader => _showStickyHeader;
 
   UserModel? _user;
   List<CreatureModel> _creatures = [];
@@ -20,6 +27,23 @@ class ShopViewModel extends BaseViewModel {
 
   void init() {
     _loadData();
+    scrollController.addListener(_onHeaderScroll);
+  }
+
+  void _onHeaderScroll() {
+    if (scrollController.hasClients) {
+      final show = scrollController.offset > 160;
+      if (show != _showStickyHeader) {
+        _showStickyHeader = show;
+        notifyListeners();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -43,7 +67,24 @@ class ShopViewModel extends BaseViewModel {
 
   Future<bool> feedCreature(CreatureModel creature, FoodItem food) async {
     if (_userId == null || seeds < food.price) return false;
-    return await _firestoreService.feedCreature(
-        _userId!, creature, food, seeds);
+
+    // Check theoretical evolution
+    final willLevelUp =
+        (creature.currentXp + food.xpGiven) >= creature.xpToNextLevel &&
+            !creature.isMaxLevel;
+
+    final success =
+        await _firestoreService.feedCreature(_userId!, creature, food, seeds);
+
+    if (success && willLevelUp) {
+      await _dialogService.showDialog(
+        title: '🎉 Niveau Supérieur !',
+        description: '${creature.name} a évolué et devient plus fort !',
+        buttonTitle: 'Génial !',
+        barrierDismissible: true,
+      );
+    }
+
+    return success;
   }
 }
