@@ -5,6 +5,7 @@ import 'package:stacked/stacked.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/task_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/creature_image.dart';
 
 import 'home_viewmodel.dart';
 
@@ -419,7 +420,14 @@ class HomeView extends StackedView<HomeViewModel> {
                   width: 2,
                 ),
               ),
-              child: Text(creature.emoji, style: const TextStyle(fontSize: 34)),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CreatureImage(
+                  creature: creature,
+                  size: 50,
+                  useParcImage: true,
+                ),
+              ),
             ),
             const SizedBox(height: 6),
             // Nom avec badge

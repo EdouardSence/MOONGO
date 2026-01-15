@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/creature_image.dart';
 import 'package:stacked/stacked.dart';
 
 import 'collection_viewmodel.dart';
@@ -444,30 +445,10 @@ class CollectionView extends StackedView<CollectionViewModel> {
                       ),
                       shape: BoxShape.circle,
                     ),
-                    child: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Color(colors[0]).withOpacity(0.5),
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(colors[0]).withOpacity(0.4),
-                            blurRadius: 12,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          creature.emoji,
-                          style: const TextStyle(fontSize: 34),
-                        ),
-                      ),
+                    child: CreatureImageWithGlow(
+                      creature: creature,
+                      size: 60,
+                      useParcImage: true,
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -609,17 +590,17 @@ class CollectionView extends StackedView<CollectionViewModel> {
                     shape: BoxShape.circle,
                   ),
                 ),
-                // Créature principale
+                // Créature principale avec image (rectangle arrondi horizontal)
                 Container(
-                  width: 110,
-                  height: 110,
+                  width: 220,
+                  height: 160,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [Color(colors[0]), Color(colors[1])],
                     ),
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: Colors.white.withOpacity(0.4),
                       width: 3,
@@ -632,10 +613,12 @@ class CollectionView extends StackedView<CollectionViewModel> {
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: Text(
-                      creature.emoji,
-                      style: const TextStyle(fontSize: 60),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(21),
+                    child: CreatureImage(
+                      creature: creature,
+                      size: 220,
+                      useParcImage: false,
                     ),
                   ),
                 ),

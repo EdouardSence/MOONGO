@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/shop_item_model.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/creature_image.dart';
 import 'package:stacked/stacked.dart';
 
 import 'shop_viewmodel.dart';
@@ -941,10 +942,12 @@ class ShopView extends StackedView<ShopViewModel> {
                                   ),
                                 ],
                         ),
-                        child: Center(
-                          child: Text(
-                            creature.emoji,
-                            style: const TextStyle(fontSize: 24),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: CreatureImage(
+                            creature: creature,
+                            size: 48,
+                            useParcImage: false,
                           ),
                         ),
                       ),
@@ -1146,10 +1149,11 @@ class ShopView extends StackedView<ShopViewModel> {
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        creature.emoji,
-                        style: const TextStyle(fontSize: 48),
+                    child: ClipOval(
+                      child: CreatureImage(
+                        creature: creature,
+                        size: 90,
+                        useParcImage: false,
                       ),
                     ),
                   ),

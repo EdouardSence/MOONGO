@@ -285,17 +285,56 @@ class FirestoreService {
   // CREATURES
   // ═══════════════════════════════════════════
 
-  /// Récupère toutes les créatures de l'utilisateur
+  // Cache des espèces pour éviter les requêtes répétées
+  Map<String, CreatureSpecies>? _speciesCache;
+
+  /// Charge et cache toutes les espèces
+  Future<Map<String, CreatureSpecies>> _loadSpeciesCache() async {
+    if (_speciesCache != null) return _speciesCache!;
+
+    final species = await getAllSpecies();
+    _speciesCache = {for (var s in species) s.speciesId: s};
+
+    // Debug log
+    print('🔄 Species cache loaded: ${_speciesCache!.length} species');
+    for (var entry in _speciesCache!.entries) {
+      print('   ${entry.key}: basePicture=${entry.value.basePicture}');
+    }
+
+    return _speciesCache!;
+  }
+
+  /// Invalide le cache des espèces (à appeler si les espèces sont mises à jour)
+  void invalidateSpeciesCache() {
+    _speciesCache = null;
+  }
+
+  /// Récupère une espèce par son ID (depuis le cache)
+  Future<CreatureSpecies?> getSpeciesById(String speciesId) async {
+    final cache = await _loadSpeciesCache();
+    return cache[speciesId];
+  }
+
+  /// Récupère toutes les créatures de l'utilisateur (avec données d'espèce)
   Stream<List<CreatureModel>> creaturesStream(String userId) {
     return _db
         .collection('creatures')
         .where('userId', isEqualTo: userId)
         .orderBy('obtainedAt', descending: true)
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => CreatureModel.fromFirestore(doc))
-          .toList();
+        .asyncMap((snapshot) async {
+      // Charger le cache des espèces
+      final speciesCache = await _loadSpeciesCache();
+
+      // Enrichir chaque créature avec ses données d'espèce
+      return snapshot.docs.map((doc) {
+        final creature = CreatureModel.fromFirestore(doc);
+        final speciesData = speciesCache[creature.speciesId];
+        if (speciesData != null) {
+          return creature.withSpeciesData(speciesData);
+        }
+        return creature;
+      }).toList();
     });
   }
 
@@ -359,7 +398,7 @@ class FirestoreService {
       return null;
     }
 
-    // Créer la créature
+    // Créer la créature avec les données d'espèce
     final now = DateTime.now();
     final creatureId = _uuid.v4();
     final name = species.getNameForStage(1); // Nom du stade 1
@@ -373,6 +412,7 @@ class FirestoreService {
       obtainedFrom: egg.id,
       obtainedAt: now,
       createdAt: now,
+      speciesData: species, // Inclure les données d'espèce
     );
 
     await _db

@@ -101,6 +101,17 @@ service cloud.firestore {
     }
 
     // ═══════════════════════════════════════════
+    // CREATURE_SPECIES - Données de référence des espèces
+    // (lecture autorisée pour tous les utilisateurs authentifiés)
+    // ═══════════════════════════════════════════
+    match /creature_species/{speciesId} {
+      allow read: if isAuthenticated();
+      
+      // Écriture réservée aux admins (via Firebase Admin SDK / console)
+      allow write: if false;
+    }
+
+    // ═══════════════════════════════════════════
     // SHOP_TRANSACTIONS - Historique achats (immutable)
     // ═══════════════════════════════════════════
     match /shop_transactions/{transactionId} {

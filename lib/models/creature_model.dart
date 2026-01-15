@@ -8,15 +8,14 @@ enum CreatureRarity {
 }
 
 /// Représente une espèce de créature avec sa chaîne d'évolution
+/// Les données sont chargées depuis Firestore (collection: creature_species)
 class CreatureSpecies {
   final String speciesId;
-  final List<String>
-      evolutionNames; // Noms à chaque stade (ex: ['Moongo', 'Ivy', 'Daisy'])
-  final List<int>
-      evolutionLevels; // Niveaux requis pour évoluer (ex: [10, 25] = évolue au niveau 10 puis 25)
-  final List<String> evolutionEmojis; // Emojis à chaque stade
+  final List<String> evolutionNames;
+  final List<int> evolutionLevels;
+  final List<String> evolutionEmojis;
   final CreatureRarity baseRarity;
-  final int baseLevel; // Niveau de départ de la créature
+  final int baseLevel;
   final String basePicture; // URL de l'image principale (grande)
   final String parcPicture; // URL de l'image pour le parc (petite)
 
@@ -30,6 +29,15 @@ class CreatureSpecies {
     this.basePicture = '',
     this.parcPicture = '',
   });
+
+  /// Espèce par défaut (fallback)
+  static const CreatureSpecies defaultSpecies = CreatureSpecies(
+    speciesId: 'unknown',
+    evolutionNames: ['Créature'],
+    evolutionLevels: [],
+    evolutionEmojis: ['❓'],
+    baseRarity: CreatureRarity.common,
+  );
 
   int get maxStage => evolutionNames.length;
   bool get canEvolve => evolutionNames.length > 1;
@@ -58,11 +66,16 @@ class CreatureSpecies {
   /// Crée une espèce depuis un document Firestore
   factory CreatureSpecies.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    return CreatureSpecies.fromMap(data, doc.id);
+  }
+
+  /// Crée une espèce depuis une Map
+  factory CreatureSpecies.fromMap(Map<String, dynamic> data, [String? docId]) {
     return CreatureSpecies(
-      speciesId: data['speciesId'] ?? doc.id,
-      evolutionNames: List<String>.from(data['evolutionNames'] ?? []),
+      speciesId: data['speciesId'] ?? docId ?? 'unknown',
+      evolutionNames: List<String>.from(data['evolutionNames'] ?? ['Créature']),
       evolutionLevels: List<int>.from(data['evolutionLevels'] ?? []),
-      evolutionEmojis: List<String>.from(data['evolutionEmojis'] ?? []),
+      evolutionEmojis: List<String>.from(data['evolutionEmojis'] ?? ['❓']),
       baseRarity: CreatureRarity.values.firstWhere(
         (e) => e.name == data['baseRarity'],
         orElse: () => CreatureRarity.common,
@@ -88,174 +101,24 @@ class CreatureSpecies {
   }
 }
 
-/// Définition de toutes les espèces de créatures disponibles
-class CreatureSpeciesData {
-  static const Map<String, CreatureSpecies> species = {
-    // ═══════════════════════════════════════════
-    // CRÉATURES COMMUNES (3 stades max)
-    // ═══════════════════════════════════════════
-    'moongo': CreatureSpecies(
-      speciesId: 'moongo',
-      evolutionNames: ['Moongo', 'Ivy', 'Daisy'],
-      evolutionLevels: [10, 25],
-      evolutionEmojis: ['🌱', '🌿', '🌸'],
-      baseRarity: CreatureRarity.common,
-    ),
-    'seedling': CreatureSpecies(
-      speciesId: 'seedling',
-      evolutionNames: ['Seedling', 'Sprout', 'Bloom'],
-      evolutionLevels: [8, 20],
-      evolutionEmojis: ['🌰', '🌱', '🌻'],
-      baseRarity: CreatureRarity.common,
-    ),
-    'pebble': CreatureSpecies(
-      speciesId: 'pebble',
-      evolutionNames: ['Pebble', 'Boulder'],
-      evolutionLevels: [15],
-      evolutionEmojis: ['🪨', '⛰️'],
-      baseRarity: CreatureRarity.common,
-    ),
-    'droplet': CreatureSpecies(
-      speciesId: 'droplet',
-      evolutionNames: ['Droplet', 'Splash', 'Tsunami'],
-      evolutionLevels: [12, 28],
-      evolutionEmojis: ['💧', '🌊', '🌀'],
-      baseRarity: CreatureRarity.common,
-    ),
-    'ember': CreatureSpecies(
-      speciesId: 'ember',
-      evolutionNames: ['Ember', 'Flame', 'Inferno'],
-      evolutionLevels: [10, 30],
-      evolutionEmojis: ['🔥', '🔶', '☀️'],
-      baseRarity: CreatureRarity.common,
-    ),
-
-    // ═══════════════════════════════════════════
-    // CRÉATURES RARES (2-3 stades)
-    // ═══════════════════════════════════════════
-    'glimmer': CreatureSpecies(
-      speciesId: 'glimmer',
-      evolutionNames: ['Glimmer', 'Sparkle', 'Radiant'],
-      evolutionLevels: [15, 35],
-      evolutionEmojis: ['✨', '💫', '⭐'],
-      baseRarity: CreatureRarity.rare,
-    ),
-    'breeze': CreatureSpecies(
-      speciesId: 'breeze',
-      evolutionNames: ['Breeze', 'Gust', 'Cyclone'],
-      evolutionLevels: [12, 30],
-      evolutionEmojis: ['🍃', '💨', '🌪️'],
-      baseRarity: CreatureRarity.rare,
-    ),
-    'crystal': CreatureSpecies(
-      speciesId: 'crystal',
-      evolutionNames: ['Crystal', 'Prism'],
-      evolutionLevels: [20],
-      evolutionEmojis: ['💎', '🔮'],
-      baseRarity: CreatureRarity.rare,
-    ),
-    'frosty': CreatureSpecies(
-      speciesId: 'frosty',
-      evolutionNames: ['Frosty', 'Glacier', 'Blizzard'],
-      evolutionLevels: [14, 32],
-      evolutionEmojis: ['❄️', '🧊', '☃️'],
-      baseRarity: CreatureRarity.rare,
-    ),
-
-    // ═══════════════════════════════════════════
-    // CRÉATURES ÉPIQUES (2 stades)
-    // ═══════════════════════════════════════════
-    'shadow': CreatureSpecies(
-      speciesId: 'shadow',
-      evolutionNames: ['Shadow', 'Phantom'],
-      evolutionLevels: [25],
-      evolutionEmojis: ['👤', '👻'],
-      baseRarity: CreatureRarity.epic,
-    ),
-    'thunder': CreatureSpecies(
-      speciesId: 'thunder',
-      evolutionNames: ['Thunder', 'Storm', 'Tempest'],
-      evolutionLevels: [18, 40],
-      evolutionEmojis: ['⚡', '🌩️', '⛈️'],
-      baseRarity: CreatureRarity.epic,
-    ),
-    'nebula': CreatureSpecies(
-      speciesId: 'nebula',
-      evolutionNames: ['Nebula', 'Galaxy'],
-      evolutionLevels: [30],
-      evolutionEmojis: ['🌌', '🪐'],
-      baseRarity: CreatureRarity.epic,
-    ),
-
-    // ═══════════════════════════════════════════
-    // CRÉATURES LÉGENDAIRES (1-2 stades, n'évoluent pas ou peu)
-    // ═══════════════════════════════════════════
-    'phoenix': CreatureSpecies(
-      speciesId: 'phoenix',
-      evolutionNames: ['Phoenix', 'Eternal Phoenix'],
-      evolutionLevels: [50],
-      evolutionEmojis: ['🦅', '🔥'],
-      baseRarity: CreatureRarity.legendary,
-    ),
-    'dragon': CreatureSpecies(
-      speciesId: 'dragon',
-      evolutionNames: ['Wyrmling', 'Dragon', 'Elder Dragon'],
-      evolutionLevels: [30, 60],
-      evolutionEmojis: ['🐉', '🐲', '👑'],
-      baseRarity: CreatureRarity.legendary,
-    ),
-    'celestial': CreatureSpecies(
-      speciesId: 'celestial',
-      evolutionNames: ['Celestial'],
-      evolutionLevels: [],
-      evolutionEmojis: ['🌟'],
-      baseRarity: CreatureRarity.legendary,
-    ),
-    'unicorn': CreatureSpecies(
-      speciesId: 'unicorn',
-      evolutionNames: ['Unicorn'],
-      evolutionLevels: [],
-      evolutionEmojis: ['🦄'],
-      baseRarity: CreatureRarity.legendary,
-    ),
-  };
-
-  /// Récupère une espèce par son ID
-  static CreatureSpecies? getSpecies(String speciesId) {
-    return species[speciesId];
-  }
-
-  /// Récupère toutes les espèces d'une rareté donnée
-  static List<CreatureSpecies> getSpeciesByRarity(CreatureRarity rarity) {
-    return species.values.where((s) => s.baseRarity == rarity).toList();
-  }
-
-  /// Récupère une espèce aléatoire selon la rareté
-  static CreatureSpecies getRandomSpeciesByRarity(CreatureRarity rarity) {
-    final speciesList = getSpeciesByRarity(rarity);
-    if (speciesList.isEmpty) {
-      // Fallback sur Moongo si aucune espèce trouvée
-      return species['moongo']!;
-    }
-    speciesList.shuffle();
-    return speciesList.first;
-  }
-}
-
+/// Modèle d'une créature possédée par un utilisateur
 class CreatureModel {
   final String creatureId;
   final String userId;
-  final String speciesId; // ID de l'espèce (ex: 'moongo')
-  final String name; // Nom actuel selon le stade d'évolution
+  final String speciesId;
+  final String name;
   final CreatureRarity rarity;
-  final int evolutionStage; // 1 à 3 (max selon l'espèce)
-  final int level; // Niveau de la créature (1-100)
+  final int evolutionStage;
+  final int level;
   final int currentXp;
   final int totalXp;
-  final String obtainedFrom; // basic_egg, premium_egg, legendary_egg
+  final String obtainedFrom;
   final DateTime obtainedAt;
   final DateTime createdAt;
   final DateTime? lastFedAt;
+
+  // Données de l'espèce (chargées depuis Firestore)
+  final CreatureSpecies? _speciesData;
 
   CreatureModel({
     required this.creatureId,
@@ -271,32 +134,54 @@ class CreatureModel {
     required this.obtainedAt,
     required this.createdAt,
     this.lastFedAt,
-  });
+    CreatureSpecies? speciesData,
+  }) : _speciesData = speciesData;
 
-  /// Récupère les données de l'espèce
-  CreatureSpecies get species =>
-      CreatureSpeciesData.getSpecies(speciesId) ??
-      CreatureSpeciesData.species['moongo']!;
+  /// Récupère les données de l'espèce (fallback si non chargées)
+  CreatureSpecies get species => _speciesData ?? CreatureSpecies.defaultSpecies;
 
-  // Emojis par stade d'évolution (legacy, pour compatibilité)
-  static const Map<int, String> stageEmojis = {
-    1: '🌱',
-    2: '🌿',
-    3: '🌸',
-  };
+  /// Met à jour les données de l'espèce
+  CreatureModel withSpeciesData(CreatureSpecies speciesData) {
+    return copyWith(speciesData: speciesData);
+  }
 
-  // XP requis pour passer au niveau suivant
+  // ═══════════════════════════════════════════
+  // IMAGES
+  // ═══════════════════════════════════════════
+
+  /// URL de l'image principale (ou null si pas disponible)
+  String? get basePictureUrl {
+    final url = species.basePicture;
+    return url.isNotEmpty ? url : null;
+  }
+
+  /// URL de l'image du parc (ou null si pas disponible)
+  String? get parcPictureUrl {
+    final url = species.parcPicture;
+    return url.isNotEmpty ? url : null;
+  }
+
+  /// Vérifie si une image principale est disponible
+  bool get hasBasePicture => basePictureUrl != null;
+
+  /// Vérifie si une image de parc est disponible
+  bool get hasParcPicture => parcPictureUrl != null;
+
+  // ═══════════════════════════════════════════
+  // XP & NIVEAUX
+  // ═══════════════════════════════════════════
+
+  /// XP requis pour passer au niveau suivant
   static int xpRequiredForLevel(int level) {
-    // Formule progressive: les niveaux supérieurs demandent plus d'XP
     return 10 + (level * 5);
   }
 
-  // Couleurs par rareté
+  /// Couleurs par rareté [couleur1, couleur2] pour les dégradés
   static Map<CreatureRarity, List<int>> rarityColors = {
-    CreatureRarity.common: [0xFF9CA3AF, 0xFF6B7280], // Gris
-    CreatureRarity.rare: [0xFF60A5FA, 0xFF3B82F6], // Bleu
-    CreatureRarity.epic: [0xFFA855F7, 0xFFEC4899], // Violet-Rose
-    CreatureRarity.legendary: [0xFFFBBF24, 0xFFF97316], // Jaune-Orange
+    CreatureRarity.common: [0xFF9CA3AF, 0xFF6B7280],
+    CreatureRarity.rare: [0xFF60A5FA, 0xFF3B82F6],
+    CreatureRarity.epic: [0xFFA855F7, 0xFFEC4899],
+    CreatureRarity.legendary: [0xFFFBBF24, 0xFFF97316],
   };
 
   String get emoji => species.getEmojiForStage(evolutionStage);
@@ -312,7 +197,6 @@ class CreatureModel {
     return currentXp / xpToNextLevel;
   }
 
-  /// Vérifie si la créature peut évoluer au niveau actuel
   bool get canEvolve {
     if (isMaxEvolution) return false;
     final requiredLevel = species.getLevelForNextEvolution(evolutionStage);
@@ -320,15 +204,17 @@ class CreatureModel {
     return level >= requiredLevel;
   }
 
-  /// Retourne le niveau requis pour la prochaine évolution
   int? get levelForNextEvolution =>
       species.getLevelForNextEvolution(evolutionStage);
 
-  /// Retourne le nom de la prochaine évolution
   String? get nextEvolutionName {
     if (isMaxEvolution) return null;
     return species.getNameForStage(evolutionStage + 1);
   }
+
+  // ═══════════════════════════════════════════
+  // LABELS
+  // ═══════════════════════════════════════════
 
   String get rarityLabel {
     switch (rarity) {
@@ -346,7 +232,7 @@ class CreatureModel {
   String get rarityEmoji {
     switch (rarity) {
       case CreatureRarity.common:
-        return '🔘';
+        return '⚪';
       case CreatureRarity.rare:
         return '🔵';
       case CreatureRarity.epic:
@@ -356,23 +242,18 @@ class CreatureModel {
     }
   }
 
+  // ═══════════════════════════════════════════
+  // FIRESTORE
+  // ═══════════════════════════════════════════
+
   factory CreatureModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
-    // Récupérer le speciesId ou le déduire du nom pour rétrocompatibilité
-    String speciesId = data['speciesId'] ?? 'moongo';
-
-    // Si pas de speciesId stocké, essayer de le déduire du nom
-    if (data['speciesId'] == null && data['name'] != null) {
-      final nameToCheck = (data['name'] as String).toLowerCase();
-      for (final entry in CreatureSpeciesData.species.entries) {
-        for (final evolutionName in entry.value.evolutionNames) {
-          if (evolutionName.toLowerCase() == nameToCheck) {
-            speciesId = entry.key;
-            break;
-          }
-        }
-      }
+    // Essayer de déduire le speciesId à partir du nom si non présent
+    String speciesId = data['speciesId'] ?? 'unknown';
+    if (speciesId == 'unknown' && data['name'] != null) {
+      // Convertir le nom en speciesId (ex: "Moongo" -> "moongo")
+      speciesId = (data['name'] as String).toLowerCase().trim();
     }
 
     return CreatureModel(
@@ -414,6 +295,10 @@ class CreatureModel {
     };
   }
 
+  // ═══════════════════════════════════════════
+  // COPY & UPDATE
+  // ═══════════════════════════════════════════
+
   CreatureModel copyWith({
     String? creatureId,
     String? userId,
@@ -428,6 +313,7 @@ class CreatureModel {
     DateTime? obtainedAt,
     DateTime? createdAt,
     DateTime? lastFedAt,
+    CreatureSpecies? speciesData,
   }) {
     return CreatureModel(
       creatureId: creatureId ?? this.creatureId,
@@ -443,11 +329,11 @@ class CreatureModel {
       obtainedAt: obtainedAt ?? this.obtainedAt,
       createdAt: createdAt ?? this.createdAt,
       lastFedAt: lastFedAt ?? this.lastFedAt,
+      speciesData: speciesData ?? _speciesData,
     );
   }
 
   /// Ajouter de l'XP, gérer les niveaux et l'évolution
-  /// Retourne la créature mise à jour avec éventuellement un nouveau niveau/stade
   CreatureModel addXp(int xpAmount) {
     if (isMaxLevel) return this;
 
@@ -457,14 +343,10 @@ class CreatureModel {
     int newStage = evolutionStage;
     String newName = name;
 
-    // Monter de niveau tant qu'on a assez d'XP
-    while (!isMaxLevel &&
-        newLevel < 100 &&
-        newXp >= xpRequiredForLevel(newLevel)) {
+    while (newLevel < 100 && newXp >= xpRequiredForLevel(newLevel)) {
       newXp -= xpRequiredForLevel(newLevel);
       newLevel++;
 
-      // Vérifier si on peut évoluer à ce niveau
       final requiredLevel = species.getLevelForNextEvolution(newStage);
       if (requiredLevel != null &&
           newLevel >= requiredLevel &&
