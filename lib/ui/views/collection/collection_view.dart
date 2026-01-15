@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
 import 'package:moongo/models/creature_model.dart';
+import 'package:stacked/stacked.dart';
 
 import 'collection_viewmodel.dart';
 
@@ -166,7 +166,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                'Nv. ${creature.evolutionStage}',
+                'Nv. ${creature.level}',
                 style: const TextStyle(
                   fontSize: 10,
                   color: Colors.white,
@@ -256,15 +256,17 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   children: [
+                    // Niveau actuel
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Stade ${creature.evolutionStage} → ${creature.evolutionStage + 1}',
-                          style: const TextStyle(fontWeight: FontWeight.w500),
+                          'Niveau ${creature.level}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         Text(
-                          '${creature.currentXp}/${creature.xpToNextStage} XP',
+                          '${creature.currentXp}/${creature.xpToNextLevel} XP',
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 12),
                         ),
@@ -274,13 +276,66 @@ class CollectionView extends StackedView<CollectionViewModel> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: LinearProgressIndicator(
-                        value: creature.progressToNextStage,
+                        value: creature.progressToNextLevel,
                         backgroundColor: Colors.grey[200],
                         valueColor:
                             AlwaysStoppedAnimation<Color>(Color(colors[0])),
                         minHeight: 10,
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    // Info évolution
+                    if (!creature.isMaxEvolution) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Color(colors[0]).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.auto_awesome,
+                                size: 16, color: Colors.amber),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Évolue en ${creature.nextEvolutionName} au Nv. ${creature.levelForNextEvolution}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(colors[0]),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.check_circle,
+                                size: 16, color: Colors.green),
+                            SizedBox(width: 6),
+                            Text(
+                              'Évolution complète !',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.green,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

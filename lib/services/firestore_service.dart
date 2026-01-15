@@ -309,15 +309,18 @@ class FirestoreService {
     // Tirer la rareté
     final rarity = _rollRarity(egg.dropRates);
 
+    // Récupérer une espèce aléatoire correspondant à la rareté
+    final species = CreatureSpeciesData.getRandomSpeciesByRarity(rarity);
+
     // Créer la créature
     final now = DateTime.now();
     final creatureId = _uuid.v4();
-    final name = CreatureModel
-        .randomNames[Random().nextInt(CreatureModel.randomNames.length)];
+    final name = species.getNameForStage(1); // Nom du stade 1
 
     final creature = CreatureModel(
       creatureId: creatureId,
       userId: userId,
+      speciesId: species.speciesId,
       name: name,
       rarity: rarity,
       obtainedFrom: egg.id,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stacked/stacked.dart';
 import 'package:moongo/models/creature_model.dart';
 import 'package:moongo/models/shop_item_model.dart';
+import 'package:stacked/stacked.dart';
 
 import 'shop_viewmodel.dart';
 
@@ -381,7 +381,7 @@ class ShopView extends StackedView<ShopViewModel> {
                     ? const Text('Niveau max !',
                         style: TextStyle(color: Colors.amber))
                     : Text(
-                        '${creature.currentXp}/${creature.xpToNextStage} XP'),
+                        'Nv. ${creature.level} - ${creature.currentXp}/${creature.xpToNextLevel} XP'),
                 enabled: !creature.isMaxLevel,
                 onTap: creature.isMaxLevel
                     ? null
