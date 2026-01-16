@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/widgets/textured_background.dart';
 
 /// Fond enchanté avec dégradé forestier
 class EnchantedBackground extends StatelessWidget {
@@ -9,28 +10,23 @@ class EnchantedBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDark
-              ? [
-                  AppColors.darkBackground,
-                  AppColors.darkSurface,
-                  AppColors.darkBackground.withValues(alpha: 0.95),
-                ]
-              : [
-                  AppColors.lightBackground,
-                  AppColors.lightSurface,
-                  AppColors.lightBackground,
-                ],
-        ),
+    return TexturedBackground(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: isDark
+            ? [
+                AppColors.darkBackground,
+                AppColors.darkSurface,
+                AppColors.darkBackground.withValues(alpha: 0.95),
+              ]
+            : [
+                AppColors.lightBackground,
+                AppColors.lightSurface,
+                AppColors.lightBackground,
+              ],
       ),
-      child: CustomPaint(
-        painter: ScrollTexturePainter(isDark: isDark),
-        child: const SizedBox.expand(),
-      ),
+      painter: ScrollTexturePainter(isDark: isDark),
     );
   }
 }
