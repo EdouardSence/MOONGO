@@ -110,4 +110,17 @@ class ProfileViewModel extends BaseViewModel {
     await _authService.signOut();
     _navigationService.clearStackAndShow(Routes.loginView);
   }
+
+  String formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String formatMemberSince(DateTime? date) {
+    if (date == null) return '-';
+    final now = DateTime.now();
+    final diff = now.difference(date);
+    if (diff.inDays < 30) return '${diff.inDays}j';
+    if (diff.inDays < 365) return '${diff.inDays ~/ 30}m';
+    return '${diff.inDays ~/ 365}a';
+  }
 }

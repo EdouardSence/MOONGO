@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/ui/common/app_theme.dart';
 import 'package:stacked/stacked.dart';
 
+import '_widgets/profile_widgets.dart';
 import 'profile_viewmodel.dart';
 
 /// Profile View avec esthétique "Carte d'Aventurier" - Style parchemin héroïque
@@ -14,37 +15,58 @@ class ProfileView extends StackedView<ProfileViewModel> {
       BuildContext context, ProfileViewModel viewModel, Widget? child) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final birthDateText = viewModel.user?.birthDate == null
+        ? null
+        : viewModel.formatDate(viewModel.user!.birthDate!);
+    final memberSinceText =
+        viewModel.formatMemberSince(viewModel.user?.createdAt);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
           // Fond avec texture parchemin
-          _buildParchmentBackground(context),
+          ProfileBackground(isDark: isDark),
 
           // Contenu
           viewModel.isBusy
-              ? _buildLoadingState(context)
+              ? const ProfileLoadingState()
               : CustomScrollView(
                   slivers: [
                     // En-tête héroïque
                     SliverToBoxAdapter(
-                      child: _buildHeroHeader(context, viewModel),
+                      child: ProfileHeroHeader(
+                        viewModel: viewModel,
+                        onSettingsTap: () =>
+                            _showSettingsSheet(context, viewModel),
+                        onAvatarTap: () =>
+                            _showAvatarPicker(context, viewModel),
+                        birthDateText: birthDateText,
+                      ),
                     ),
 
                     // Carte de flamme (streak)
                     SliverToBoxAdapter(
-                      child: _buildFlameCard(viewModel, isDark),
+                      child: FlameCard(
+                        currentStreak: viewModel.user?.currentStreak ?? 0,
+                        longestStreak: viewModel.user?.longestStreak ?? 0,
+                      ),
                     ),
 
                     // Statistiques d'aventurier
                     SliverToBoxAdapter(
-                      child: _buildStatsSection(context, viewModel),
+                      child: StatsSection(
+                        viewModel: viewModel,
+                        memberSinceText: memberSinceText,
+                      ),
                     ),
 
                     // Actions
                     SliverToBoxAdapter(
-                      child: _buildActionsSection(context, viewModel, isDark),
+                      child: ActionsSection(
+                        onLogout: viewModel.logout,
+                        isDark: isDark,
+                      ),
                     ),
 
                     // Espace en bas
@@ -54,595 +76,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   ],
                 ),
         ],
-      ),
-    );
-  }
-
-  /// Fond texturé style parchemin
-  Widget _buildParchmentBackground(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDark
-              ? [
-                  const Color(0xFF1E3A2F),
-                  AppColors.darkBackground,
-                  const Color(0xFF1A2D26),
-                ]
-              : [
-                  AppColors.secondary.withValues(alpha: 0.2),
-                  AppColors.lightBackground,
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ],
-        ),
-      ),
-      child: CustomPaint(
-        painter: _ParchmentTexturePainter(isDark: isDark),
-        child: const SizedBox.expand(),
-      ),
-    );
-  }
-
-  /// État de chargement
-  Widget _buildLoadingState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('📜', style: TextStyle(fontSize: 48)),
-          const SizedBox(height: 16),
-          Text(
-            'Consultation du grimoire...',
-            style: GoogleFonts.playfairDisplay(
-              fontSize: 16,
-              fontStyle: FontStyle.italic,
-              color: AppColors.primary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// En-tête héroïque avec avatar et infos
-  Widget _buildHeroHeader(BuildContext context, ProfileViewModel viewModel) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 16,
-        left: 24,
-        right: 24,
-        bottom: 32,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.accent,
-            AppColors.accent.withValues(alpha: 0.85),
-            const Color(0xFF5B2DA0),
-          ],
-        ),
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(48)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.4),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Barre supérieure avec paramètres
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '⚔️ Aventurier',
-                style: GoogleFonts.playfairDisplay(
-                  fontSize: 14,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white.withValues(alpha: 0.8),
-                  letterSpacing: 2,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => _showSettingsSheet(context, viewModel),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(
-                    Icons.settings_rounded,
-                    color: Colors.white,
-                    size: 22,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // Avatar avec cadre orné
-          GestureDetector(
-            onTap: () => _showAvatarPicker(context, viewModel),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Aura externe
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.3),
-                        Colors.white.withValues(alpha: 0.1),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
-                // Cadre doré
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: AppColors.tertiary,
-                      width: 4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.tertiary.withValues(alpha: 0.5),
-                        blurRadius: 16,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 3,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        viewModel.user?.avatarUrl ?? '😊',
-                        style: const TextStyle(fontSize: 48),
-                      ),
-                    ),
-                  ),
-                ),
-                // Badge édition
-                Positioned(
-                  bottom: 4,
-                  right: 4,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.tertiary,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.edit_rounded,
-                      size: 14,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Nom de l'aventurier
-          Text(
-            viewModel.user?.displayName ?? 'Aventurier',
-            style: GoogleFonts.fraunces(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-              letterSpacing: 1,
-            ),
-          ),
-
-          if (viewModel.user?.birthDate != null) ...[
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('🎂', style: TextStyle(fontSize: 14)),
-                const SizedBox(width: 6),
-                Text(
-                  'Né le ${_formatDate(viewModel.user!.birthDate!)}',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ],
-
-          const SizedBox(height: 16),
-
-          // Badge de graines
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-                width: 1.5,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🌱', style: TextStyle(fontSize: 20)),
-                const SizedBox(width: 8),
-                Text(
-                  '${viewModel.user?.seeds ?? 0}',
-                  style: GoogleFonts.fraunces(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'graines',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Carte de la flamme (streak)
-  Widget _buildFlameCard(ProfileViewModel viewModel, bool isDark) {
-    final currentStreak = viewModel.user?.currentStreak ?? 0;
-    final longestStreak = viewModel.user?.longestStreak ?? 0;
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.tertiary,
-            AppColors.tertiary.withValues(alpha: 0.85),
-            const Color(0xFFE08A00),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.2),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.tertiary.withValues(alpha: 0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Flamme animée (simulée avec glow)
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.orange.withValues(alpha: 0.6),
-                  blurRadius: 20,
-                  spreadRadius: 4,
-                ),
-              ],
-            ),
-            child: const Text('🔥', style: TextStyle(fontSize: 44)),
-          ),
-          const SizedBox(width: 20),
-
-          // Statistiques de streak
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Flamme Sacrée',
-                  style: GoogleFonts.playfairDisplay(
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white.withValues(alpha: 0.9),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      '$currentStreak',
-                      style: GoogleFonts.fraunces(
-                        fontSize: 42,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        'jours',
-                        style: GoogleFonts.dmSans(
-                          fontSize: 16,
-                          color: Colors.white.withValues(alpha: 0.9),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Record
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              children: [
-                const Text('👑', style: TextStyle(fontSize: 22)),
-                const SizedBox(height: 4),
-                Text(
-                  '$longestStreak',
-                  style: GoogleFonts.fraunces(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'Record',
-                  style: GoogleFonts.dmSans(
-                    fontSize: 10,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Section des statistiques
-  Widget _buildStatsSection(BuildContext context, ProfileViewModel viewModel) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Titre de section
-          Row(
-            children: [
-              const Text('📊', style: TextStyle(fontSize: 20)),
-              const SizedBox(width: 10),
-              Text(
-                'Exploits',
-                style: GoogleFonts.fraunces(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? AppColors.darkTextPrimary
-                      : AppColors.lightTextPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Grille de stats
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  '🌱',
-                  '${viewModel.user?.totalSeedsEarned ?? 0}',
-                  'Graines récoltées',
-                  AppColors.primary,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  '✅',
-                  '${viewModel.user?.totalTasksCompleted ?? 0}',
-                  'Quêtes accomplies',
-                  AppColors.accent,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  '🐾',
-                  '${viewModel.creaturesCount}',
-                  'Compagnons',
-                  AppColors.secondary,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  '📅',
-                  _formatMemberSince(viewModel.user?.createdAt),
-                  'Ancienneté',
-                  AppColors.tertiary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Carte de statistique individuelle
-  Widget _buildStatCard(BuildContext context, String emoji, String value,
-      String label, Color color) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: isDark ? 0.3 : 0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.15),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 24)),
-              Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.5),
-                      blurRadius: 6,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: GoogleFonts.fraunces(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              color: isDark
-                  ? AppColors.darkTextPrimary
-                  : AppColors.lightTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.dmSans(
-              fontSize: 12,
-              color: isDark
-                  ? AppColors.darkTextSecondary
-                  : AppColors.lightTextSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Section des actions
-  Widget _buildActionsSection(
-      BuildContext context, ProfileViewModel viewModel, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
-      child: GestureDetector(
-        onTap: viewModel.logout,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: isDark ? 0.15 : 0.08),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.red.withValues(alpha: 0.3),
-              width: 1.5,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.logout_rounded,
-                  color: Colors.red.withValues(alpha: 0.4)),
-              const SizedBox(width: 10),
-              Text(
-                'Quitter l\'aventure',
-                style: GoogleFonts.dmSans(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.red.withValues(alpha: 0.4),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -981,7 +414,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
                           const SizedBox(width: 14),
                           Text(
                             viewModel.user?.birthDate != null
-                                ? _formatDate(viewModel.user!.birthDate!)
+                                ? viewModel
+                                    .formatDate(viewModel.user!.birthDate!)
                                 : 'Ajouter date de naissance',
                             style: GoogleFonts.dmSans(
                               color: viewModel.user?.birthDate != null
@@ -1146,60 +580,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
     );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  String _formatMemberSince(DateTime? date) {
-    if (date == null) return '-';
-    final now = DateTime.now();
-    final diff = now.difference(date);
-    if (diff.inDays < 30) return '${diff.inDays}j';
-    if (diff.inDays < 365) return '${diff.inDays ~/ 30}m';
-    return '${diff.inDays ~/ 365}a';
-  }
-
   @override
   ProfileViewModel viewModelBuilder(BuildContext context) => ProfileViewModel();
 
   @override
   void onViewModelReady(ProfileViewModel viewModel) => viewModel.init();
-}
-
-/// Painter pour la texture de parchemin
-class _ParchmentTexturePainter extends CustomPainter {
-  final bool isDark;
-
-  _ParchmentTexturePainter({required this.isDark});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color =
-          (isDark ? Colors.white : AppColors.secondary).withValues(alpha: 0.03)
-      ..style = PaintingStyle.fill;
-
-    // Motif de vieilles lignes de parchemin
-    for (var i = 0; i < size.height; i += 50) {
-      canvas.drawLine(
-        Offset(20, i.toDouble()),
-        Offset(size.width - 20, i.toDouble()),
-        paint..strokeWidth = 0.5,
-      );
-    }
-
-    // Points décoratifs
-    for (var i = 0; i < size.width; i += 60) {
-      for (var j = 0; j < size.height; j += 80) {
-        canvas.drawCircle(
-          Offset(i.toDouble() + (j % 120 == 0 ? 30 : 0), j.toDouble()),
-          1.5,
-          paint,
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
