@@ -16,6 +16,10 @@ migrate_working_dir/
 firebase-debug.log
 firestore-debug.log
 
+# Firebase Service Account Key (NEVER COMMIT!)
+scripts/serviceAccountKey.json
+serviceAccountKey.json
+
 # IntelliJ related
 *.iml
 *.ipr

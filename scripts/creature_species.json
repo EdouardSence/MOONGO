@@ -1,0 +1,309 @@
+{
+    "moongo": {
+        "speciesId": "moongo",
+        "evolutionNames": [
+            "Moongo",
+            "Ivy",
+            "Daisy"
+        ],
+        "evolutionLevels": [
+            10,
+            25
+        ],
+        "evolutionEmojis": [
+            "🌱",
+            "🌿",
+            "🌸"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "common"
+    },
+    "seedling": {
+        "speciesId": "seedling",
+        "evolutionNames": [
+            "Seedling",
+            "Sprout",
+            "Bloom"
+        ],
+        "evolutionLevels": [
+            8,
+            20
+        ],
+        "evolutionEmojis": [
+            "🌰",
+            "🌱",
+            "🌻"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "common"
+    },
+    "pebble": {
+        "speciesId": "pebble",
+        "evolutionNames": [
+            "Pebble",
+            "Boulder"
+        ],
+        "evolutionLevels": [
+            15
+        ],
+        "evolutionEmojis": [
+            "🪨",
+            "⛰️"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "common"
+    },
+    "droplet": {
+        "speciesId": "droplet",
+        "evolutionNames": [
+            "Droplet",
+            "Splash",
+            "Tsunami"
+        ],
+        "evolutionLevels": [
+            12,
+            28
+        ],
+        "evolutionEmojis": [
+            "💧",
+            "🌊",
+            "🌀"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "common"
+    },
+    "ember": {
+        "speciesId": "ember",
+        "evolutionNames": [
+            "Ember",
+            "Flame",
+            "Inferno"
+        ],
+        "evolutionLevels": [
+            10,
+            30
+        ],
+        "evolutionEmojis": [
+            "🔥",
+            "🔶",
+            "☀️"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "common"
+    },
+    "glimmer": {
+        "speciesId": "glimmer",
+        "evolutionNames": [
+            "Glimmer",
+            "Sparkle",
+            "Radiant"
+        ],
+        "evolutionLevels": [
+            15,
+            35
+        ],
+        "evolutionEmojis": [
+            "✨",
+            "💫",
+            "⭐"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "rare"
+    },
+    "breeze": {
+        "speciesId": "breeze",
+        "evolutionNames": [
+            "Breeze",
+            "Gust",
+            "Cyclone"
+        ],
+        "evolutionLevels": [
+            12,
+            30
+        ],
+        "evolutionEmojis": [
+            "🍃",
+            "💨",
+            "🌪️"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "rare"
+    },
+    "crystal": {
+        "speciesId": "crystal",
+        "evolutionNames": [
+            "Crystal",
+            "Prism"
+        ],
+        "evolutionLevels": [
+            20
+        ],
+        "evolutionEmojis": [
+            "💎",
+            "🔮"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "rare"
+    },
+    "frosty": {
+        "speciesId": "frosty",
+        "evolutionNames": [
+            "Frosty",
+            "Glacier",
+            "Blizzard"
+        ],
+        "evolutionLevels": [
+            14,
+            32
+        ],
+        "evolutionEmojis": [
+            "❄️",
+            "🧊",
+            "☃️"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "rare"
+    },
+    "shadow": {
+        "speciesId": "shadow",
+        "evolutionNames": [
+            "Shadow",
+            "Phantom"
+        ],
+        "evolutionLevels": [
+            25
+        ],
+        "evolutionEmojis": [
+            "👤",
+            "👻"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "epic"
+    },
+    "thunder": {
+        "speciesId": "thunder",
+        "evolutionNames": [
+            "Thunder",
+            "Storm",
+            "Tempest"
+        ],
+        "evolutionLevels": [
+            18,
+            40
+        ],
+        "evolutionEmojis": [
+            "⚡",
+            "🌩️",
+            "⛈️"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "epic"
+    },
+    "nebula": {
+        "speciesId": "nebula",
+        "evolutionNames": [
+            "Nebula",
+            "Galaxy"
+        ],
+        "evolutionLevels": [
+            30
+        ],
+        "evolutionEmojis": [
+            "🌌",
+            "🪐"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "epic"
+    },
+    "phoenix": {
+        "speciesId": "phoenix",
+        "evolutionNames": [
+            "Phoenix",
+            "Eternal Phoenix"
+        ],
+        "evolutionLevels": [
+            50
+        ],
+        "evolutionEmojis": [
+            "🦅",
+            "🔥"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "legendary"
+    },
+    "dragon": {
+        "speciesId": "dragon",
+        "evolutionNames": [
+            "Wyrmling",
+            "Dragon",
+            "Elder Dragon"
+        ],
+        "evolutionLevels": [
+            30,
+            60
+        ],
+        "evolutionEmojis": [
+            "🐉",
+            "🐲",
+            "👑"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "legendary"
+    },
+    "celestial": {
+        "speciesId": "celestial",
+        "evolutionNames": [
+            "Celestial"
+        ],
+        "evolutionLevels": [],
+        "evolutionEmojis": [
+            "🌟"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "legendary"
+    },
+    "unicorn": {
+        "speciesId": "unicorn",
+        "evolutionNames": [
+            "Unicorn"
+        ],
+        "evolutionLevels": [],
+        "evolutionEmojis": [
+            "🦄"
+        ],
+        "baseLevel": 1,
+        "basePicture": "",
+        "parcPicture": "",
+        "baseRarity": "legendary"
+    }
+}

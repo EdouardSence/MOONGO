@@ -746,48 +746,44 @@ class ShopView extends StackedView<ShopViewModel> {
               ),
             ],
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 14),
 
           // Infos de l'œuf
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      egg.name,
-                      style: GoogleFonts.fraunces(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17,
-                        color: isDark
-                            ? AppColors.darkTextPrimary
-                            : AppColors.lightTextPrimary,
+                Text(
+                  egg.name,
+                  style: GoogleFonts.fraunces(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: isDark
+                        ? AppColors.darkTextPrimary
+                        : AppColors.lightTextPrimary,
+                  ),
+                ),
+                if (egg.id == 'legendary_egg') ...[
+                  const SizedBox(height: 4),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppColors.tertiary.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '✨ LÉGENDAIRE',
+                      style: GoogleFonts.dmSans(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.tertiary,
+                        letterSpacing: 0.5,
                       ),
                     ),
-                    if (egg.id == 'legendary_egg') ...[
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.tertiary.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'RARE',
-                          style: GoogleFonts.dmSans(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.tertiary,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 8),
+                  ),
+                ],
+                const SizedBox(height: 6),
                 _buildDropRates(egg, isDark),
               ],
             ),
