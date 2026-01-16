@@ -38,6 +38,7 @@ class TasksView extends StackedView<TasksViewModel> {
                   onCompleteSubTask: viewModel.completeSubTask,
                   onAddSubTask: (task) =>
                       _showAddSubTaskDialog(context, viewModel, task),
+                  onCreateTask: () => _showCreateTaskSheet(context, viewModel),
                 ),
                 TaskList(
                   tasks: viewModel.weekTasks,
@@ -47,6 +48,7 @@ class TasksView extends StackedView<TasksViewModel> {
                   onCompleteSubTask: viewModel.completeSubTask,
                   onAddSubTask: (task) =>
                       _showAddSubTaskDialog(context, viewModel, task),
+                  onCreateTask: () => _showCreateTaskSheet(context, viewModel),
                 ),
                 TaskList(
                   tasks: viewModel.monthTasks,
@@ -56,6 +58,7 @@ class TasksView extends StackedView<TasksViewModel> {
                   onCompleteSubTask: viewModel.completeSubTask,
                   onAddSubTask: (task) =>
                       _showAddSubTaskDialog(context, viewModel, task),
+                  onCreateTask: () => _showCreateTaskSheet(context, viewModel),
                 ),
                 TaskList(
                   tasks: viewModel.allTasks,
@@ -65,6 +68,7 @@ class TasksView extends StackedView<TasksViewModel> {
                   onCompleteSubTask: viewModel.completeSubTask,
                   onAddSubTask: (task) =>
                       _showAddSubTaskDialog(context, viewModel, task),
+                  onCreateTask: () => _showCreateTaskSheet(context, viewModel),
                 ),
               ],
             ),

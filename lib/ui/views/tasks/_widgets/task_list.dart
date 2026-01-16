@@ -12,6 +12,7 @@ class TaskList extends StatelessWidget {
   final void Function(String taskId) onDeleteTask;
   final void Function(TaskModel task, String subTaskId) onCompleteSubTask;
   final void Function(TaskModel task) onAddSubTask;
+  final VoidCallback onCreateTask;
 
   const TaskList({
     super.key,
@@ -21,12 +22,13 @@ class TaskList extends StatelessWidget {
     required this.onDeleteTask,
     required this.onCompleteSubTask,
     required this.onAddSubTask,
+    required this.onCreateTask,
   });
 
   @override
   Widget build(BuildContext context) {
     if (tasks.isEmpty) {
-      return EmptyState(isDark: isDark);
+      return EmptyState(isDark: isDark, onCreateTask: onCreateTask);
     }
 
     return ListView.builder(
