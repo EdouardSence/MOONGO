@@ -7,7 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'calendar_viewmodel.dart';
 
 class CalendarView extends StackedView<CalendarViewModel> {
-  const CalendarView({Key? key}) : super(key: key);
+  const CalendarView({super.key});
 
   @override
   Widget builder(
