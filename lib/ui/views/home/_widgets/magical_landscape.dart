@@ -50,39 +50,43 @@ class MagicalLandscape extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         child: Stack(
           children: [
-            // Texture de fond subtile
+            // Texture de fond subtile (isolée pour éviter les repaints)
             Positioned.fill(
-              child: CustomPaint(
-                painter: ForestTexturePainter(isDark: isDark),
+              child: RepaintBoundary(
+                child: CustomPaint(
+                  painter: ForestTexturePainter(isDark: isDark),
+                ),
               ),
             ),
 
-            // Sol avec herbe ondulée
+            // Sol avec herbe ondulée (isolé pour éviter les repaints)
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: 70,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      appTheme.grassColor,
-                      appTheme.grassColor.withValues(alpha: 0.8),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
+              child: RepaintBoundary(
+                child: Container(
+                  height: 70,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        appTheme.grassColor,
+                        appTheme.grassColor.withValues(alpha: 0.8),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(28),
+                      bottomRight: Radius.circular(28),
+                    ),
                   ),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(28),
-                    bottomRight: Radius.circular(28),
-                  ),
-                ),
-                child: CustomPaint(
-                  painter: GrassWavePainter(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.white.withValues(alpha: 0.3),
+                  child: CustomPaint(
+                    painter: GrassWavePainter(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.white.withValues(alpha: 0.3),
+                    ),
                   ),
                 ),
               ),
@@ -382,15 +386,17 @@ class _FloatingElementState extends State<FloatingElement>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0, sin(_animation.value * pi) * widget.amplitude),
-          child: child,
-        );
-      },
-      child: widget.child,
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, sin(_animation.value * pi) * widget.amplitude),
+            child: child,
+          );
+        },
+        child: widget.child,
+      ),
     );
   }
 }
