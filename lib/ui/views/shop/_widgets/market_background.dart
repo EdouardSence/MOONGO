@@ -5,7 +5,7 @@ import 'package:moongo/ui/common/app_theme.dart';
 class MarketTexturePainter extends CustomPainter {
   final bool isDark;
 
-  MarketTexturePainter({required this.isDark});
+  const MarketTexturePainter({required this.isDark});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -44,10 +44,10 @@ class MarketBackground extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: isDark
-              ? [
-                  const Color(0xFF1A3D32),
+              ? const [
+                  Color(0xFF1A3D32),
                   AppColors.darkBackground,
-                  const Color(0xFF0D1F1A),
+                  Color(0xFF0D1F1A),
                 ]
               : [
                   AppColors.tertiary.withValues(alpha: 0.15),
