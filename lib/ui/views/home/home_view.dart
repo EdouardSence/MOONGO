@@ -240,16 +240,16 @@ class HomeView extends StackedView<HomeViewModel> {
               top: 25,
               left: 25,
               child: _FloatingElement(
-                child: Text('✨', style: TextStyle(fontSize: 16)),
                 delay: Duration.zero,
+                child: Text('✨', style: TextStyle(fontSize: 16)),
               ),
             ),
             const Positioned(
               top: 40,
               right: 50,
               child: _FloatingElement(
-                child: Text('🦋', style: TextStyle(fontSize: 20)),
                 delay: Duration(milliseconds: 500),
+                child: Text('🦋', style: TextStyle(fontSize: 20)),
               ),
             ),
             Positioned(
