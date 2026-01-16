@@ -8,6 +8,7 @@ import 'package:moongo/app/app.router.dart';
 import 'package:moongo/services/theme_service.dart';
 import 'package:moongo/ui/common/app_theme.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:flutter/services.dart';
 
 import 'firebase_options.dart';
 
@@ -25,7 +26,8 @@ Future<void> main() async {
   final themeService = locator<ThemeService>();
   await themeService.loadTheme();
 
-  runApp(MainApp(themeService: themeService));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(MainApp(themeService: themeService)));
 }
 
 class MainApp extends StatelessWidget {
