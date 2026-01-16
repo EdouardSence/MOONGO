@@ -6,6 +6,7 @@
 ///   dart seed_creatures.dart
 ///
 /// Ce script doit être exécuté une seule fois pour initialiser la base de données.
+library;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
