@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:moongo/ui/common/app_theme.dart';
 
-/// En-tête de section avec style parchemin
+/// En-tête de section réutilisable avec style parchemin
 class SectionHeader extends StatelessWidget {
   final String title;
   final String emoji;
@@ -59,11 +59,11 @@ class SectionHeader extends StatelessWidget {
                 Text(
                   title,
                   style: GoogleFonts.fraunces(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: isDark
                         ? AppColors.darkTextPrimary
-                        : AppColors.secondary,
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
               ],

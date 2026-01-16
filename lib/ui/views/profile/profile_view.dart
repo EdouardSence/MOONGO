@@ -30,7 +30,10 @@ class ProfileView extends StackedView<ProfileViewModel> {
 
           // Contenu
           viewModel.isBusy
-              ? const ProfileLoadingState()
+              ? const LoadingState(
+                  emoji: '📜',
+                  message: 'Consultation du grimoire...',
+                )
               : CustomScrollView(
                   slivers: [
                     // En-tête héroïque

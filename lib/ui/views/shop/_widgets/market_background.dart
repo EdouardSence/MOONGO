@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/widgets/textured_background.dart';
 
 /// Painter pour la texture du marché
 class MarketTexturePainter extends CustomPainter {
@@ -38,28 +39,23 @@ class MarketBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDark
-              ? const [
-                  Color(0xFF1A3D32),
-                  AppColors.darkBackground,
-                  Color(0xFF0D1F1A),
-                ]
-              : [
-                  AppColors.tertiary.withValues(alpha: 0.15),
-                  AppColors.lightBackground,
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ],
-        ),
+    return TexturedBackground(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: isDark
+            ? const [
+                Color(0xFF1A3D32),
+                AppColors.darkBackground,
+                Color(0xFF0D1F1A),
+              ]
+            : [
+                AppColors.tertiary.withValues(alpha: 0.15),
+                AppColors.lightBackground,
+                AppColors.secondary.withValues(alpha: 0.1),
+              ],
       ),
-      child: CustomPaint(
-        painter: MarketTexturePainter(isDark: isDark),
-        child: const SizedBox.expand(),
-      ),
+      painter: MarketTexturePainter(isDark: isDark),
     );
   }
 }

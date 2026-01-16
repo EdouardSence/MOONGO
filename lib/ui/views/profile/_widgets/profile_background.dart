@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moongo/ui/common/app_theme.dart';
+import 'package:moongo/ui/common/widgets/textured_background.dart';
 
 /// Fond texturé style parchemin
 class ProfileBackground extends StatelessWidget {
@@ -9,28 +10,23 @@ class ProfileBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: isDark
-              ? [
-                  const Color(0xFF1E3A2F),
-                  AppColors.darkBackground,
-                  const Color(0xFF1A2D26),
-                ]
-              : [
-                  AppColors.secondary.withValues(alpha: 0.2),
-                  AppColors.lightBackground,
-                  AppColors.secondary.withValues(alpha: 0.1),
-                ],
-        ),
+    return TexturedBackground(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: isDark
+            ? [
+                const Color(0xFF1E3A2F),
+                AppColors.darkBackground,
+                const Color(0xFF1A2D26),
+              ]
+            : [
+                AppColors.secondary.withValues(alpha: 0.2),
+                AppColors.lightBackground,
+                AppColors.secondary.withValues(alpha: 0.1),
+              ],
       ),
-      child: CustomPaint(
-        painter: ParchmentTexturePainter(isDark: isDark),
-        child: const SizedBox.expand(),
-      ),
+      painter: ParchmentTexturePainter(isDark: isDark),
     );
   }
 }

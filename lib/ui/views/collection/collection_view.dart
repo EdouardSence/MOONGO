@@ -31,7 +31,10 @@ class CollectionView extends StackedView<CollectionViewModel> {
               // Contenu principal
               Expanded(
                 child: viewModel.isBusy
-                    ? const CollectionLoadingState()
+                    ? const LoadingState(
+                        emoji: '🔮',
+                        message: 'Inventaire des curiosités...',
+                      )
                     : viewModel.creatures.isEmpty
                         ? CollectionEmptyState(isDark: isDark)
                         : CreatureGallery(
