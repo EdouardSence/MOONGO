@@ -74,9 +74,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   const Color(0xFF1A2D26),
                 ]
               : [
-                  AppColors.secondary.withOpacity(0.2),
+                  AppColors.secondary.withValues(alpha: 0.2),
                   AppColors.lightBackground,
-                  AppColors.secondary.withOpacity(0.1),
+                  AppColors.secondary.withValues(alpha: 0.1),
                 ],
         ),
       ),
@@ -110,8 +110,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
 
   /// En-tête héroïque avec avatar et infos
   Widget _buildHeroHeader(BuildContext context, ProfileViewModel viewModel) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
@@ -125,14 +123,14 @@ class ProfileView extends StackedView<ProfileViewModel> {
           end: Alignment.bottomRight,
           colors: [
             AppColors.accent,
-            AppColors.accent.withOpacity(0.85),
+            AppColors.accent.withValues(alpha: 0.85),
             const Color(0xFF5B2DA0),
           ],
         ),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(48)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withOpacity(0.4),
+            color: AppColors.accent.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -149,7 +147,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 style: GoogleFonts.playfairDisplay(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   letterSpacing: 2,
                 ),
               ),
@@ -158,7 +156,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.15),
+                    color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Icon(
@@ -187,8 +185,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        Colors.white.withOpacity(0.3),
-                        Colors.white.withOpacity(0.1),
+                        Colors.white.withValues(alpha: 0.3),
+                        Colors.white.withValues(alpha: 0.1),
                         Colors.transparent,
                       ],
                     ),
@@ -206,7 +204,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.tertiary.withOpacity(0.5),
+                        color: AppColors.tertiary.withValues(alpha: 0.5),
                         blurRadius: 16,
                         spreadRadius: 2,
                       ),
@@ -241,7 +239,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 8,
                         ),
                       ],
@@ -281,7 +279,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   'Né le ${_formatDate(viewModel.user!.birthDate!)}',
                   style: GoogleFonts.dmSans(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -294,10 +292,10 @@ class ProfileView extends StackedView<ProfileViewModel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3),
+                color: Colors.white.withValues(alpha: 0.3),
                 width: 1.5,
               ),
             ),
@@ -319,7 +317,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   'graines',
                   style: GoogleFonts.dmSans(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -344,18 +342,18 @@ class ProfileView extends StackedView<ProfileViewModel> {
           end: Alignment.bottomRight,
           colors: [
             AppColors.tertiary,
-            AppColors.tertiary.withOpacity(0.85),
+            AppColors.tertiary.withValues(alpha: 0.85),
             const Color(0xFFE08A00),
           ],
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.tertiary.withOpacity(0.4),
+            color: AppColors.tertiary.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -367,11 +365,11 @@ class ProfileView extends StackedView<ProfileViewModel> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.orange.withOpacity(0.6),
+                  color: Colors.orange.withValues(alpha: 0.6),
                   blurRadius: 20,
                   spreadRadius: 4,
                 ),
@@ -391,7 +389,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -414,7 +412,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         'jours',
                         style: GoogleFonts.dmSans(
                           fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                         ),
                       ),
                     ),
@@ -428,7 +426,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
@@ -447,7 +445,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   'Record',
                   style: GoogleFonts.dmSans(
                     fontSize: 10,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ],
@@ -551,12 +549,12 @@ class ProfileView extends StackedView<ProfileViewModel> {
         color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(isDark ? 0.3 : 0.2),
+          color: color.withValues(alpha: isDark ? 0.3 : 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -577,7 +575,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.5),
+                      color: color.withValues(alpha: 0.5),
                       blurRadius: 6,
                     ),
                   ],
@@ -621,24 +619,25 @@ class ProfileView extends StackedView<ProfileViewModel> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 18),
           decoration: BoxDecoration(
-            color: Colors.red.withOpacity(isDark ? 0.15 : 0.08),
+            color: Colors.red.withValues(alpha: isDark ? 0.15 : 0.08),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.red.withOpacity(0.3),
+              color: Colors.red.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.logout_rounded, color: Colors.red[400]),
+              Icon(Icons.logout_rounded,
+                  color: Colors.red.withValues(alpha: 0.4)),
               const SizedBox(width: 10),
               Text(
                 'Quitter l\'aventure',
                 style: GoogleFonts.dmSans(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.red[400],
+                  color: Colors.red.withValues(alpha: 0.4),
                 ),
               ),
             ],
@@ -669,7 +668,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                 width: 48,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.grey[600] : Colors.grey[300],
+                  color: isDark
+                      ? Colors.grey.withValues(alpha: 0.6)
+                      : Colors.grey.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -715,7 +716,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         duration: const Duration(milliseconds: 200),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.accent.withOpacity(0.15)
+                              ? AppColors.accent.withValues(alpha: 0.15)
                               : (isDark
                                   ? AppColors.darkBackground
                                   : AppColors.lightBackground),
@@ -729,7 +730,8 @@ class ProfileView extends StackedView<ProfileViewModel> {
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: AppColors.accent.withOpacity(0.3),
+                                    color:
+                                        AppColors.accent.withValues(alpha: 0.3),
                                     blurRadius: 12,
                                   ),
                                 ]
@@ -756,7 +758,6 @@ class ProfileView extends StackedView<ProfileViewModel> {
   void _showSettingsSheet(BuildContext context, ProfileViewModel viewModel) {
     final nameController =
         TextEditingController(text: viewModel.user?.displayName);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showModalBottomSheet(
       context: context,
@@ -784,8 +785,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                       width: 48,
                       height: 4,
                       decoration: BoxDecoration(
-                        color:
-                            sheetIsDark ? Colors.grey[600] : Colors.grey[300],
+                        color: sheetIsDark
+                            ? Colors.grey.withValues(alpha: 0.6)
+                            : Colors.grey.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -835,7 +837,9 @@ class ProfileView extends StackedView<ProfileViewModel> {
                               fontWeight: FontWeight.w600,
                               color: sheetIsDark
                                   ? AppColors.darkTextPrimary
-                                  : AppColors.lightTextPrimary,
+                                      .withValues(alpha: 1)
+                                  : AppColors.lightTextPrimary
+                                      .withValues(alpha: 1),
                             ),
                           ),
                         ),
@@ -866,7 +870,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                                     size: 20,
                                     color: !sheetIsDark
                                         ? Colors.white
-                                        : Colors.grey,
+                                        : Colors.grey.withValues(alpha: 1),
                                   ),
                                 ),
                               ),
@@ -888,7 +892,7 @@ class ProfileView extends StackedView<ProfileViewModel> {
                                     size: 20,
                                     color: sheetIsDark
                                         ? Colors.white
-                                        : Colors.grey,
+                                        : Colors.grey.withValues(alpha: 1),
                                   ),
                                 ),
                               ),
@@ -1015,13 +1019,13 @@ class ProfileView extends StackedView<ProfileViewModel> {
                         gradient: LinearGradient(
                           colors: [
                             AppColors.primary,
-                            AppColors.primary.withOpacity(0.85)
+                            AppColors.primary.withValues(alpha: 0.85)
                           ],
                         ),
                         borderRadius: BorderRadius.circular(18),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
+                            color: AppColors.primary.withValues(alpha: 0.4),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -1171,7 +1175,8 @@ class _ParchmentTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppColors.secondary).withOpacity(0.03)
+      ..color =
+          (isDark ? Colors.white : AppColors.secondary).withValues(alpha: 0.03)
       ..style = PaintingStyle.fill;
 
     // Motif de vieilles lignes de parchemin

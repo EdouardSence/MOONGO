@@ -15,8 +15,6 @@ class TasksView extends StackedView<TasksViewModel> {
   Widget builder(
       BuildContext context, TasksViewModel viewModel, Widget? child) {
     final theme = Theme.of(context);
-    final appTheme = theme.appTheme;
-    final isDark = theme.brightness == Brightness.dark;
 
     return DefaultTabController(
       length: 4,
@@ -32,10 +30,10 @@ class TasksView extends StackedView<TasksViewModel> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 1,
                   ),
                 ),
@@ -60,7 +58,7 @@ class TasksView extends StackedView<TasksViewModel> {
                     style: GoogleFonts.playfairDisplay(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
-                      color: Colors.white.withOpacity(0.85),
+                      color: Colors.white.withValues(alpha: 0.85),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -130,7 +128,7 @@ class TasksView extends StackedView<TasksViewModel> {
               ? [
                   AppColors.darkBackground,
                   AppColors.darkSurface,
-                  AppColors.darkBackground.withOpacity(0.95),
+                  AppColors.darkBackground.withValues(alpha: 0.95),
                 ]
               : [
                   AppColors.lightBackground,
@@ -149,8 +147,6 @@ class TasksView extends StackedView<TasksViewModel> {
   /// Liste des tâches avec style parchemin
   Widget _buildTaskList(
       BuildContext context, TasksViewModel viewModel, List<TaskModel> tasks) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     if (tasks.isEmpty) {
       return _buildEmptyState(context);
     }
@@ -190,10 +186,10 @@ class TasksView extends StackedView<TasksViewModel> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(isDark ? 0.2 : 0.15),
+              color: AppColors.secondary.withValues(alpha: isDark ? 0.2 : 0.15),
               shape: BoxShape.circle,
               border: Border.all(
-                color: AppColors.secondary.withOpacity(0.3),
+                color: AppColors.secondary.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -228,12 +224,15 @@ class TasksView extends StackedView<TasksViewModel> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+                colors: [
+                  AppColors.primary,
+                  AppColors.primary.withValues(alpha: 0.8)
+                ],
               ),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.4),
+                  color: AppColors.primary.withValues(alpha: 0.4),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -273,17 +272,17 @@ class TasksView extends StackedView<TasksViewModel> {
         color: appTheme.cardBackground,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: color.withOpacity(isDark ? 0.3 : 0.2),
+          color: color.withValues(alpha: isDark ? 0.3 : 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(isDark ? 0.15 : 0.1),
+            color: color.withValues(alpha: isDark ? 0.15 : 0.1),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -320,14 +319,14 @@ class TasksView extends StackedView<TasksViewModel> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            color.withOpacity(isDark ? 0.25 : 0.12),
-            color.withOpacity(isDark ? 0.15 : 0.06),
+            color.withValues(alpha: isDark ? 0.25 : 0.12),
+            color.withValues(alpha: isDark ? 0.15 : 0.06),
           ],
         ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         border: Border(
           bottom: BorderSide(
-            color: color.withOpacity(isDark ? 0.2 : 0.15),
+            color: color.withValues(alpha: isDark ? 0.2 : 0.15),
             width: 1,
           ),
         ),
@@ -338,11 +337,11 @@ class TasksView extends StackedView<TasksViewModel> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(isDark ? 0.3 : 0.2),
+              color: color.withValues(alpha: isDark ? 0.3 : 0.2),
               borderRadius: BorderRadius.circular(14),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   blurRadius: 8,
                   spreadRadius: 1,
                 ),
@@ -396,13 +395,13 @@ class TasksView extends StackedView<TasksViewModel> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: isDark
-                      ? Colors.white.withOpacity(0.2)
-                      : Colors.black.withOpacity(0.1),
+                      ? Colors.white.withValues(alpha: 0.2)
+                      : Colors.black.withValues(alpha: 0.1),
                 ),
               ),
               child: Row(
@@ -464,10 +463,10 @@ class TasksView extends StackedView<TasksViewModel> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.25 : 0.15),
+        color: color.withValues(alpha: isDark ? 0.25 : 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(isDark ? 0.4 : 0.3),
+          color: color.withValues(alpha: isDark ? 0.4 : 0.3),
           width: 1,
         ),
       ),
@@ -516,7 +515,7 @@ class TasksView extends StackedView<TasksViewModel> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -563,7 +562,7 @@ class TasksView extends StackedView<TasksViewModel> {
                     child: Container(
                       width: 6,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -591,10 +590,10 @@ class TasksView extends StackedView<TasksViewModel> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withOpacity(0.1),
+                  color: AppColors.accent.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.accent.withOpacity(0.3),
+                    color: AppColors.accent.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -633,13 +632,13 @@ class TasksView extends StackedView<TasksViewModel> {
                   gradient: LinearGradient(
                     colors: [
                       AppColors.tertiary,
-                      AppColors.tertiary.withOpacity(0.8)
+                      AppColors.tertiary.withValues(alpha: 0.8)
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.tertiary.withOpacity(0.4),
+                      color: AppColors.tertiary.withValues(alpha: 0.4),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -679,12 +678,12 @@ class TasksView extends StackedView<TasksViewModel> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: subTask.completed
-              ? AppColors.primary.withOpacity(isDark ? 0.15 : 0.08)
+              ? AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08)
               : (isDark ? Colors.grey[850] : Colors.grey[50]),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: subTask.completed
-                ? AppColors.primary.withOpacity(0.3)
+                ? AppColors.primary.withValues(alpha: 0.3)
                 : (isDark ? Colors.grey[700]! : Colors.grey[200]!),
           ),
         ),
@@ -741,13 +740,13 @@ class TasksView extends StackedView<TasksViewModel> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.tertiary.withOpacity(0.2),
-            AppColors.tertiary.withOpacity(0.1),
+            AppColors.tertiary.withValues(alpha: 0.2),
+            AppColors.tertiary.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.tertiary.withOpacity(0.3),
+          color: AppColors.tertiary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -787,13 +786,13 @@ class TasksView extends StackedView<TasksViewModel> {
                     gradient: LinearGradient(
                       colors: [
                         AppColors.primary,
-                        AppColors.primary.withOpacity(0.85)
+                        AppColors.primary.withValues(alpha: 0.85)
                       ],
                     ),
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4),
+                        color: AppColors.primary.withValues(alpha: 0.4),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -820,10 +819,10 @@ class TasksView extends StackedView<TasksViewModel> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.15),
+                  color: AppColors.primary.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -849,7 +848,7 @@ class TasksView extends StackedView<TasksViewModel> {
               child: Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -963,12 +962,12 @@ class TasksView extends StackedView<TasksViewModel> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.accent, AppColors.accent.withOpacity(0.8)],
+          colors: [AppColors.accent, AppColors.accent.withValues(alpha: 0.8)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accent.withOpacity(0.5),
+            color: AppColors.accent.withValues(alpha: 0.5),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -1015,7 +1014,8 @@ class _ScrollTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppColors.secondary).withOpacity(0.03)
+      ..color =
+          (isDark ? Colors.white : AppColors.secondary).withValues(alpha: 0.03)
       ..style = PaintingStyle.fill;
 
     // Motif subtil de parchemin
@@ -1093,7 +1093,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -1270,8 +1270,8 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color:
-                                            AppColors.tertiary.withOpacity(0.1),
+                                        color: AppColors.tertiary
+                                            .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -1329,7 +1329,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           decoration: BoxDecoration(
-                            color: AppColors.tertiary.withOpacity(0.1),
+                            color: AppColors.tertiary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: DropdownButtonHideUnderline(
@@ -1399,7 +1399,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                     height: 48,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.primary.withOpacity(0.15)
+                          ? AppColors.primary.withValues(alpha: 0.15)
                           : (isDark
                               ? AppColors.darkBackground
                               : AppColors.lightBackground),
@@ -1412,7 +1412,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
+                                color: AppColors.primary.withValues(alpha: 0.3),
                                 blurRadius: 8,
                               ),
                             ]
@@ -1459,7 +1459,8 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: colorValue.withOpacity(isSelected ? 0.5 : 0.3),
+                          color: colorValue.withValues(
+                              alpha: isSelected ? 0.5 : 0.3),
                           blurRadius: isSelected ? 12 : 6,
                           offset: const Offset(0, 3),
                         ),
@@ -1480,10 +1481,10 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.tertiary.withOpacity(0.1),
+                color: AppColors.tertiary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppColors.tertiary.withOpacity(0.3),
+                  color: AppColors.tertiary.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -1595,13 +1596,13 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                   gradient: LinearGradient(
                     colors: [
                       AppColors.primary,
-                      AppColors.primary.withOpacity(0.85)
+                      AppColors.primary.withValues(alpha: 0.85)
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.4),
+                      color: AppColors.primary.withValues(alpha: 0.4),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -1728,7 +1729,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -1789,7 +1790,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppColors.tertiary.withOpacity(0.4),
+                            color: AppColors.tertiary.withValues(alpha: 0.4),
                             blurRadius: 8,
                           ),
                         ]
@@ -1870,7 +1871,7 @@ class _CreateTaskSheetState extends State<_CreateTaskSheet> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.4),
+                    color: AppColors.primary.withValues(alpha: 0.4),
                     blurRadius: 8,
                   ),
                 ]

@@ -52,10 +52,10 @@ class ShopView extends StackedView<ShopViewModel> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(24),
                             border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 width: 1.5),
                           ),
                           child: Text(
@@ -180,13 +180,13 @@ class ShopView extends StackedView<ShopViewModel> {
                             color: (viewModel.seeds >= food.price
                                     ? AppColors.primary
                                     : Colors.red)
-                                .withOpacity(0.1),
+                                .withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                                 color: (viewModel.seeds >= food.price
                                         ? AppColors.primary
                                         : Colors.red)
-                                    .withOpacity(0.3)),
+                                    .withValues(alpha: 0.3)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -255,7 +255,8 @@ class ShopView extends StackedView<ShopViewModel> {
                                   border: Border.all(
                                     color: creature.isMaxLevel
                                         ? Colors.transparent
-                                        : Color(colors[0]).withOpacity(0.3),
+                                        : Color(colors[0])
+                                            .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
@@ -277,7 +278,7 @@ class ShopView extends StackedView<ShopViewModel> {
                                             : [
                                                 BoxShadow(
                                                   color: Color(colors[0])
-                                                      .withOpacity(0.4),
+                                                      .withValues(alpha: 0.4),
                                                   blurRadius: 8,
                                                 ),
                                               ],
@@ -476,8 +477,8 @@ class ShopView extends StackedView<ShopViewModel> {
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
                         colors: [
-                          Color(colors[0]).withOpacity(0.4),
-                          Color(colors[0]).withOpacity(0.1),
+                          Color(colors[0]).withValues(alpha: 0.4),
+                          Color(colors[0]).withValues(alpha: 0.1),
                           Colors.transparent,
                         ],
                       ),
@@ -495,7 +496,7 @@ class ShopView extends StackedView<ShopViewModel> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Color(colors[0]).withOpacity(0.5),
+                          color: Color(colors[0]).withValues(alpha: 0.5),
                           blurRadius: 24,
                           spreadRadius: 4,
                         ),
@@ -532,13 +533,13 @@ class ShopView extends StackedView<ShopViewModel> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(colors[0]).withOpacity(0.2),
-                      Color(colors[1]).withOpacity(0.2),
+                      Color(colors[0]).withValues(alpha: 0.2),
+                      Color(colors[1]).withValues(alpha: 0.2),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Color(colors[0]).withOpacity(0.4),
+                    color: Color(colors[0]).withValues(alpha: 0.4),
                   ),
                 ),
                 child: Row(
@@ -574,7 +575,7 @@ class ShopView extends StackedView<ShopViewModel> {
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(colors[0]).withOpacity(0.4),
+                        color: Color(colors[0]).withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -614,7 +615,8 @@ class _MarketTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppColors.tertiary).withOpacity(0.03)
+      ..color =
+          (isDark ? Colors.white : AppColors.tertiary).withValues(alpha: 0.03)
       ..style = PaintingStyle.fill;
 
     // Motif de lanternes/étoiles subtiles
@@ -675,8 +677,6 @@ class _MarketHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
@@ -690,13 +690,13 @@ class _MarketHeader extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppColors.tertiary,
-            AppColors.tertiary.withOpacity(0.85),
+            AppColors.tertiary.withValues(alpha: 0.85),
           ],
         ),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.tertiary.withOpacity(0.4),
+            color: AppColors.tertiary.withValues(alpha: 0.4),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -726,7 +726,7 @@ class _MarketHeader extends StatelessWidget {
                     style: GoogleFonts.playfairDisplay(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       letterSpacing: 3,
                     ),
                   ),
@@ -748,7 +748,10 @@ class _MarketHeader extends StatelessWidget {
                 height: 2,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.white.withOpacity(0.5)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.white.withValues(alpha: 0.5)
+                    ],
                   ),
                 ),
               ),
@@ -756,7 +759,7 @@ class _MarketHeader extends StatelessWidget {
               Text(
                 '◆',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 10,
                 ),
               ),
@@ -766,7 +769,10 @@ class _MarketHeader extends StatelessWidget {
                 height: 2,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.white.withOpacity(0.5), Colors.transparent],
+                    colors: [
+                      Colors.white.withValues(alpha: 0.5),
+                      Colors.transparent
+                    ],
                   ),
                 ),
               ),
@@ -796,23 +802,23 @@ class _TreasureChest extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             AppColors.secondary,
-            AppColors.secondary.withOpacity(0.85),
+            AppColors.secondary.withValues(alpha: 0.85),
             const Color(0xFFB8956D),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.secondary.withOpacity(0.4),
+            color: AppColors.secondary.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -824,11 +830,11 @@ class _TreasureChest extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   blurRadius: 12,
                   spreadRadius: 2,
                 ),
@@ -848,7 +854,7 @@ class _TreasureChest extends StatelessWidget {
                   style: GoogleFonts.playfairDisplay(
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withValues(alpha: 0.85),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -864,7 +870,7 @@ class _TreasureChest extends StatelessWidget {
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             offset: const Offset(2, 2),
                             blurRadius: 4,
                           ),
@@ -906,7 +912,7 @@ class _FloatingStar extends StatelessWidget {
       '✦',
       style: TextStyle(
         fontSize: size,
-        color: Colors.white.withOpacity(opacity),
+        color: Colors.white.withValues(alpha: opacity),
       ),
     );
   }
@@ -938,7 +944,7 @@ class _SectionHeader extends StatelessWidget {
                 gradient: LinearGradient(
                   colors: [
                     Colors.transparent,
-                    AppColors.secondary.withOpacity(isDark ? 0.4 : 0.5),
+                    AppColors.secondary.withValues(alpha: isDark ? 0.4 : 0.5),
                   ],
                 ),
               ),
@@ -951,11 +957,12 @@ class _SectionHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               color: isDark
-                  ? AppColors.darkSurface.withOpacity(0.8)
-                  : AppColors.secondary.withOpacity(0.15),
+                  ? AppColors.darkSurface.withValues(alpha: 0.8)
+                  : AppColors.secondary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppColors.secondary.withOpacity(isDark ? 0.3 : 0.4),
+                color:
+                    AppColors.secondary.withValues(alpha: isDark ? 0.3 : 0.4),
                 width: 1.5,
               ),
             ),
@@ -985,7 +992,7 @@ class _SectionHeader extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppColors.secondary.withOpacity(isDark ? 0.4 : 0.5),
+                    AppColors.secondary.withValues(alpha: isDark ? 0.4 : 0.5),
                     Colors.transparent,
                   ],
                 ),
@@ -1060,15 +1067,15 @@ class _FoodCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isEnabled
-                ? AppColors.primary.withOpacity(0.3)
+                ? AppColors.primary.withValues(alpha: 0.3)
                 : Colors.transparent,
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
               color: isEnabled
-                  ? AppColors.primary.withOpacity(0.15)
-                  : Colors.black.withOpacity(isDark ? 0.2 : 0.06),
+                  ? AppColors.primary.withValues(alpha: 0.15)
+                  : Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -1084,15 +1091,15 @@ class _FoodCard extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.accent.withOpacity(isDark ? 0.2 : 0.1),
-                    AppColors.accent.withOpacity(isDark ? 0.1 : 0.05),
+                    AppColors.accent.withValues(alpha: isDark ? 0.2 : 0.1),
+                    AppColors.accent.withValues(alpha: isDark ? 0.1 : 0.05),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: isEnabled
                     ? [
                         BoxShadow(
-                          color: AppColors.accent.withOpacity(0.3),
+                          color: AppColors.accent.withValues(alpha: 0.3),
                           blurRadius: 12,
                           spreadRadius: 2,
                         ),
@@ -1121,7 +1128,7 @@ class _FoodCard extends StatelessWidget {
               margin: const EdgeInsets.symmetric(vertical: 6),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.accent.withOpacity(0.15),
+                color: AppColors.accent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -1142,7 +1149,7 @@ class _FoodCard extends StatelessWidget {
                     ? LinearGradient(
                         colors: [
                           AppColors.primary,
-                          AppColors.primary.withOpacity(0.85)
+                          AppColors.primary.withValues(alpha: 0.85)
                         ],
                       )
                     : null,
@@ -1153,7 +1160,7 @@ class _FoodCard extends StatelessWidget {
                 boxShadow: isEnabled
                     ? [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.4),
+                          color: AppColors.primary.withValues(alpha: 0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -1280,17 +1287,17 @@ class _EggCard extends StatelessWidget {
         color: isDark ? AppColors.darkSurface : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: eggColor.withOpacity(isDark ? 0.3 : 0.2),
+          color: eggColor.withValues(alpha: isDark ? 0.3 : 0.2),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: eggColor.withOpacity(0.2),
+            color: eggColor.withValues(alpha: 0.2),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -1309,8 +1316,8 @@ class _EggCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: RadialGradient(
                     colors: [
-                      glowColor.withOpacity(0.3),
-                      glowColor.withOpacity(0.1),
+                      glowColor.withValues(alpha: 0.3),
+                      glowColor.withValues(alpha: 0.1),
                       Colors.transparent,
                     ],
                   ),
@@ -1326,19 +1333,19 @@ class _EggCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      eggColor.withOpacity(0.4),
-                      eggColor.withOpacity(0.2),
-                      eggColor.withOpacity(0.1),
+                      eggColor.withValues(alpha: 0.4),
+                      eggColor.withValues(alpha: 0.2),
+                      eggColor.withValues(alpha: 0.1),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
-                    color: eggColor.withOpacity(0.3),
+                    color: eggColor.withValues(alpha: 0.3),
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: glowColor.withOpacity(0.4),
+                      color: glowColor.withValues(alpha: 0.4),
                       blurRadius: 16,
                       spreadRadius: 2,
                     ),
@@ -1348,7 +1355,7 @@ class _EggCard extends StatelessWidget {
                   child: Text('🥚',
                       style: TextStyle(fontSize: 36, shadows: [
                         Shadow(
-                          color: glowColor.withOpacity(0.6),
+                          color: glowColor.withValues(alpha: 0.6),
                           blurRadius: 12,
                         ),
                       ])),
@@ -1386,7 +1393,7 @@ class _EggCard extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 0, 255, 255)
-                          .withOpacity(0.2),
+                          .withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -1406,7 +1413,7 @@ class _EggCard extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: AppColors.tertiary.withOpacity(0.2),
+                      color: AppColors.tertiary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -1437,7 +1444,7 @@ class _EggCard extends StatelessWidget {
                     ? LinearGradient(
                         colors: [
                           AppColors.primary,
-                          AppColors.primary.withOpacity(0.85)
+                          AppColors.primary.withValues(alpha: 0.85)
                         ],
                       )
                     : null,
@@ -1448,7 +1455,7 @@ class _EggCard extends StatelessWidget {
                 boxShadow: canAfford
                     ? [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.4),
+                          color: AppColors.primary.withValues(alpha: 0.4),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -1540,10 +1547,10 @@ class _RateChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(isDark ? 0.15 : 0.1),
+        color: color.withValues(alpha: isDark ? 0.15 : 0.1),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

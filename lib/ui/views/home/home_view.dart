@@ -65,7 +65,7 @@ class HomeView extends StackedView<HomeViewModel> {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -82,10 +82,10 @@ class HomeView extends StackedView<HomeViewModel> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.tertiary.withOpacity(0.2),
+                  color: AppColors.tertiary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: AppColors.tertiary.withOpacity(0.5),
+                    color: AppColors.tertiary.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
@@ -110,10 +110,10 @@ class HomeView extends StackedView<HomeViewModel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.tertiary.withOpacity(0.15),
+              color: AppColors.tertiary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppColors.tertiary.withOpacity(0.4),
+                color: AppColors.tertiary.withValues(alpha: 0.4),
                 width: 1.5,
               ),
               boxShadow: [
@@ -135,7 +135,7 @@ class HomeView extends StackedView<HomeViewModel> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.tertiary.withOpacity(0.5),
+                        color: AppColors.tertiary.withValues(alpha: 0.5),
                         blurRadius: 8,
                         spreadRadius: 1,
                       ),
@@ -180,16 +180,16 @@ class HomeView extends StackedView<HomeViewModel> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.4)
-                : AppColors.primary.withOpacity(0.2),
+                ? Colors.black.withValues(alpha: 0.4)
+                : AppColors.primary.withValues(alpha: 0.2),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
         ],
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.white.withOpacity(0.3),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.white.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -215,7 +215,7 @@ class HomeView extends StackedView<HomeViewModel> {
                   gradient: LinearGradient(
                     colors: [
                       appTheme.grassColor,
-                      appTheme.grassColor.withOpacity(0.8),
+                      appTheme.grassColor.withValues(alpha: 0.8),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -228,8 +228,8 @@ class HomeView extends StackedView<HomeViewModel> {
                 child: CustomPaint(
                   painter: _GrassWavePainter(
                     color: isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.3),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.white.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -260,7 +260,7 @@ class HomeView extends StackedView<HomeViewModel> {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
+                    color: Colors.white.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Text('☁️', style: TextStyle(fontSize: 24)),
@@ -340,8 +340,9 @@ class HomeView extends StackedView<HomeViewModel> {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                color:
-                    isDark ? AppColors.darkCard : Colors.white.withOpacity(0.8),
+                color: isDark
+                    ? AppColors.darkCard
+                    : Colors.white.withValues(alpha: 0.8),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -399,8 +400,8 @@ class HomeView extends StackedView<HomeViewModel> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: isDark
-                    ? AppColors.darkCard.withOpacity(0.9)
-                    : Colors.white.withOpacity(0.9),
+                    ? AppColors.darkCard.withValues(alpha: 0.9)
+                    : Colors.white.withValues(alpha: 0.9),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -409,15 +410,15 @@ class HomeView extends StackedView<HomeViewModel> {
                     spreadRadius: 2,
                   ),
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
                 ],
                 border: Border.all(
                   color: isDark
-                      ? AppColors.secondary.withOpacity(0.3)
-                      : AppColors.primary.withOpacity(0.2),
+                      ? AppColors.secondary.withValues(alpha: 0.3)
+                      : AppColors.primary.withValues(alpha: 0.2),
                   width: 2,
                 ),
               ),
@@ -436,12 +437,12 @@ class HomeView extends StackedView<HomeViewModel> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: isDark
-                    ? AppColors.darkSurface.withOpacity(0.95)
-                    : Colors.white.withOpacity(0.95),
+                    ? AppColors.darkSurface.withValues(alpha: 0.95)
+                    : Colors.white.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -478,14 +479,14 @@ class HomeView extends StackedView<HomeViewModel> {
         boxShadow: [
           BoxShadow(
             color: isDark
-                ? Colors.black.withOpacity(0.3)
-                : AppColors.secondary.withOpacity(0.15),
+                ? Colors.black.withValues(alpha: 0.3)
+                : AppColors.secondary.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
         ],
         border: Border.all(
-          color: appTheme.postItBorder.withOpacity(0.6),
+          color: appTheme.postItBorder.withValues(alpha: 0.6),
           width: 2,
         ),
       ),
@@ -499,7 +500,7 @@ class HomeView extends StackedView<HomeViewModel> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: appTheme.postItBorder.withOpacity(0.2),
+                  color: appTheme.postItBorder.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Center(
@@ -524,13 +525,13 @@ class HomeView extends StackedView<HomeViewModel> {
                   gradient: LinearGradient(
                     colors: [
                       appTheme.postItBorder,
-                      appTheme.postItBorder.withOpacity(0.7),
+                      appTheme.postItBorder.withValues(alpha: 0.7),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: appTheme.postItBorder.withOpacity(0.3),
+                      color: appTheme.postItBorder.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -556,9 +557,9 @@ class HomeView extends StackedView<HomeViewModel> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  appTheme.postItBorder.withOpacity(0.1),
-                  appTheme.postItBorder.withOpacity(0.4),
-                  appTheme.postItBorder.withOpacity(0.1),
+                  appTheme.postItBorder.withValues(alpha: 0.1),
+                  appTheme.postItBorder.withValues(alpha: 0.4),
+                  appTheme.postItBorder.withValues(alpha: 0.1),
                 ],
               ),
             ),
@@ -589,7 +590,7 @@ class HomeView extends StackedView<HomeViewModel> {
                   style: GoogleFonts.dmSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: appTheme.postItText.withOpacity(0.7),
+                    color: appTheme.postItText.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -608,7 +609,7 @@ class HomeView extends StackedView<HomeViewModel> {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: appTheme.postItBorder.withOpacity(0.15),
+              color: appTheme.postItBorder.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: const Center(
@@ -628,7 +629,7 @@ class HomeView extends StackedView<HomeViewModel> {
           Text(
             'Aucune quête aujourd\'hui',
             style: GoogleFonts.dmSans(
-              color: appTheme.postItText.withOpacity(0.7),
+              color: appTheme.postItText.withValues(alpha: 0.7),
               fontSize: 13,
             ),
           ),
@@ -656,16 +657,16 @@ class HomeView extends StackedView<HomeViewModel> {
           decoration: BoxDecoration(
             color: task.completed
                 ? (isDark
-                    ? Colors.white.withOpacity(0.05)
-                    : Colors.black.withOpacity(0.03))
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.03))
                 : (isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.white.withOpacity(0.6)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.white.withValues(alpha: 0.6)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: task.completed
                   ? Colors.transparent
-                  : appTheme.postItBorder.withOpacity(0.3),
+                  : appTheme.postItBorder.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -676,14 +677,14 @@ class HomeView extends StackedView<HomeViewModel> {
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: appTheme.postItBorder.withOpacity(0.2),
+                  color: appTheme.postItBorder.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
                   child: Icon(
                     Icons.chevron_right_rounded,
                     size: 18,
-                    color: appTheme.postItText.withOpacity(0.7),
+                    color: appTheme.postItText.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -699,7 +700,7 @@ class HomeView extends StackedView<HomeViewModel> {
                     decoration:
                         task.completed ? TextDecoration.lineThrough : null,
                     color: task.completed
-                        ? appTheme.postItText.withOpacity(0.5)
+                        ? appTheme.postItText.withValues(alpha: 0.5)
                         : appTheme.postItText,
                   ),
                   maxLines: 1,
@@ -712,7 +713,7 @@ class HomeView extends StackedView<HomeViewModel> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: appTheme.postItBorder.withOpacity(0.15),
+                  color: appTheme.postItBorder.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -807,7 +808,7 @@ class _ForestTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : Colors.black).withOpacity(0.02)
+      ..color = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02)
       ..strokeWidth = 1;
 
     final random = Random(42);

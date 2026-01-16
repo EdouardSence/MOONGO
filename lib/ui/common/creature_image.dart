@@ -123,15 +123,15 @@ class CreatureImageWithGlow extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(isDark ? 0.15 : 0.5),
+        color: Colors.white.withValues(alpha: isDark ? 0.15 : 0.5),
         shape: BoxShape.circle,
         border: Border.all(
-          color: Color(colors[0]).withOpacity(0.5),
+          color: Color(colors[0]).withValues(alpha: 0.5),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(colors[0]).withOpacity(0.4),
+            color: Color(colors[0]).withValues(alpha: 0.4),
             blurRadius: 12,
             spreadRadius: 2,
           ),

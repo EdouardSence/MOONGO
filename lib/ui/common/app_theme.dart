@@ -459,11 +459,13 @@ class AppTheme {
               const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: AppColors.secondary.withOpacity(0.3)),
+            borderSide:
+                BorderSide(color: AppColors.secondary.withValues(alpha: 0.3)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: AppColors.secondary.withOpacity(0.3)),
+            borderSide:
+                BorderSide(color: AppColors.secondary.withValues(alpha: 0.3)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -488,7 +490,7 @@ class AppTheme {
         // Chip
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.lightSurface,
-          selectedColor: AppColors.primary.withOpacity(0.15),
+          selectedColor: AppColors.primary.withValues(alpha: 0.15),
           labelStyle: AppTypography.bodyFont(fontSize: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -497,7 +499,7 @@ class AppTheme {
 
         // Divider
         dividerTheme: DividerThemeData(
-          color: AppColors.secondary.withOpacity(0.2),
+          color: AppColors.secondary.withValues(alpha: 0.2),
           thickness: 1,
         ),
 
@@ -649,11 +651,13 @@ class AppTheme {
               const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: AppColors.secondary.withOpacity(0.2)),
+            borderSide:
+                BorderSide(color: AppColors.secondary.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: AppColors.secondary.withOpacity(0.2)),
+            borderSide:
+                BorderSide(color: AppColors.secondary.withValues(alpha: 0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
@@ -678,7 +682,7 @@ class AppTheme {
         // Chip
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.darkCard,
-          selectedColor: AppColors.primary.withOpacity(0.3),
+          selectedColor: AppColors.primary.withValues(alpha: 0.3),
           labelStyle: AppTypography.bodyFont(fontSize: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -687,7 +691,7 @@ class AppTheme {
 
         // Divider
         dividerTheme: DividerThemeData(
-          color: AppColors.secondary.withOpacity(0.15),
+          color: AppColors.secondary.withValues(alpha: 0.15),
           thickness: 1,
         ),
 

@@ -60,7 +60,7 @@ class CalendarView extends StackedView<CalendarViewModel> {
                   shape: BoxShape.circle,
                 ),
                 todayDecoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.5),
+                  color: primaryColor.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 defaultTextStyle:

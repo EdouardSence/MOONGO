@@ -15,7 +15,6 @@ class CollectionView extends StackedView<CollectionViewModel> {
   Widget builder(
       BuildContext context, CollectionViewModel viewModel, Widget? child) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -77,8 +76,6 @@ class CollectionView extends StackedView<CollectionViewModel> {
   /// En-tête de la galerie
   Widget _buildGalleryHeader(
       BuildContext context, CollectionViewModel viewModel) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
@@ -92,14 +89,14 @@ class CollectionView extends StackedView<CollectionViewModel> {
           end: Alignment.bottomRight,
           colors: [
             AppColors.secondary,
-            AppColors.secondary.withOpacity(0.85),
+            AppColors.secondary.withValues(alpha: 0.85),
             const Color(0xFFB8956D),
           ],
         ),
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(36)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.secondary.withOpacity(0.4),
+            color: AppColors.secondary.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -113,10 +110,10 @@ class CollectionView extends StackedView<CollectionViewModel> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
+                  color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                   ),
                 ),
                 child: const Text('🏛️', style: TextStyle(fontSize: 28)),
@@ -142,7 +139,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                       style: GoogleFonts.playfairDisplay(
                         fontSize: 14,
                         fontStyle: FontStyle.italic,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         letterSpacing: 2,
                       ),
                     ),
@@ -155,10 +152,10 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -189,7 +186,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
               Text(
                 '✦',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 12,
                 ),
               ),
@@ -209,8 +206,8 @@ class CollectionView extends StackedView<CollectionViewModel> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: leftToRight
-              ? [Colors.transparent, Colors.white.withOpacity(0.5)]
-              : [Colors.white.withOpacity(0.5), Colors.transparent],
+              ? [Colors.transparent, Colors.white.withValues(alpha: 0.5)]
+              : [Colors.white.withValues(alpha: 0.5), Colors.transparent],
         ),
       ),
     );
@@ -241,7 +238,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
             style: GoogleFonts.playfairDisplay(
               fontSize: 16,
               fontStyle: FontStyle.italic,
-              color: AppColors.secondary,
+              color: AppColors.secondary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -267,10 +264,11 @@ class CollectionView extends StackedView<CollectionViewModel> {
                   width: 160,
                   height: 160,
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(isDark ? 0.15 : 0.1),
+                    color: AppColors.secondary
+                        .withValues(alpha: isDark ? 0.15 : 0.1),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.secondary.withOpacity(0.3),
+                      color: AppColors.secondary.withValues(alpha: 0.3),
                       width: 3,
                     ),
                   ),
@@ -283,7 +281,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.secondary.withOpacity(0.2),
+                        color: AppColors.secondary.withValues(alpha: 0.2),
                         blurRadius: 20,
                         spreadRadius: 5,
                       ),
@@ -328,13 +326,13 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 gradient: LinearGradient(
                   colors: [
                     AppColors.tertiary,
-                    AppColors.tertiary.withOpacity(0.85)
+                    AppColors.tertiary.withValues(alpha: 0.85)
                   ],
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.tertiary.withOpacity(0.4),
+                    color: AppColors.tertiary.withValues(alpha: 0.4),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -408,18 +406,18 @@ class CollectionView extends StackedView<CollectionViewModel> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(colors[0]).withOpacity(isDark ? 0.3 : 0.2),
-              Color(colors[1]).withOpacity(isDark ? 0.2 : 0.1),
+              Color(colors[0]).withValues(alpha: isDark ? 0.3 : 0.2),
+              Color(colors[1]).withValues(alpha: isDark ? 0.2 : 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: Color(colors[0]).withOpacity(isDark ? 0.4 : 0.3),
+            color: Color(colors[0]).withValues(alpha: isDark ? 0.4 : 0.3),
             width: 2,
           ),
           boxShadow: [
             BoxShadow(
-              color: Color(colors[0]).withOpacity(0.25),
+              color: Color(colors[0]).withValues(alpha: 0.25),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -441,7 +439,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                       decoration: BoxDecoration(
                         gradient: RadialGradient(
                           colors: [
-                            Color(colors[0]).withOpacity(0.3),
+                            Color(colors[0]).withValues(alpha: 0.3),
                             Colors.transparent,
                           ],
                         ),
@@ -475,7 +473,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
@@ -499,7 +497,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 width: 22,
                 height: 22,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -519,11 +517,11 @@ class CollectionView extends StackedView<CollectionViewModel> {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: AppColors.tertiary.withOpacity(0.9),
+                    color: AppColors.tertiary.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.tertiary.withOpacity(0.5),
+                        color: AppColors.tertiary.withValues(alpha: 0.5),
                         blurRadius: 8,
                       ),
                     ],
@@ -553,7 +551,7 @@ class CollectionView extends StackedView<CollectionViewModel> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
           boxShadow: [
             BoxShadow(
-              color: Color(colors[0]).withOpacity(0.3),
+              color: Color(colors[0]).withValues(alpha: 0.3),
               blurRadius: 30,
               offset: const Offset(0, -10),
             ),
@@ -898,7 +896,8 @@ class _GalleryTexturePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = (isDark ? Colors.white : AppColors.secondary).withOpacity(0.02)
+      ..color =
+          (isDark ? Colors.white : AppColors.secondary).withValues(alpha: 0.02)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
