@@ -284,7 +284,9 @@ class TaskModel {
     if (type == TaskType.recurring) {
       // Daily et Weekly sont forcément dûs cette semaine
       if (recurrence?.frequency == RecurrenceFrequency.daily ||
-          recurrence?.frequency == RecurrenceFrequency.weekly) return true;
+          recurrence?.frequency == RecurrenceFrequency.weekly) {
+        return true;
+      }
 
       // Pour monthly et custom, on simplifie en disant qu'ils apparaissent
       return true;
