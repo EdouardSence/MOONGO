@@ -118,3 +118,61 @@ class MarketHeader extends StatelessWidget {
     );
   }
 }
+
+/// SliverAppBar complet du marché avec header sticky et flexible space
+class MarketSliverAppBar extends StatelessWidget {
+  final ShopViewModel viewModel;
+
+  const MarketSliverAppBar({super.key, required this.viewModel});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      expandedHeight: 125,
+      backgroundColor: AppColors.tertiary,
+      title: AnimatedOpacity(
+        duration: const Duration(milliseconds: 250),
+        opacity: viewModel.showStickyHeader ? 1.0 : 0.0,
+        child: AnimatedBuilder(
+          animation: viewModel,
+          builder: (context, child) => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Le Bazar des Merveilles',
+                style: GoogleFonts.fraunces(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+                ),
+                child: Text(
+                  '${viewModel.seeds} 🌱',
+                  style: GoogleFonts.fraunces(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      centerTitle: false,
+      flexibleSpace: FlexibleSpaceBar(
+        background: MarketHeader(viewModel: viewModel),
+      ),
+    );
+  }
+}

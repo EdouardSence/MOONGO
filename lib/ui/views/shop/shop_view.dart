@@ -29,54 +29,7 @@ class ShopView extends StackedView<ShopViewModel> {
             controller: viewModel.scrollController,
             slivers: [
               // En-tête du marché Sticky
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: 180,
-                backgroundColor: AppColors.tertiary,
-                title: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: viewModel.showStickyHeader ? 1.0 : 0.0,
-                  child: AnimatedBuilder(
-                    animation: viewModel,
-                    builder: (context, child) => Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Le Bazar des Merveilles',
-                          style: GoogleFonts.fraunces(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                width: 1.5),
-                          ),
-                          child: Text(
-                            '${viewModel.seeds} 🌱',
-                            style: GoogleFonts.fraunces(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                centerTitle: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: MarketHeader(viewModel: viewModel),
-                ),
-              ),
+              MarketSliverAppBar(viewModel: viewModel),
 
               // Bannière des graines
               SliverToBoxAdapter(
