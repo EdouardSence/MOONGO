@@ -1,5 +1,4 @@
 /// Barrel file pour exporter tous les widgets de la boutique
-library;
 
 export 'market_background.dart';
 export 'market_header.dart';
