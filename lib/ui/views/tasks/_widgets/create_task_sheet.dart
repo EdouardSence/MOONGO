@@ -624,13 +624,13 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     // Construction des sous-tâches
     List<SubTask>? subTaskObjects;
     if (_subTasks.isNotEmpty) {
-      subTaskObjects = _subTasks.map((s) {
+      subTaskObjects = _subTasks.asMap().entries.map((entry) {
         final id =
-            '${DateTime.now().millisecondsSinceEpoch}_${_subTasks.indexOf(s)}';
+            '${DateTime.now().millisecondsSinceEpoch}_${entry.key}';
         return SubTask(
           id: id,
-          title: s['title'],
-          seedsReward: s['seedsReward'] as int,
+          title: entry.value['title'],
+          seedsReward: entry.value['seedsReward'] as int,
           completed: false,
         );
       }).toList();

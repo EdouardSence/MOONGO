@@ -353,34 +353,35 @@ class ProgressSection extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Stack(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeOutCubic,
-                  width:
-                      MediaQuery.of(context).size.width * task.progress * 0.75,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.tertiary],
-                    ),
-                  ),
-                ),
-                // Particules brillantes
-                if (task.progress > 0)
-                  Positioned(
-                    right: 2,
-                    top: 2,
-                    bottom: 2,
-                    child: Container(
-                      width: 6,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(3),
+            child: LayoutBuilder(
+              builder: (context, constraints) => Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeOutCubic,
+                    width: constraints.maxWidth * task.progress,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary, AppColors.tertiary],
                       ),
                     ),
                   ),
-              ],
+                  // Particules brillantes
+                  if (task.progress > 0)
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      bottom: 2,
+                      child: Container(
+                        width: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
