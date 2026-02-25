@@ -27,7 +27,7 @@ class LoginView extends StackedView<LoginViewModel> {
             // Champ Email
             TextField(
               onChanged: viewModel.setEmail,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email',
                 hintText: 'exemple@email.com',
                 border: OutlineInputBorder(),
@@ -41,7 +41,7 @@ class LoginView extends StackedView<LoginViewModel> {
               decoration: InputDecoration(
                 labelText: 'Mot de passe',
                 hintText: 'Entrez votre mot de passe',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 suffixIcon: IconButton(
                   icon: Icon(
                     viewModel.isPasswordVisible

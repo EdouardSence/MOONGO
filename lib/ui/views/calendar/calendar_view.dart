@@ -7,7 +7,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'calendar_viewmodel.dart';
 
 class CalendarView extends StackedView<CalendarViewModel> {
-  const CalendarView({Key? key}) : super(key: key);
+  const CalendarView({super.key});
 
   @override
   Widget builder(
@@ -51,16 +51,16 @@ class CalendarView extends StackedView<CalendarViewModel> {
               locale: 'fr_FR',
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
-                markerDecoration: BoxDecoration(
-                  color: primaryColor,
+                markerDecoration: const BoxDecoration(
+                  color: Color(0xFF6366F1),
                   shape: BoxShape.circle,
                 ),
-                selectedDecoration: BoxDecoration(
-                  color: primaryColor,
+                selectedDecoration: const BoxDecoration(
+                  color: Color(0xFF6366F1),
                   shape: BoxShape.circle,
                 ),
                 todayDecoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.5),
+                  color: primaryColor.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 defaultTextStyle:
@@ -75,7 +75,8 @@ class CalendarView extends StackedView<CalendarViewModel> {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87),
-                formatButtonTextStyle: TextStyle(color: primaryColor),
+                formatButtonTextStyle:
+                    const TextStyle(color: Color(0xFF6366F1)),
                 formatButtonDecoration: BoxDecoration(
                   border: Border.all(color: primaryColor),
                   borderRadius: BorderRadius.circular(12),
