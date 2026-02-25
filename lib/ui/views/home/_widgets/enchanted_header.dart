@@ -20,7 +20,7 @@ class EnchantedHeader extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? const [Color(0xFF1A2F23), Color(0xFF2D4A3A)]
-              : [AppColors.primary, const Color(0xFF3D7A62)],
+              : const [Color(0xFFD1E5DC), Color(0xFFD1E5DC)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -33,39 +33,14 @@ class EnchantedHeader extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo avec typographie distinctive
-          Row(
-            children: [
-              // Icône feuille organique
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.tertiary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.tertiary.withValues(alpha: 0.5),
-                    width: 1.5,
-                  ),
-                ),
-                child: const Center(
-                  child: Text('🌿', style: TextStyle(fontSize: 22)),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'MOONGO',
-                style: GoogleFonts.fraunces(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ],
+          // Logo MOONGO
+          Image.asset(
+            'assets/images/logo_horizontal.png',
+            width: MediaQuery.of(context).size.width * 0.4,
+            fit: BoxFit.contain,
           ),
+          const Spacer(),
 
           // Compteur de graines avec glow effect
           Container(
@@ -110,7 +85,7 @@ class EnchantedHeader extends StatelessWidget {
                 Text(
                   '$seeds',
                   style: GoogleFonts.fraunces(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : AppColors.primary,
                     fontWeight: FontWeight.w700,
                     fontSize: 20,
                   ),
