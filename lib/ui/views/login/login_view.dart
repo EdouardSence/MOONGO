@@ -16,6 +16,13 @@ class LoginView extends StackedView<LoginViewModel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Logo
+            Image.asset(
+              'assets/images/logo_square.png',
+              width: 120,
+              height: 120,
+            ),
+            const SizedBox(height: 16),
             // Message de bienvenue
             Text(
               viewModel.loginMode
