@@ -15,9 +15,6 @@ class StartupViewModel extends BaseViewModel {
 
   // Place anything here that needs to happen before we get into the application
   Future runStartupLogic() async {
-    // Petit délai pour le splash screen
-    await Future.delayed(const Duration(seconds: 1));
-
     authService.firebaseAuth.authStateChanges().listen((User? user) async {
       if (user != null) {
         // Vérifier si l'utilisateur a déjà un profil Firestore

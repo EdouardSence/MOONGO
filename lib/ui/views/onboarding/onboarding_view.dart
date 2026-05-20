@@ -17,12 +17,14 @@ class OnboardingView extends StackedView<OnboardingViewModel> {
             children: [
               const Spacer(),
 
-              // Titre
-              const Text(
-                '🌱',
-                style: TextStyle(fontSize: 64),
+              // Logo
+              Image.asset(
+                'assets/images/logo_square.png',
+                width: 150,
+                height: 150,
               ),
               const SizedBox(height: 16),
+              // Titre
               const Text(
                 'Bienvenue sur MOONGO !',
                 style: TextStyle(
