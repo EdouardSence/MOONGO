@@ -20,7 +20,7 @@ class EnchantedHeader extends StatelessWidget {
         gradient: LinearGradient(
           colors: isDark
               ? const [Color(0xFF1A2F23), Color(0xFF2D4A3A)]
-              : const [Color(0xFFD1E5DC), Color(0xFFD1E5DC)],
+              : const [Color(0xFFD1E5DC), Color(0xFFC2D8CF)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
