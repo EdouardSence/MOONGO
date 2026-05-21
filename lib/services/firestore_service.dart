@@ -405,7 +405,7 @@ class FirestoreService {
       userId: userId,
       speciesId: species.speciesId,
       name: name,
-      rarity: rarity,
+      rarity: species.baseRarity,
       obtainedFrom: egg.id,
       obtainedAt: now,
       createdAt: now,

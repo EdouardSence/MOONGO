@@ -49,7 +49,7 @@ class CreatureImage extends StatelessWidget {
       return CachedNetworkImage(
         imageUrl: imageUrl,
         cacheManager: CreatureImageCacheManager.instance,
-        cacheKey: '${creature.speciesId}_${useParcImage ? 'parc' : 'base'}',
+        cacheKey: '${creature.speciesId}_${creature.evolutionStage}_${useParcImage ? 'parc' : 'base'}',
         width: size,
         height: size,
         fit: fit,
@@ -143,7 +143,7 @@ class CreatureImageWithGlow extends StatelessWidget {
                 imageUrl: imageUrl,
                 cacheManager: CreatureImageCacheManager.instance,
                 cacheKey:
-                    '${creature.speciesId}_${useParcImage ? 'parc' : 'base'}',
+                    '${creature.speciesId}_${creature.evolutionStage}_${useParcImage ? 'parc' : 'base'}',
                 width: size,
                 height: size,
                 fit: BoxFit.cover,

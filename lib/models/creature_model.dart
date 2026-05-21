@@ -16,8 +16,8 @@ class CreatureSpecies {
   final List<String> evolutionEmojis;
   final CreatureRarity baseRarity;
   final int baseLevel;
-  final String basePicture; // URL de l'image principale (grande)
-  final String parcPicture; // URL de l'image pour le parc (petite)
+  final List<String> basePictures; // URLs par stade d'évolution (grande)
+  final List<String> parcPictures; // URLs par stade d'évolution (parc)
 
   const CreatureSpecies({
     required this.speciesId,
@@ -26,8 +26,8 @@ class CreatureSpecies {
     required this.evolutionEmojis,
     required this.baseRarity,
     this.baseLevel = 1,
-    this.basePicture = '',
-    this.parcPicture = '',
+    this.basePictures = const [],
+    this.parcPictures = const [],
   });
 
   /// Espèce par défaut (fallback)
@@ -59,9 +59,15 @@ class CreatureSpecies {
     return evolutionLevels[currentStage - 1];
   }
 
-  /// Vérifie si l'espèce a une image configurée
-  bool get hasBasePicture => basePicture.isNotEmpty;
-  bool get hasParcPicture => parcPicture.isNotEmpty;
+  bool get hasBasePicture => basePictures.isNotEmpty;
+  bool get hasParcPicture => parcPictures.isNotEmpty;
+
+  String getPictureForStage(int stage, {bool parc = false}) {
+    final list = parc ? parcPictures : basePictures;
+    if (list.isEmpty) return '';
+    final index = (stage - 1).clamp(0, list.length - 1);
+    return list[index];
+  }
 
   /// Crée une espèce depuis un document Firestore
   factory CreatureSpecies.fromFirestore(DocumentSnapshot doc) {
@@ -81,8 +87,8 @@ class CreatureSpecies {
         orElse: () => CreatureRarity.common,
       ),
       baseLevel: data['baseLevel'] ?? 1,
-      basePicture: data['basePicture'] ?? '',
-      parcPicture: data['parcPicture'] ?? '',
+      basePictures: List<String>.from(data['basePictures'] ?? []),
+      parcPictures: List<String>.from(data['parcPictures'] ?? []),
     );
   }
 
@@ -95,8 +101,8 @@ class CreatureSpecies {
       'evolutionEmojis': evolutionEmojis,
       'baseRarity': baseRarity.name,
       'baseLevel': baseLevel,
-      'basePicture': basePicture,
-      'parcPicture': parcPicture,
+      'basePictures': basePictures,
+      'parcPictures': parcPictures,
     };
   }
 }
@@ -149,15 +155,13 @@ class CreatureModel {
   // IMAGES
   // ═══════════════════════════════════════════
 
-  /// URL de l'image principale (ou null si pas disponible)
   String? get basePictureUrl {
-    final url = species.basePicture;
+    final url = species.getPictureForStage(evolutionStage, parc: false);
     return url.isNotEmpty ? url : null;
   }
 
-  /// URL de l'image du parc (ou null si pas disponible)
   String? get parcPictureUrl {
-    final url = species.parcPicture;
+    final url = species.getPictureForStage(evolutionStage, parc: true);
     return url.isNotEmpty ? url : null;
   }
 

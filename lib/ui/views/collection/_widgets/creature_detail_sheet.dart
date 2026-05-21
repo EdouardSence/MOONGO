@@ -65,7 +65,7 @@ class CreatureDetailSheet extends StatelessWidget {
                 // Créature principale avec image (rectangle arrondi horizontal)
                 Container(
                   width: 220,
-                  height: 160,
+                  height: 220,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
